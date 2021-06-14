@@ -100,3 +100,7 @@ Route::get('/test', function (Request $request) {
             ->get();
     return $uii;
 });
+
+
+/** POC  */
+Route::get('/flow/{indicator_id}/{country_id}/{partnership_id}', 'Api\TestController@getFlowData');
