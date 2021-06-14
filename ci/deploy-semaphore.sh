@@ -10,7 +10,7 @@ sudo chown "${USER}:" . -R
 
 echo "Deploying site..."
 
-if [[ "${TRAVIS_BRANCH}" != "master" && "${TRAVIS_BRANCH}" != "sites/2scale" ]]; then
+if [[ "${TRAVIS_BRANCH}" != "main" && "${TRAVIS_BRANCH}" != "develop" ]]; then
     exit 0
 fi
 
@@ -20,11 +20,11 @@ fi
 
 FOLDER="2scale-test"
 
-if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-	FOLDER="2scale"
-	echo "Deploying Production"
+if [[ "${TRAVIS_BRANCH}" == "main" ]]; then
+    FOLDER="2scale"
+    echo "Deploying Production"
 else
-	echo "Deploying Test"
+    echo "Deploying Test"
 fi
 
 rsync \
