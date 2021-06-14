@@ -171,28 +171,37 @@ const agregateExtras = data => {
                 sum.push(val.total_actual_value);
                 target.push(val.value);
                 gap.push(val.total_actual_value - val.value);
-                let percentage =
-                    val.value !== 0
-                        ? ((val.total_actual_value / val.value) * 100).toFixed(
-                              2
-                          ) + "%"
-                        : "-";
+                let percentage = "-";
+                if (val.value !== 0) {
+                    percentage = (
+                        (val.total_actual_value / val.value) *
+                        100
+                    ).toFixed(2);
+                    percentage = percentage > 100 ? 100 : percentage;
+                    percentage = percentage + "%";
+                }
                 percent.push(percentage);
             });
         } else {
             sum.push(item.total_actual_value);
             target.push(item.total_target_value);
             gap.push(item.total_actual_value - item.total_target_value);
-            let percentage =
-                item.total_target_value !== 0
-                    ? (
-                          (item.total_actual_value / item.total_target_value) *
-                          100
-                      ).toFixed(2) + "%"
-                    : "-";
+            let percentage = "-";
+            if (val.value !== 0) {
+                percentage = (
+                    (val.total_actual_value / val.value) *
+                    100
+                ).toFixed(2);
+                percentage = percentage > 100 ? 100 : percentage;
+                percentage = percentage + "%";
+            }
             percent.push(percentage);
         }
-        dim_percent = isNaN(dim_percent) ? " - " : dim_percent.toFixed(2) + "%";
+        dim_percent = isNaN(dim_percent)
+            ? " - "
+            : dim_percent.toFixed(2) > 100
+            ? 100
+            : dim_percent.toFixed(2) + "%";
         sum_values.push({
             total: sum,
             dimension_total: dim_sum,
@@ -271,9 +280,35 @@ const renderRow = (
     // manage the child columns not match with children columns
     if (mainColumn.length !== data.columns.length && level !== 1) {
         let tmp = mainColumn.map(val => {
-            let find = data.columns.find(x => x.order === val.order);
+            let find = data.columns.find(x => x.title === val.title);
             if (typeof find === "undefined") {
-                return { dimensions: [], total_actual_value: 0 };
+                let dimensions = val.dimensions.map(d => {
+                    d.total_actual_value = 0;
+                    d.value = 0;
+                    return d;
+                });
+                return {
+                    ...val,
+                    dimensions: dimensions,
+                    total_actual_value: 0,
+                    total_target_value: 0
+                };
+            }
+            return find;
+        });
+        data.columns = tmp;
+    }
+
+    // there was a dimensions value not match with their parent
+    if (mainColumn.length === data.columns.length && level !== 1) {
+        let tmp = mainColumn.map(val => {
+            let find = data.columns.find(x => x.title === val.title);
+            if (val.dimensions.length !== find.dimensions.length) {
+                find.dimensions = val.dimensions.map(d => {
+                    d.total_actual_value = 0;
+                    d.value = 0;
+                    return d;
+                });
             }
             return find;
         });
