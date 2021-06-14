@@ -76,7 +76,7 @@ ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
     -p 18765 \
     -o UserKnownHostsFile=/dev/null \
     -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php73 artisan migrate"
+    u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php73 artisan migrate --force"
 
 echo "===================================================="
 echo "Done deploying ${FOLDER}"
