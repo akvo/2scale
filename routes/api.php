@@ -106,10 +106,7 @@ Route::get('/test', function (Request $request) {
 // home investment not yet
 Route::get('/flow/partnerships', 'Api\TestController@getPartnership');
 Route::get('/flow/sectors', 'Api\TestController@getSector');
-Route::get('/flow/rnr-gender/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getRnrGender');
-Route::get('/flow/rnr-gender/{country_id}/{partnership_id}', 'Api\TestController@getRnrGender');
-Route::get('/flow/rnr-gender/{country_id}/', 'Api\TestController@getRnrGender');
-Route::get('/flow/rnr-gender/', 'Api\TestController@getRnrGender');
+Route::get('/flow/rnr-gender', 'Api\TestController@getRnrGender');
 Route::get('/flow/rnr-gender-per-year/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getRnrGenderGroupByYear');
 Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getPartnershipCommodities');
 Route::get('/rsr/impact-reach/uii', 'Api\TestController@getRsrUiiReport');

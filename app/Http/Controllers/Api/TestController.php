@@ -26,15 +26,11 @@ class TestController extends Controller
 
     private function filterRnrGenderData($request, $data)
     {
-        $country_id = $request->country_id;
-        $partnership_id = $request->partnership_id;
-        $start = $request->start;
-        $end = $request->end;
-        if (isset($request->country_id)) {
-            $data = $data->where('country_id', $country_id);
+        if (isset($request->country)) {
+            $data = $data->whereIn('country_id', explode(",", $request->country));
         }
-        if (isset($request->partnership_id)) {
-            $data = $data->where('partnership_id', $partnership_id);
+        if (isset($request->partnership)) {
+            $data = $data->whereIn('partnership_id', explode(",", $request->partnership));
         }
         if (isset($request->start) && isset($request->end)) {
             $data = $data->whereBetween('event_date', [date($start), date($end)]);
@@ -88,64 +84,85 @@ class TestController extends Controller
         return $sector;
     }
 
-    public function getRnrGender(Request $request)
-    {
-        $partnership = $this->getPartnershipCache();
-        $rnrGender = $this->filterRnrGenderData($request, RnrGender::all());
-
-        $genderGroupByCountryAndCategories = $rnrGender->map(function ($rnr) {
-            $rnr['event_year'] = date("Y", strtotime($rnr->event_date));
-            return $rnr;
-        })->groupBy('country_id')
-            ->map(function ($country, $key) use ($partnership) {
-                $partner = $country->groupBy('partnership_id')
-                                   ->map(function($category, $key) use ($partnership){
-                                       $c = $category->groupBy('question_id')
-                                                     ->map(function ($d, $key) {
-                                                         $years = $d->groupBy('event_year')
-                                                                    ->map(function ($y, $key) {
-                                                                        return [
-                                                                            'year' => $key,
-                                                                            'value' => $y->sum('total')
-                                                                        ];
-                                                                    })->sortBy('year')->values();
-                                                         return [
-                                                            'gender' => $d->first()->gender,
-                                                            'age' => $d->first()->age,
-                                                            'value' => $d->sum('total'),
-                                                            'stack' => ['year'],
-                                                            'categories' => $years
-                                                        ];})->values();
+    private function sumBy($data, $partnership, $groups, $index = 0) {
+        $data = collect($data)
+            ->groupBy($groups[$index])->map(function($d, $k) use ($partnership, $groups, $index) {
+                $child = $index + 1;
+                if (in_array($groups[$index],["country_id","partnership_id"])) {
+                    $k= $partnership->where('id', $k)->first()->name;
+                }
+                if (count($groups) > $child){
+                    $data = $this->sumBy($d, $partnership, $groups, $child);
                     return [
-                        'partnership' => $partnership->where('id', $key)->first()->name,
-                        'value' => $c->sum('value'),
-                        'stack' => ['gender', 'age'],
-                        'categories' => $c
-                    ];
-                })->values();
-                return [
-                    'country_id' => $key,
-                    'country' => $partnership->where('id', $key)->first()->name,
-                    'value' => $partner->sum('value'),
-                    'stack' => ['partnership'],
-                    'categories' => $partner,
-                ];
-            })->values();
-
-        $results = $partnership->where('level', 'country')->values()
-            ->map(function ($p) use ($genderGroupByCountryAndCategories) {
-                $find = $genderGroupByCountryAndCategories->where('country_id', $p->id)->first();
-                if (!$find) {
-                    return [
-                        'country' =>$p->name,
-                        'value' => 0,
-                        'categories' => []
+                        'name' => $k,
+                        'value' => $d->sum('total'),
+                        'childrens' => $data,
+                        'stack' => $groups[$index]
                     ];
                 }
-                return collect($find)->except('country_id');
-            });
+                return [
+                    'name' => $k,
+                    'value' => $d->sum('total')
+                ];
+            })->values();
+        return $data;
+    }
 
-        return $results;
+    public function getRnrGender(Request $request, RnrGender $rnr)
+    {
+        $partnership = $this->getPartnershipCache();
+        $sum = collect(explode(",", $request->sum))
+            ->map(function($x){
+                return str_replace(" ","_",$x);
+            })->filter()->all();
+        $req = collect(['total'])
+            ->merge(explode(",", $request->indicators))
+            ->merge(explode(",", $request->sum));
+        $params = collect([]);
+        $customParams = collect([]);
+        $req->each(function($x) use ($params, $customParams){
+            if (Str::contains($x, " ")) {
+                $customParams->push(explode(" ", $x));
+                collect(explode(" ", $x))->each(function($n) use ($params) {
+                    $params->push($n);
+                });
+            } else if ($x === "year") {
+                $params->push("event_date");
+            } else {
+                $params->push($x);
+            }
+            return;
+        });
+        if ($request->country) {
+            $rnr = $rnr->whereIn('country_id', explode(",", $request->country));
+            $params->push('country_id');
+        }
+        if ($request->partnership) {
+            $rnr = $rnr->whereIn('partnership_id', explode(",", $request->partnership));
+            $params->push('partnership_id');
+        }
+        if ($request->start && $request->end) {
+            $rnr = $rnr->whereBetween('event_date', [date($start), date($end)]);
+            $params->push('event_date');
+        }
+        $params = $params->filter()->unique()->toArray();
+        $rnr = $rnr->get($params);
+        if ($customParams->count()) {
+            $rnr = $rnr->transform(function($d) use ($customParams){
+                $customParams->each(function($c) use ($d) {
+                    $n = collect();
+                    collect($c)->each(function($e) use ($d, $n){
+                        $n->push($d[$e]);
+                    });
+                    $d[implode("_", $c)] = implode(" ", $n->toArray());
+                });
+                return $d;
+            });
+        }
+        if (isset($request->sum)) {
+            return $this->sumBy($rnr, $partnership, $sum);
+        }
+        return $rnr;
     }
 
     public function getRnrGenderGroupByYear(Request $request)
