@@ -104,3 +104,4 @@ Route::get('/test', function (Request $request) {
 
 /** POC  */
 Route::get('/flow/rnr-gender/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getRnrGender');
+Route::get('/flow/rnr-gender-per-year/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getRnrGenderGroupByYear');
