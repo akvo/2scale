@@ -9,7 +9,7 @@ class Datapoint extends Model
     protected $hidden = ['created_at','updated_at'];
     protected $fillable = ['form_id','survey_group_id','form_id','partnership_id','country_id','submission_date','datapoint_id'];
 
-	public function answers() 
+	public function answers()
 	{
 		return $this->hasMany('App\Answer');
 	}
@@ -17,9 +17,9 @@ class Datapoint extends Model
     public function forms()
     {
         return $this->belongsTo('\App\Form','form_id','form_id');
-    } 
+    }
 
-    public function surveygroup() 
+    public function surveygroup()
 	{
         return $this->belongsTo('App\SurveyGroup');
     }

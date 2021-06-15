@@ -103,4 +103,4 @@ Route::get('/test', function (Request $request) {
 
 
 /** POC  */
-Route::get('/flow/{indicator_id}/{country_id}/{partnership_id}', 'Api\TestController@getFlowData');
+Route::get('/flow/rnr-gender/{country_id}/{partnership_id}', 'Api\TestController@getRnrGender');
