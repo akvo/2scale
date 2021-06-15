@@ -30,13 +30,13 @@ class TestController extends Controller
         $partnership_id = $request->partnership_id;
         $start = $request->start;
         $end = $request->end;
-        if ($country_id !== "0") {
+        if (isset($request->country_id)) {
             $data = $data->where('country_id', $country_id);
         }
-        if ($partnership_id !== "0") {
+        if (isset($request->partnership_id)) {
             $data = $data->where('partnership_id', $partnership_id);
         }
-        if ($start !== "0") {
+        if (isset($request->start) && isset($request->end)) {
             $data = $data->whereBetween('event_date', [date($start), date($end)]);
         }
         return $data;
@@ -98,27 +98,37 @@ class TestController extends Controller
             return $rnr;
         })->groupBy('country_id')
             ->map(function ($country, $key) use ($partnership) {
-                $category = $country->groupBy('question_id')
-                            ->map(function ($d, $key) {
-                                $years = $d->groupBy('event_year')
-                                    ->map(function ($y, $key) {
-                                        return [
-                                            'year' => $key,
-                                            'value' => $y->sum('total')
-                                        ];
-                                    })->sortBy('year')->values();;
-                                return [
-                                    'gender' => $d->first()->gender,
-                                    'age' => $d->first()->age,
-                                    'value' => $d->sum('total'),
-                                    'per_year' => $years
-                                ];
-                            })->values();
+                $partner = $country->groupBy('partnership_id')
+                                   ->map(function($category, $key) use ($partnership){
+                                       $c = $category->groupBy('question_id')
+                                                     ->map(function ($d, $key) {
+                                                         $years = $d->groupBy('event_year')
+                                                                    ->map(function ($y, $key) {
+                                                                        return [
+                                                                            'year' => $key,
+                                                                            'value' => $y->sum('total')
+                                                                        ];
+                                                                    })->sortBy('year')->values();
+                                                         return [
+                                                            'gender' => $d->first()->gender,
+                                                            'age' => $d->first()->age,
+                                                            'value' => $d->sum('total'),
+                                                            'stack' => ['year'],
+                                                            'categories' => $years
+                                                        ];})->values();
+                    return [
+                        'partnership' => $partnership->where('id', $key)->first()->name,
+                        'value' => $c->sum('value'),
+                        'stack' => ['gender', 'age'],
+                        'categories' => $c
+                    ];
+                })->values();
                 return [
                     'country_id' => $key,
                     'country' => $partnership->where('id', $key)->first()->name,
-                    'value' => $category->sum('value'),
-                    'categories' => $category,
+                    'value' => $partner->sum('value'),
+                    'stack' => ['partnership'],
+                    'categories' => $partner,
                 ];
             })->values();
 
