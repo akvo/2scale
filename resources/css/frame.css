@@ -17,3 +17,25 @@
     font-weight: bold;
     font-style: normal;
 }
+
+html,
+body {
+    font-family: "MarkPro", sans-serif;
+}
+
+.card,
+.navbar,
+.page-link {
+    box-shadow: none !important;
+}
+
+.card .card-header {
+    background: none !important;
+    text-align: center;
+    border-bottom: none;
+}
+
+.loader-spinner {
+    position: absolute;
+    top: 45%;
+}

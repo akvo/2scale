@@ -43,9 +43,11 @@ mix.js("resources/js/app.js", "public/js")
     .version();
 
 mix.styles(["resources/css/theme.css"], "public/css/all.css");
+mix.styles(["resources/css/frame.css"], "public/css/frame.css");
 
 mix.copyDirectory("resources/vendor", "public/vendor");
 mix.copyDirectory("resources/images", "public/images");
+mix.copyDirectory("resources/fonts", "public/fonts");
 mix.copy("resources/favicon.ico", "public/");
 mix.copyDirectory("resources/json", "public/json");
 

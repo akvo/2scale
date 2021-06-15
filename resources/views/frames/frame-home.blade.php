@@ -17,6 +17,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.1/axios.min.js" type="text/javascript"></script>
   <link href="{{ asset('vendor/font-awesome-5/css/fontawesome-all.min.css') }}" rel="stylesheet" media="all">
   <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  <link href="{{ mix('/css/frame.css') }}" rel="stylesheet" media="all">
 
   {{-- Old --}}
   {{-- <style>
@@ -108,8 +109,7 @@
     html,
     body{
         width:95%;
-      margin:auto;
-        font-family: 'Montsterrat', sans-serif;
+        margin:auto;
     }
     .loader-spinner {
         position:absolute;
