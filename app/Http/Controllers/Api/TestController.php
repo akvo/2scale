@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Cache;
 
 class TestController extends Controller
 {
-    //
     public function getRnrGender(Request $request)
     {
         $partnership = Cache::get('partnership');
@@ -23,10 +22,21 @@ class TestController extends Controller
 
         $country_id = $request->country_id;
         $partnership_id = $request->partnership_id;
-        // we need country & partnership id on view table
+        $start = $request->start;
+        $end = $request->end;
 
-        $genderGroupByCountryAndType = RnrGender::all()
-            ->groupBy('country_id')
+        $rnrGender = RnrGender::all();
+        if ($country_id !== "0") {
+            $rnrGender = $rnrGender->where('country_id', $country_id);
+        }
+        if ($partnership_id !== "0") {
+            $rnrGender = $rnrGender->where('partnership_id', $partnership_id);
+        }
+        if ($start !== "0") {
+            $rnrGender = $rnrGender->whereBetween('event_date', [date($start), date($end)]);
+        }
+
+        $genderGroupByCountryAndType = $rnrGender->groupBy('country_id')
             ->map(function ($country, $key) use ($partnership) {
                 $category = $country->groupBy('question_id')
                             ->map(function ($d, $key) {
@@ -37,11 +47,26 @@ class TestController extends Controller
                                 ];
                             })->values();
                 return [
-                    'country_id' => $partnership->where('id',$key)->first()->name,
+                    'country_id' => $key,
+                    'country' => $partnership->where('id', $key)->first()->name,
                     'total' => $category->sum('total'),
                     'categories' => $category,
                 ];
             })->values();
-        return $genderGroupByCountryAndType;
+
+        $results = $partnership->where('level', 'country')->values()
+            ->map(function ($p) use ($genderGroupByCountryAndType) {
+                $find = $genderGroupByCountryAndType->where('country_id', $p->id)->first();
+                if (!$find) {
+                    return [
+                        'country' =>$p->name,
+                        'total' => 0,
+                        'categories' => []
+                    ];
+                }
+                return collect($find)->except('country_id');
+            });
+
+        return $results;
     }
 }
