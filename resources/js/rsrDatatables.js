@@ -187,9 +187,9 @@ const agregateExtras = data => {
             target.push(item.total_target_value);
             gap.push(item.total_actual_value - item.total_target_value);
             let percentage = "-";
-            if (val.value !== 0) {
+            if (item.total_target_value !== 0) {
                 percentage = (
-                    (val.total_actual_value / val.value) *
+                    (item.total_actual_value / item.total_target_value) *
                     100
                 ).toFixed(2);
                 percentage = percentage > 100 ? 100 : percentage;
