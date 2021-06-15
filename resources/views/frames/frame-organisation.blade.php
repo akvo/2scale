@@ -13,7 +13,8 @@
     <!-- Vendor CSS-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 	<!-- Material Design Bootstrap -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/css/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/css/mdb.min.css" rel="stylesheet">
+    <link href="{{ mix('/css/frame.css') }}" rel="stylesheet" media="all">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.1/axios.min.js" type="text/javascript"></script>
 </head>
@@ -22,7 +23,6 @@ html,
 body{
     width:100%;
 	margin:auto;
-    font-family: 'Montsterrat', sans-serif;
 }
 .view.view-cascade {
     border-radius: 3px;
@@ -69,7 +69,7 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     <select id="select-country-survey" class="selectpicker" data-style="" data-live-search="true">
       <option value="">Select Country</option>
         @foreach($surveys["countries"] as $country)
-        <option 
+        <option
             data-tokens="{{ $country['name'] }}"
             data-id="{{ $country['id'] }}"
             value="{{ Str::title($country['name']) }}">

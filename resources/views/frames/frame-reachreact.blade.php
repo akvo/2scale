@@ -16,6 +16,7 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Material Design Bootstrap -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/css/mdb.min.css" rel="stylesheet">
+    <link href="{{ mix('/css/frame.css') }}" rel="stylesheet" media="all">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.1/axios.min.js" type="text/javascript"></script>
 </head>
@@ -24,7 +25,6 @@ html,
 body{
     width:95%;
 	margin:auto;
-    font-family: 'Montsterrat', sans-serif;
 }
 .loader-spinner {
     position:absolute;
