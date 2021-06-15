@@ -5,25 +5,12 @@ $FORM_URL = env('FORM_URL', 'http://localhost:3000') . '/' . $INSTANCE;
 
 return [
     "url" => $FORM_URL,
-    "cascade" => "cascade-30100013-v52.sqlite",
+    "cascade" => "cascade-30100013-v58.sqlite",
     "sector_cascade" => "cascade-26130006-v21.sqlite",
     "forms" => array(
-        /* Testing
         [
-        "name" => "Training",
-        "list" => array(
-                [
-                    "form_id" => 61820055,
-                    "name" => "D&D Baseline form for Testing New Sync",
-                    "survey_id" => 94000040,
-                    "partner_qid"=> 57980133,
-                ],
-            )
-        ],
-        */
-        [
-        "name" => "M&E Tools",
-        "list" => array(
+            "name" => "M&E Tools",
+            "list" => array(
                 [
                     "form_id" => 28150013,
                     "name" => "D&D Baseline Forms",
@@ -41,8 +28,8 @@ return [
             )
         ],
         [
-        "name" => "Organisation Forms",
-        "list" => array(
+            "name" => "Organisation Forms",
+            "list" => array(
                 [
                     "form_id" => 30160001,
                     "name" => "Agri-Business Cluster Form",
@@ -74,8 +61,8 @@ return [
             )
         ],
         [
-        "name" => "Universal Impact Indicators",
-        "list" => array(
+            "name" => "Universal Impact Indicators",
+            "list" => array(
                 [
                     "form_id" => 27870030,
                     "name" => "UII-1 BoP Form",
@@ -135,7 +122,8 @@ return [
             )
         ]
     ),
-    "country_cascade" => "cascade-30100013-v52.sqlite",
+    // unused
+    "country_cascade" => "cascade-30100013-v58.sqlite",
     "countries" => array(
         [
             "id" => 1,
