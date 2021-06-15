@@ -35,6 +35,24 @@ class TestController extends Controller
             $data = $data->where('partnership_id', $partnership_id);
         }
         if ($start !== "0") {
+            $data = $data->whereBetween('event_date', [date($start), date($end)]);
+        }
+        return $data;
+    }
+
+    private function filterPartnership($request, $data)
+    {
+        $country_id = $request->country_id;
+        $partnership_id = $request->partnership_id;
+        $start = $request->start;
+        $end = $request->end;
+        if ($country_id !== "0") {
+            $data = $data->where('country_id', $country_id);
+        }
+        if ($partnership_id !== "0") {
+            $data = $data->where('partnership_id', $partnership_id);
+        }
+        if ($start !== "0") {
             $data = $data->whereBetween('submission_date', [date($start), date($end)]);
         }
         return $data;
@@ -97,7 +115,7 @@ class TestController extends Controller
                 return [
                     'country_id' => $key,
                     'country' => $partnership->where('id', $key)->first()->name,
-                    'value' => $category->sum('total'),
+                    'value' => $category->sum('value'),
                     'categories' => $category,
                 ];
             })->values();
@@ -162,7 +180,7 @@ class TestController extends Controller
         $surveys = collect(config('surveys.forms'))->where('name', 'Organisation Forms')->first();
         $formIds = collect($surveys['list'])->pluck('form_id');
         $partnership = $this->getPartnershipCache();
-        $datapoint = $this->filterRnrGenderData($request, Datapoint::whereIn('form_id', $formIds)->get());
+        $datapoint = $this->filterPartnership($request, Datapoint::whereIn('form_id', $formIds)->get());
         $results = $datapoint->map(function ($d) use ($partnership) {
             return $d;
         });
