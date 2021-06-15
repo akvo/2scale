@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use App\Sector;
 use App\Datapoint;
 use App\RnrGender;
 use App\Partnership;
-use Illuminate\Support\Facades\Cache;
+use App\RsrResult;
 
 class TestController extends Controller
 {
@@ -184,6 +186,82 @@ class TestController extends Controller
         $results = $datapoint->map(function ($d) use ($partnership) {
             return $d;
         });
+        return $results;
+    }
+
+    public function getRsrUiiReport(Request $request)
+    {
+        $config = config('akvo-rsr');
+        $charts = collect($config['impact_react_charts']);
+        $programId = $config['projects']['parent'];
+
+        $rsrResults = RsrResult::where('rsr_project_id', $programId)
+            ->with('rsr_indicators.rsr_dimensions.rsr_dimension_values')
+            ->with('rsr_indicators.rsr_periods.rsr_period_dimension_values')
+            ->get();
+
+        $results = $rsrResults->map(function ($rs) use ($charts) {
+            $rs['rsr_indicators'] = $rs->rsr_indicators->transform(function ($ind) {
+                if ($ind['has_dimension']) {
+                    $ind['rsr_dimensions'] = $ind->rsr_dimensions->transform(function ($dim) use ($ind) {
+                        $dimVal = $dim->rsr_dimension_values->map(function ($dv) use ($ind) {
+                            $actualDimValues = $ind['rsr_periods']->pluck('rsr_period_dimension_values')
+                                ->flatten(1)->where('rsr_dimension_value_id', $dv['id']);
+
+                            $name = $dv['name'];
+                            if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
+                                if (Str::contains($name, "Male")) {
+                                    $name = "Male";
+                                }
+                                if (Str::contains($name, "Female")) {
+                                    $name = "Female";
+                                }
+                            }
+                            if (Str::contains($name, ">") || Str::contains($name, "<")) {
+                                if (Str::contains($name, "Male") && Str::contains($name, ">")) {
+                                    $name = "Senior Male";
+                                }
+                                if (Str::contains($name, "Male") && Str::contains($name, "<")) {
+                                    $name = "Junior Male";
+                                }
+                                if (Str::contains($name, "Female") && Str::contains($name, ">")) {
+                                    $name = "Senior Female";
+                                }
+                                if (Str::contains($name, "Female") && Str::contains($name, "<")) {
+                                    $name = "Junior Female";
+                                }
+                            }
+
+                            return [
+                                'name' => $name,
+                                'target_value' => $dv['value'],
+                                'actual_value' => $actualDimValues->sum('value')
+                            ];
+                        });
+                        return [
+                            'name' => $dim['name'],
+                            'values' => $dimVal
+                        ];
+                    });
+
+                    $ind['rsr_periods'] = $ind->rsr_periods->transform(function ($p) {
+                        $p['actual_value'] = $p['rsr_period_dimension_values']->sum('value');
+                        return $p;
+                    });
+                }
+                $ind['actual_value'] = $ind['rsr_periods']->sum('actual_value');
+                return $ind;
+            });
+            $chart = $charts->where('id', $rs['id'])->first();
+            return [
+                "group" => $chart['group'],
+                "title" => Str::after($rs['title'], ": "),
+                "target_value" => $rs['rsr_indicators']->sum('target_value'),
+                "actual_value" => $rs['rsr_indicators']->sum('actual_value'),
+                "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1)
+            ];
+        });
+
         return $results;
     }
 }

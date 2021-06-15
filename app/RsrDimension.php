@@ -24,7 +24,7 @@ class RsrDimension extends Model
     public function childrens()
     {
         return $this->hasMany('\App\RsrDimension','parent_dimension_name','id');
-    } 
+    }
 
     public function parents()
     {

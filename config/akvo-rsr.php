@@ -25,52 +25,56 @@ return [
     ],
     'impact_react_charts' => [
         # using program rsr result id
-        'food_nutrition_security' => [
-            'uii1' => [
-                'id' => 42401,
-                'name' => 'UII1 - BoP',
-            ],
-            'uii2' => [
-                'id' => 42865,
-                'name' => 'UII2 - SHF',
-            ],
-            'uii3' => [
-                'id' => 42698,
-                'name' => 'UII3 - EEP',
-            ],
+        [
+            'id' => 42401,
+            'name' => 'UII1 - BoP',
+            'group' => 'Food Nutrition and Security'
         ],
-        'private_sector_development' => [
-            'uii4' => [
-                'id' => 42804,
-                'name' => 'UII4 - SME',
-            ],
-            'uii5' => [
-                'id' => 42825,
-                'name' => 'UII5 - NONFE',
-            ],
-            'uii6' => [
-                'id' => 42835,
-                'name' => 'UII6 - MSME',
-            ],
-            'uii7' => [
-                'id' => 42845,
-                'name' => 'UII7 - INNO',
-            ],
+        [
+            'id' => 42865,
+            'name' => 'UII2 - SHF',
+            'group' => 'Food Nutrition and Security'
         ],
-        'input_adittionality' => [
-            'uii8' => [
-                'id' => 42855,
-                'name' => 'UII8 - FSERV',
-            ],
-            'amount_of_co_financing' => [
-                'id' => 48191,
-                'name' => 'Private contribution',
-            ],
-            '2scale_contribution' => [
-                'id' => 48259,
-                'name' => '2SCALE contribution',
-            ],
+        [
+            'id' => 42698,
+            'name' => 'UII3 - EEP',
+            'group' => 'Food Nutrition and Security'
         ],
+        [
+            'id' => 42804,
+            'name' => 'UII4 - SME',
+            'group' => 'Private Sector Development'
+        ],
+        [
+            'id' => 42825,
+            'name' => 'UII5 - NONFE',
+            'group' => 'Private Sector Development'
+        ],
+        [
+            'id' => 42835,
+            'name' => 'UII6 - MSME',
+            'group' => 'Private Sector Development'
+        ],
+        [
+            'id' => 42845,
+            'name' => 'UII7 - INNO',
+            'group' => 'Private Sector Development'
+        ],
+        [
+            'id' => 42855,
+            'name' => 'UII8 - FSERV',
+            'group' => "Input Additionality"
+        ],
+        [
+            'id' => 48191,
+            'name' => 'Private contribution',
+            'group' => "Input Additionality"
+        ],
+        [
+            'id' => 48259,
+            'name' => '2SCALE contribution',
+            'group' => "Input Additionality"
+        ]
     ],
     'charts' => [
         'reachreact' => [
