@@ -103,5 +103,9 @@ Route::get('/test', function (Request $request) {
 
 
 /** POC  */
+// home investment not yet
+Route::get('/flow/partnerships', 'Api\TestController@getPartnership');
+Route::get('/flow/sectors', 'Api\TestController@getSector');
 Route::get('/flow/rnr-gender/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getRnrGender');
 Route::get('/flow/rnr-gender-per-year/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getRnrGenderGroupByYear');
+Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getPartnershipCommodities');

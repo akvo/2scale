@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Sector;
 use App\Datapoint;
 use App\RnrGender;
 use App\Partnership;
@@ -39,25 +40,64 @@ class TestController extends Controller
         return $data;
     }
 
+    public function getPartnership(Request $request)
+    {
+        $allPartnership = $this->getPartnershipCache();
+        $partnership = $allPartnership->where('level', 'country')
+            ->map(function ($p) use ($allPartnership) {
+                $childs = $allPartnership->where('parent_id', $p->id)->values();
+                $p['value'] = $childs->count();
+                $p['childrens'] = $childs->map(function ($c) {
+                    return collect($c)->only('id', 'name');
+                });
+                return collect($p)->only('id', 'name', 'value', 'childrens');
+            })->values();
+        return $partnership;
+    }
+
+    public function getSector(Request $request)
+    {
+        $sector = Sector::where('level', 'industry')->with('childrens')->get();
+        $sector = $sector->map(function ($s) {
+            $s['value'] = $s->childrens->count();
+            $s['childrens'] = $s->childrens->transform(function ($c) {
+                return collect($c)->only('id', 'name');
+            });
+            return collect($s)->only('id', 'name', 'value', 'childrens');
+        });
+        return $sector;
+    }
+
     public function getRnrGender(Request $request)
     {
         $partnership = $this->getPartnershipCache();
         $rnrGender = $this->filterRnrGenderData($request, RnrGender::all());
 
-        $genderGroupByCountryAndCategories = $rnrGender->groupBy('country_id')
+        $genderGroupByCountryAndCategories = $rnrGender->map(function ($rnr) {
+            $rnr['event_year'] = date("Y", strtotime($rnr->event_date));
+            return $rnr;
+        })->groupBy('country_id')
             ->map(function ($country, $key) use ($partnership) {
                 $category = $country->groupBy('question_id')
                             ->map(function ($d, $key) {
+                                $years = $d->groupBy('event_year')
+                                    ->map(function ($y, $key) {
+                                        return [
+                                            'year' => $key,
+                                            'value' => $y->sum('total')
+                                        ];
+                                    })->sortBy('year')->values();;
                                 return [
                                     'gender' => $d->first()->gender,
                                     'age' => $d->first()->age,
-                                    'total' => $d->sum('total')
+                                    'value' => $d->sum('total'),
+                                    'per_year' => $years
                                 ];
                             })->values();
                 return [
                     'country_id' => $key,
                     'country' => $partnership->where('id', $key)->first()->name,
-                    'total' => $category->sum('total'),
+                    'value' => $category->sum('total'),
                     'categories' => $category,
                 ];
             })->values();
@@ -68,7 +108,7 @@ class TestController extends Controller
                 if (!$find) {
                     return [
                         'country' =>$p->name,
-                        'total' => 0,
+                        'value' => 0,
                         'categories' => []
                     ];
                 }
@@ -114,6 +154,18 @@ class TestController extends Controller
                 return collect($find)->except('country_id');
             });
 
+        return $results;
+    }
+
+    public function getPartnershipCommodities(Request $request)
+    {
+        $surveys = collect(config('surveys.forms'))->where('name', 'Organisation Forms')->first();
+        $formIds = collect($surveys['list'])->pluck('form_id');
+        $partnership = $this->getPartnershipCache();
+        $datapoint = $this->filterRnrGenderData($request, Datapoint::whereIn('form_id', $formIds)->get());
+        $results = $datapoint->map(function ($d) use ($partnership) {
+            return $d;
+        });
         return $results;
     }
 }
