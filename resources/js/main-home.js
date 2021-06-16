@@ -1,11 +1,16 @@
 const axios = window.axios;
 import { getMaps, getCharts } from "./charts.js";
-const baseurl = $("meta[name=path]").attr("content");
+import _ from "lodash";
 
 const info = {
     head: "Header Lorem Ipsum",
-    content: "Lorem Ipsum Dolor Sit Amet for Footer"
+    content: "Lorem Ipsum Dolor Sit Amet for Footer",
 };
+
+axios.get("/api/flow/rnr-gender").then((res) => {
+    const data = res.data;
+    console.log(_.find(data[0], _.matchesProperty("categories")));
+});
 
 getMaps("maps", "home/map/partnership");
 
