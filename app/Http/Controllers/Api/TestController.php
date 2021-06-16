@@ -7,115 +7,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use App\Sector;
+use App\SectorIndustry;
 use App\Datapoint;
 use App\RnrGender;
 use App\Partnership;
 use App\RsrResult;
+use App\RsrDetail;
 
 class TestController extends Controller
 {
-    private function getPartnershipCache() {
-        $partnership = Cache::get('partnership');
-        if (!$partnership) {
-            $partnership = Partnership::all();
-            Cache::put('partnership', $partnership, 86400);
-        }
-        return $partnership;
-    }
 
-    private function filterRnrGenderData($request, $data)
+    private function getRequestAttributes($request)
     {
-        if (isset($request->country)) {
-            $data = $data->whereIn('country_id', explode(",", $request->country));
-        }
-        if (isset($request->partnership)) {
-            $data = $data->whereIn('partnership_id', explode(",", $request->partnership));
-        }
-        if (isset($request->start) && isset($request->end)) {
-            $data = $data->whereBetween('event_date', [date($start), date($end)]);
-        }
-        return $data;
-    }
-
-    private function filterPartnership($request, $data)
-    {
-        $country_id = $request->country_id;
-        $partnership_id = $request->partnership_id;
-        $start = $request->start;
-        $end = $request->end;
-        if ($country_id !== "0") {
-            $data = $data->where('country_id', $country_id);
-        }
-        if ($partnership_id !== "0") {
-            $data = $data->where('partnership_id', $partnership_id);
-        }
-        if ($start !== "0") {
-            $data = $data->whereBetween('submission_date', [date($start), date($end)]);
-        }
-        return $data;
-    }
-
-    public function getPartnership(Request $request)
-    {
-        $allPartnership = $this->getPartnershipCache();
-        $partnership = $allPartnership->where('level', 'country')
-            ->map(function ($p) use ($allPartnership) {
-                $childs = $allPartnership->where('parent_id', $p->id)->values();
-                $p['value'] = $childs->count();
-                $p['childrens'] = $childs->map(function ($c) {
-                    return collect($c)->only('id', 'name');
-                });
-                return collect($p)->only('id', 'name', 'value', 'childrens');
-            })->values();
-        return $partnership;
-    }
-
-    public function getSector(Request $request)
-    {
-        $sector = Sector::where('level', 'industry')->with('childrens')->get();
-        $sector = $sector->map(function ($s) {
-            $s['value'] = $s->childrens->count();
-            $s['childrens'] = $s->childrens->transform(function ($c) {
-                return collect($c)->only('id', 'name');
-            });
-            return collect($s)->only('id', 'name', 'value', 'childrens');
-        });
-        return $sector;
-    }
-
-    private function sumBy($data, $partnership, $groups, $index = 0) {
-        $data = collect($data)
-            ->groupBy($groups[$index])->map(function($d, $k) use ($partnership, $groups, $index) {
-                $child = $index + 1;
-                if (in_array($groups[$index],["country_id","partnership_id"])) {
-                    $k= $partnership->where('id', $k)->first()->name;
-                }
-                if (count($groups) > $child){
-                    $data = $this->sumBy($d, $partnership, $groups, $child);
-                    return [
-                        'name' => $k,
-                        'value' => $d->sum('total'),
-                        'childrens' => $data,
-                        'stack' => $groups[$index]
-                    ];
-                }
-                return [
-                    'name' => $k,
-                    'value' => $d->sum('total')
-                ];
-            })->values();
-        return $data;
-    }
-
-    public function getRnrGender(Request $request, RnrGender $rnr)
-    {
-        $partnership = $this->getPartnershipCache();
         $sum = collect(explode(",", $request->sum))
             ->map(function($x){
                 return str_replace(" ","_",$x);
             })->filter()->all();
-        $req = collect(['total'])
+        $req = collect([])
             ->merge(explode(",", $request->indicators))
             ->merge(explode(",", $request->sum));
         $params = collect([]);
@@ -133,6 +41,69 @@ class TestController extends Controller
             }
             return;
         });
+        return [$sum,$params,$customParams];
+    }
+
+    private function appendCustomParams($data, $customParams) {
+        return $data->transform(function($d) use ($customParams){
+            $customParams->each(function($c) use ($d) {
+                $n = collect();
+                collect($c)->each(function($e) use ($d, $n){
+                    $n->push($d[$e]);
+                });
+                $d[implode("_", $c)] = implode(" ", $n->toArray());
+            });
+            return $d;
+        });
+    }
+
+    public function getPartnership(Request $request)
+    {
+        $allPartnership = $this->getPartnershipCache();
+        $partnership = $allPartnership->where('level', 'country')
+            ->map(function ($p) use ($allPartnership) {
+                $childs = $allPartnership->where('parent_id', $p->id)->values();
+                $p['value'] = $childs->count();
+                $p['childrens'] = $childs->map(function ($c) {
+                    return collect($c)->only('id', 'name');
+                });
+                return collect($p)->only('id', 'name', 'value', 'childrens');
+            })->values();
+        return $partnership;
+    }
+
+    public function getSector(Request $request, SectorIndustry $si)
+    {
+        $partnership = $this->getPartnershipCache();
+        [$sum, $params, $customParams] = $this->getRequestAttributes($request);
+        if ($request->country) {
+            $si = $si->whereIn('country_id', explode(",", $request->country));
+            $params->push('country_id');
+        }
+        if ($request->partnership) {
+            $si = $si->whereIn('partnership_id', explode(",", $request->partnership));
+            $params->push('partnership_id');
+        }
+        if ($request->form_id) {
+            $si = $si->whereIn('form_id', explode(",", $request->form_id));
+            $params->push('form_id');
+        }
+        $params = $params->filter()->unique()->toArray();
+        $si = $si->get($params);
+        if ($customParams->count()) {
+            $si = $this->appendCustomParams($si, $customParams);
+        }
+        if (isset($request->sum)) {
+            return $this->countBy($si, $partnership, $sum);
+        }
+        return $si;
+    }
+
+    public function getRnrGender(Request $request, RnrGender $rnr)
+    {
+        $partnership = $this->getPartnershipCache();
+        [$sum, $params, $customParams] = $this->getRequestAttributes($request);
+        $params->push('total');
         if ($request->country) {
             $rnr = $rnr->whereIn('country_id', explode(",", $request->country));
             $params->push('country_id');
@@ -148,60 +119,12 @@ class TestController extends Controller
         $params = $params->filter()->unique()->toArray();
         $rnr = $rnr->get($params);
         if ($customParams->count()) {
-            $rnr = $rnr->transform(function($d) use ($customParams){
-                $customParams->each(function($c) use ($d) {
-                    $n = collect();
-                    collect($c)->each(function($e) use ($d, $n){
-                        $n->push($d[$e]);
-                    });
-                    $d[implode("_", $c)] = implode(" ", $n->toArray());
-                });
-                return $d;
-            });
+            $rnr = $this->appendCustomParams($rnr, $customParams);
         }
         if (isset($request->sum)) {
             return $this->sumBy($rnr, $partnership, $sum);
         }
         return $rnr;
-    }
-
-    public function getRnrGenderGroupByYear(Request $request)
-    {
-        $partnership = $this->getPartnershipCache();
-        $rnrGender = $this->filterRnrGenderData($request, RnrGender::all());
-
-        $groupDataByCountryAndYear = $rnrGender->map(function ($rnr) {
-            $rnr['event_year'] = date("Y", strtotime($rnr->event_date));
-            return $rnr;
-        })->groupBy('country_id')->map(function ($c, $key) use ($partnership) {
-            $years = $c->groupBy('event_year')
-                    ->map(function ($y, $key) {
-                        return [
-                            'year' => $key,
-                            'total' => $y->sum('total')
-                        ];
-                    })->sortBy('year')->values();
-            return [
-                'country_id' => $key,
-                'country' => $partnership->where('id', $key)->first()->name,
-                'total' => $years,
-            ];
-        })->values();
-
-        $results = $partnership->where('level', 'country')->values()
-            ->map(function ($p) use ($groupDataByCountryAndYear) {
-                $find = $groupDataByCountryAndYear->where('country_id', $p->id)->first();
-                if (!$find) {
-                    return [
-                        'country' =>$p->name,
-                        'total' => 0,
-                        'years' => []
-                    ];
-                }
-                return collect($find)->except('country_id');
-            });
-
-        return $results;
     }
 
     public function getPartnershipCommodities(Request $request)
@@ -216,7 +139,48 @@ class TestController extends Controller
         return $results;
     }
 
-    public function getRsrUiiReport(Request $request)
+    private function sumRsr($data, $groups, $index = 0) {
+        $data = collect($data)
+            ->groupBy($groups[$index]."_id")->map(function($d, $k) use ($groups, $index) {
+                $child = $index + 1;
+                $title = $d[0][$groups[$index].'_title'];
+                $name = $groups[$index];
+                if (count($groups) > $child){
+                    $data = $this->sumRsr($d, $groups, $child);
+                    return [
+                        'name' => $title,
+                        'target_value' => $d[0][$name.'_target_value'],
+                        'actual_value' => $d->sum($name.'_actual_value'),
+                        'value' => $d->sum($name.'_value'),
+                        'childrens' => $data,
+                        'stack' => $groups[$index]
+                    ];
+                }
+                return [
+                    'name' => $title,
+                    'target_value' => $d[0][$name.'_target_value'],
+                    'actual_value' => $d->sum($name.'_actual_value'),
+                    'value' => $d->sum($name.'_value'),
+                ];
+            })->values();
+        return $data;
+    }
+
+
+    public function getRsrImpactReach(Request $request, RsrDetail $rsrDetail)
+    {
+        $config = config('akvo-rsr');
+        $charts = collect($config['impact_react_charts']);
+        $programId = $config['projects']['parent'];
+        $rsrDetail = $rsrDetail->where('project_id',$programId)
+                               ->whereNotNull('dimension_id')
+                               ->get();
+        $groups = ['result','dimension','period'];
+        return $this->sumRsr($rsrDetail,$groups);
+
+    }
+
+    public function getRsrUiiReport(Request $request, RsrDetail $rsrDetail)
     {
         $config = config('akvo-rsr');
         $charts = collect($config['impact_react_charts']);
@@ -291,4 +255,80 @@ class TestController extends Controller
 
         return $results;
     }
+
+    private function getPartnershipCache() {
+        $partnership = Cache::get('partnership');
+        if (!$partnership) {
+            $partnership = Partnership::all();
+            Cache::put('partnership', $partnership, 86400);
+        }
+        return $partnership;
+    }
+
+    private function filterPartnership($request, $data)
+    {
+        $country_id = $request->country_id;
+        $partnership_id = $request->partnership_id;
+        $start = $request->start;
+        $end = $request->end;
+        if ($country_id !== "0") {
+            $data = $data->where('country_id', $country_id);
+        }
+        if ($partnership_id !== "0") {
+            $data = $data->where('partnership_id', $partnership_id);
+        }
+        if ($start !== "0") {
+            $data = $data->whereBetween('submission_date', [date($start), date($end)]);
+        }
+        return $data;
+    }
+
+    private function sumBy($data, $partnership, $groups, $index = 0) {
+        $data = collect($data)
+            ->groupBy($groups[$index])->map(function($d, $k) use ($partnership, $groups, $index) {
+                $child = $index + 1;
+                if (in_array($groups[$index],["country_id","partnership_id"])) {
+                    $k= $partnership->where('id', $k)->first()->name;
+                }
+                if (count($groups) > $child){
+                    $data = $this->sumBy($d, $partnership, $groups, $child);
+                    return [
+                        'name' => $k,
+                        'value' => $d->sum('total'),
+                        'childrens' => $data,
+                        'stack' => $groups[$index]
+                    ];
+                }
+                return [
+                    'name' => $k,
+                    'value' => $d->sum('total')
+                ];
+            })->values();
+        return $data;
+    }
+
+    private function countBy($data, $partnership, $groups, $index = 0, $counter='datapoint_id') {
+        $data = collect($data)
+            ->groupBy($groups[$index])->map(function($d, $k) use ($partnership, $groups, $index, $counter) {
+                $child = $index + 1;
+                if (in_array($groups[$index],["country_id","partnership_id"])) {
+                    $k= $partnership->where('id', $k)->first()->name;
+                }
+                if (count($groups) > $child){
+                    $data = $this->countBy($d, $partnership, $groups, $child, $counter);
+                    return [
+                        'name' => $k,
+                        'value' => $d->count($counter),
+                        'childrens' => $data,
+                        'stack' => $groups[$index]
+                    ];
+                }
+                return [
+                    'name' => $k,
+                    'value' => $d->count($counter)
+                ];
+            })->values();
+        return $data;
+    }
+
 }
