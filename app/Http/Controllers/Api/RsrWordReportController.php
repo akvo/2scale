@@ -57,23 +57,21 @@ class RsrWordReportController extends Controller
 
     private function renderWordDoc($phpWord, $columns, $data, $country)
     {
+        $n = microtime(true);
+        // start section
+        $section = $phpWord->addSection();
+
         // Style
-        $phpWord->addNumberingStyle(
-            'hNum',
+        $listFormat = $phpWord->addNumberingStyle(
+            'multilevel-'.$n,
             array('type' => 'multilevel', 'levels' => array(
-                    array('pStyle' => 'Heading1', 'format' => 'decimal', 'text' => '%1', 'start' => 1),
-                    array('pStyle' => 'Heading2', 'format' => 'decimal', 'text' => '%1.%2', 'start' => 1),
-                    array('pStyle' => 'Heading3', 'format' => 'decimal', 'text' => '%1.%2.%3', 'start' => 1),
+                    array('format' => 'decimal', 'text' => '%1.', 'left' => 360, 'hanging' => 360, 'tabPos' => 50),
+                    array('format' => 'decimal', 'text' => '%1.%2', 'left' => 360, 'hanging' => 360, 'tabPos' => 100),
+                    array('format' => 'decimal', 'text' => '%1.%2.%3', 'left' => 360, 'hanging' => 360, 'tabPos' => 150),
                 )
             )
         );
-        $phpWord->addTitleStyle(1, array('size' => 10, 'bold' => true), array('numStyle' => 'hNum', 'numLevel' => 0));
-        $phpWord->addTitleStyle(2, array('size' => 10, 'bold' => true), array('numStyle' => 'hNum', 'numLevel' => 1));
-        $phpWord->addTitleStyle(3, array('size' => 10, 'bold' => true), array('numStyle' => 'hNum', 'numLevel' => 2));
-        // $section->addTitle('Heading 1', 1);
-        // $section->addTitle('Heading 2', 2);
-        // $section->addTitle('Heading 3', 3);
-
+        $listItemStyle = array('bold' => true);
         $justify = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH);
         $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
         $cellVCentered = array('valign' => 'center');
@@ -81,7 +79,6 @@ class RsrWordReportController extends Controller
         $lineStyle = array('weight' => 1, 'width' => 430, 'height' => 0);
         // EOL Style
 
-        $section = $phpWord->addSection();
         $section->addText('Quarterly report month-month 2020', array('size' => 12, 'bold' => true), $cellHCentered);
         $section->addText($country, array('size' => 12, 'bold' => true), $cellHCentered);
         $section->addTextBreak(2);
@@ -90,7 +87,7 @@ class RsrWordReportController extends Controller
         $section->addLine($lineStyle);
 
         // Start table rendering
-        $section->addTitle('Summary of the PPPs contribution to the UIIs', 2);
+        $section->addListItem('Summary of the PPPs contribution to the UIIs', 1, $listItemStyle, 'multilevel-'.$n);
         $spanTableStyleName = 'Rsr Table';
         $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
         $table = $section->addTable($spanTableStyleName);
@@ -165,14 +162,24 @@ class RsrWordReportController extends Controller
         $lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut feugiat tortor. Nullam risus felis, ultrices et feugiat a, elementum a odio. Nam tempor, sapien sit amet iaculis commodo, nibh diam venenatis dolor, et semper ante lorem et nibh. Praesent vitae velit sed eros sollicitudin accumsan sit amet eget magna. Ut malesuada ante eu arcu sollicitudin fermentum. Nam vulputate, lectus tempor accumsan placerat, velit libero posuere purus, sed tempus enim nisi ac lorem. Donec ornare justo elit, a vestibulum ipsum consequat id.';
 
         $section->addTextBreak(2);
-        $section->addTitle('Incubating inclusive model', 2);
+        $section->addListItem('Incubating inclusive model', 1, $listItemStyle, 'multilevel-'.$n);
         $section->addText($lorem, null, $justify);
         $section->addTextBreak(1);
-        $section->addTitle('Govern and adopt inclusive agribusiness partnership', 3);
-        $section->addTitle('Improve access to nutritional food for the BoP consumer', 3);
-        $section->addTitle('Foster competitiveness and inclusiveness of the food value chain ', 3);
-        $section->addTitle('Professionalize Agribusiness Clusters', 3);
-        $section->addTitle('Strengthen the enabling agribusiness environment', 3);
+        $section->addListItem('Govern and adopt inclusive agribusiness partnership', 2, $listItemStyle, 'multilevel-'.$n);
+        $section->addListItem('Improve access to nutritional food for the BoP consumer', 2, $listItemStyle, 'multilevel-'.$n);
+        $section->addListItem('Foster competitiveness and inclusiveness of the food value chain', 2, $listItemStyle, 'multilevel-'.$n);
+        $section->addListItem('Professionalize Agribusiness Clusters', 2, $listItemStyle, 'multilevel-'.$n);
+        $section->addListItem('Strengthen the enabling agribusiness environment', 2, $listItemStyle, 'multilevel-'.$n);
+
+        $section->addTextBreak(2);
+        $section->addListItem('Other activities', 0, $listItemStyle, 'multilevel-'.$n);
+        $section->addTextBreak(1);
+        $section->addListItem('Action research', 1, $listItemStyle, 'multilevel-'.$n);
+        $section->addListItem('Monitoring and Evaluation', 1, $listItemStyle, 'multilevel-'.$n);
+        $section->addListItem('Communications', 1, $listItemStyle, 'multilevel-'.$n);
+
+        $section->addTextBreak(2);
+        $section->addListItem('Conclusion and follow-up', 0, $listItemStyle, 'multilevel-'.$n);
 
         $footer = $section->addFooter();
         $footer->addPreserveText('Page {PAGE} of {NUMPAGES}', null, array('align' => \PhpOffice\PhpWord\SimpleType\Jc::END));
