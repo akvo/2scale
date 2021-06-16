@@ -345,7 +345,8 @@ class ApiController extends Controller
             $country = $partnership->where('id', $request->country_id)->first()->name;
         }
         if (isset($request->partnership_id) && $request->partnership_id !== "0") {
-            $pid = $request->partnership_id;
+            $pid = $request->country_id;
+            // $pid = $request->partnership_id;
         }
         $rsrReport = $chart->getAndTransformRsrData($pid);
         if (count($rsrReport) === 0) {
@@ -354,7 +355,25 @@ class ApiController extends Controller
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999');
+        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $country);
+
+        if (count($rsrReport['data']['childrens']) > 0) {
+            // render document for the childrens
+            foreach ($rsrReport['data']['childrens'] as $key => $child) {
+                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $country);
+            }
+        }
+
+        // save file
+        $writers = ['format' => 'Word2007', 'extension' => 'docx'];
+        $filename = "test";
+        $targetFile = "{$filename}.{$writers['extension']}";
+        return (string) $phpWord->save($targetFile, $writers['format']);
+    }
+
+    private function renderWordDoc($phpWord, $columns, $data, $country)
+    {
+        // Style
         $phpWord->addNumberingStyle(
             'hNum',
             array('type' => 'multilevel', 'levels' => array(
@@ -364,32 +383,37 @@ class ApiController extends Controller
                 )
             )
         );
-        $phpWord->addTitleStyle(1, array('size' => 10), array('numStyle' => 'hNum', 'numLevel' => 0));
-        $phpWord->addTitleStyle(2, array('size' => 10), array('numStyle' => 'hNum', 'numLevel' => 1));
-        $phpWord->addTitleStyle(3, array('size' => 10), array('numStyle' => 'hNum', 'numLevel' => 2));
+        $phpWord->addTitleStyle(1, array('size' => 10, 'bold' => true), array('numStyle' => 'hNum', 'numLevel' => 0));
+        $phpWord->addTitleStyle(2, array('size' => 10, 'bold' => true), array('numStyle' => 'hNum', 'numLevel' => 1));
+        $phpWord->addTitleStyle(3, array('size' => 10, 'bold' => true), array('numStyle' => 'hNum', 'numLevel' => 2));
+        // $section->addTitle('Heading 1', 1);
+        // $section->addTitle('Heading 2', 2);
+        // $section->addTitle('Heading 3', 3);
 
-        $section = $phpWord->addSection();
-
+        $justify = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH);
         $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
         $cellVCentered = array('valign' => 'center');
+        $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999');
+        $lineStyle = array('weight' => 1, 'width' => 430, 'height' => 0);
+        // EOL Style
 
-        $section->addText('Quarterly report month-month 2020', array('size' => 16, 'bold' => true), $cellHCentered);
-        $section->addTextBreak(1);
-        $section->addText($country, array('size' => 16, 'bold' => true), $cellHCentered);
+        $section = $phpWord->addSection();
+        $section->addText('Quarterly report month-month 2020', array('size' => 12, 'bold' => true), $cellHCentered);
+        $section->addText($country, array('size' => 12, 'bold' => true), $cellHCentered);
         $section->addTextBreak(2);
-        $section->addText('Partnership Name: '.$rsrReport['data']['project']);
 
-        $section->addTitle('Heading 1', 1);
-        $section->addTitle('Heading 2', 2);
-        $section->addTitle('Heading 3', 3);
+        $section->addText('Partnership Name: '.$data['project'], array('size' => 12, 'bold' => true));
+        $section->addLine($lineStyle);
 
-        $spanTableStyleName = 'Colspan Rowspan';
+        // Start table rendering
+        $section->addTitle('Summary of the PPPs contribution to the UIIs', 2);
+        $spanTableStyleName = 'Rsr Table';
         $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
         $table = $section->addTable($spanTableStyleName);
 
         // Header row
         $table->addRow();
-        $rsrReport['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
+        $columns->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
             if (count($col['subtitle']) === 0) {
                 $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
                 $table->addCell(350, $cellRowSpan)->addText($col['uii'], $cellHCentered);
@@ -402,7 +426,7 @@ class ApiController extends Controller
         });
 
         $table->addRow();
-        $rsrReport['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
+        $columns->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
             if (count($col['subtitle']) === 0) {
                 $cellRowContinue = array('vMerge' => 'continue');
                 $table->addCell(350, $cellRowContinue);
@@ -441,7 +465,7 @@ class ApiController extends Controller
 
         // Body
         $table->addRow();
-        $rsrReport['data']['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
+        $data['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
             if (count($col['rsr_dimensions']) === 0) {
                 $table->addCell(1000)->addText($col['total_actual_value'], $cellHCentered);
             }
@@ -453,12 +477,19 @@ class ApiController extends Controller
             }
         });
         // end of body
+        // EOL of Table
+        $lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut ut feugiat tortor. Nullam risus felis, ultrices et feugiat a, elementum a odio. Nam tempor, sapien sit amet iaculis commodo, nibh diam venenatis dolor, et semper ante lorem et nibh. Praesent vitae velit sed eros sollicitudin accumsan sit amet eget magna. Ut malesuada ante eu arcu sollicitudin fermentum. Nam vulputate, lectus tempor accumsan placerat, velit libero posuere purus, sed tempus enim nisi ac lorem. Donec ornare justo elit, a vestibulum ipsum consequat id.';
 
-        // save file
-        $writers = ['format' => 'Word2007', 'extension' => 'docx'];
-        $filename = "test";
-        $targetFile = "{$filename}.{$writers['extension']}";
-        return (string) $phpWord->save($targetFile, $writers['format']);
+        $section->addTextBreak(2);
+        $section->addTitle('Incubating inclusive model', 2);
+        $section->addText($lorem, null, $justify);
+        $section->addTextBreak(1);
+        $section->addTitle('Govern and adopt inclusive agribusiness partnership', 3);
+        $section->addTitle('Improve access to nutritional food for the BoP consumer', 3);
+        $section->addTitle('Foster competitiveness and inclusiveness of the food value chain ', 3);
+        $section->addTitle('Professionalize Agribusiness Clusters', 3);
+        $section->addTitle('Strengthen the enabling agribusiness environment', 3);
+        return $phpWord;
     }
 
 }
