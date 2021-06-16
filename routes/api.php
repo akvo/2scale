@@ -104,9 +104,11 @@ Route::get('/test', function (Request $request) {
 
 /** POC  */
 // home investment not yet
-Route::get('/flow/partnerships', 'Api\TestController@getPartnership');
-Route::get('/flow/sectors', 'Api\TestController@getSector');
-Route::get('/flow/rnr-gender', 'Api\TestController@getRnrGender');
-Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/{end}', 'Api\TestController@getPartnershipCommodities');
-Route::get('/rsr/impact-reach', 'Api\TestController@getRsrImpactReach');
-Route::get('/rsr/impact-reach/uii', 'Api\TestController@getRsrUiiReport');
+Route::get('/flow/partnerships', 'Api\ApiController@getPartnership');
+Route::get('/flow/sectors', 'Api\ApiController@getSector');
+Route::get('/flow/rnr-gender', 'Api\ApiController@getRnrGender');
+Route::get('/rsr/impact-reach', 'Api\ApiController@getRsrImpactReach');
+Route::get('/rsr/impact-reach/uii', 'Api\ApiController@getRsrUiiReport');
+Route::get('/rsr/word-report/{country_id}/{partnership_id}', 'Api\ApiController@getRsrWordReport');
+
+Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/{end}', 'Api\ApiController@getPartnershipCommodities');

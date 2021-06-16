@@ -680,18 +680,22 @@ class ChartController extends Controller
             $partnershipId = $request->country_id; // generate datatables just from country level
             // $partnershipId = $request->partnership_id; // generate datatables from partnership level
         }
+        return $this->getAndTransformRsrData($partnershipId);
+    }
 
+    public function getAndTransformRsrData($partnershipId)
+    {
         $data = \App\RsrProject::where('partnership_id', $partnershipId)
                 ->with(['rsr_results' => function ($query) {
-                    $query->orderBy('order');
+                    // $query->orderBy('order');
                     $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
                     $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
                     $query->with(['childrens' => function ($query) {
-                        $query->orderBy('order');
+                        // $query->orderBy('order');
                         $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
                         $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
                         $query->with(['childrens' => function ($query) {
-                            $query->orderBy('order');
+                            // $query->orderBy('order');
                             $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
                             $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
                         }]);
@@ -707,6 +711,7 @@ class ChartController extends Controller
             $res = Arr::except($res, ['childrens']);
             $res['columns'] = [
                 'id' => $res['id'],
+                'uii' => Str::before($res['title'], ': '),
                 'title' => '# of '.Str::after($res['title'], ': '),
                 'subtitle' => [],
             ];
@@ -720,6 +725,7 @@ class ChartController extends Controller
                 });
                 $res['columns']= [
                     'id' => $res['id'],
+                    'uii' => Str::before($res['title'], ': '),
                     'title' => '# of '.Str::after($res['title'], ': '),
                     'subtitle' => $subtitles,
                 ];
@@ -735,6 +741,7 @@ class ChartController extends Controller
                 });
                 $res['columns'] = [
                     'id' => $res['id'],
+                    'uii' => Str::before($res['title'], ': '),
                     'title' => '# of '.Str::after($res['title'], ': '),
                     'subtitle' => $subtitles,
                 ];
@@ -783,6 +790,7 @@ class ChartController extends Controller
                 });
                 $res['columns'] = [
                     'id' => $res['id'],
+                    'uii' => Str::before($res['title'], ': '),
                     'title' => '# of '.Str::after($res['title'], ': '),
                     'subtitle' => $subtitles,
                 ];

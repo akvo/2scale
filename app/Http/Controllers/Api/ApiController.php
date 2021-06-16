@@ -13,8 +13,11 @@ use App\RnrGender;
 use App\Partnership;
 use App\RsrResult;
 use App\RsrDetail;
+use PhpOffice\PhpWord\Shared\Converter;
+use PhpOffice\PhpWord\Style\TablePosition;
+use App\Http\Controllers\Api\ChartController;
 
-class TestController extends Controller
+class ApiController extends Controller
 {
 
     private function getRequestAttributes($request)
@@ -175,7 +178,7 @@ class TestController extends Controller
         $rsrDetail = $rsrDetail->where('project_id',$programId)
                                ->whereNotNull('dimension_id')
                                ->get();
-        $groups = ['result','dimension','period'];
+        $groups = ['result', 'period', 'dimension'];
         return $this->sumRsr($rsrDetail,$groups);
 
     }
@@ -329,6 +332,133 @@ class TestController extends Controller
                 ];
             })->values();
         return $data;
+    }
+
+    public function getRsrWordReport(Request $request)
+    {
+        $chart = new ChartController();
+        $partnership = $this->getPartnershipCache();
+        $pid = null;
+        $country = "";
+        if (isset($request->country_id) && $request->country_id !== "0") {
+            $pid = $request->country_id;
+            $country = $partnership->where('id', $request->country_id)->first()->name;
+        }
+        if (isset($request->partnership_id) && $request->partnership_id !== "0") {
+            $pid = $request->partnership_id;
+        }
+        $rsrReport = $chart->getAndTransformRsrData($pid);
+        if (count($rsrReport) === 0) {
+            return response('no data available', 503);
+        }
+
+        // New Word Document
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999');
+        $phpWord->addNumberingStyle(
+            'hNum',
+            array('type' => 'multilevel', 'levels' => array(
+                array('pStyle' => 'Heading1', 'format' => 'decimal', 'text' => '%1'),
+                array('pStyle' => 'Heading2', 'format' => 'decimal', 'text' => '%1.%2'),
+                array('pStyle' => 'Heading3', 'format' => 'decimal', 'text' => '%1.%2.%3'),
+                )
+            )
+        );
+        $phpWord->addTitleStyle(1, array('size' => 10), array('numStyle' => 'hNum', 'numLevel' => 0));
+        $phpWord->addTitleStyle(2, array('size' => 10), array('numStyle' => 'hNum', 'numLevel' => 1));
+        $phpWord->addTitleStyle(3, array('size' => 10), array('numStyle' => 'hNum', 'numLevel' => 2));
+
+        $section = $phpWord->addSection();
+
+        $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+        $cellVCentered = array('valign' => 'center');
+
+        $section->addText('Quarterly report month-month 2020', array('size' => 16, 'bold' => true), $cellHCentered);
+        $section->addTextBreak(1);
+        $section->addText($country, array('size' => 16, 'bold' => true), $cellHCentered);
+        $section->addTextBreak(2);
+        $section->addText('Partnership Name: '.$rsrReport['data']['project']);
+
+        $section->addTitle('Heading 1', 1);
+        $section->addTitle('Heading 2', 2);
+        $section->addTitle('Heading 3', 3);
+
+        $spanTableStyleName = 'Colspan Rowspan';
+        $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+        $table = $section->addTable($spanTableStyleName);
+
+        // Header row
+        $table->addRow();
+        $rsrReport['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
+            if (count($col['subtitle']) === 0) {
+                $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
+                $table->addCell(350, $cellRowSpan)->addText($col['uii'], $cellHCentered);
+            }
+            if (count($col['subtitle']) > 0) {
+                $subtitles = collect($col['subtitle'])->pluck('values')->flatten(1);
+                $cellColSpan = array('gridSpan' => count($subtitles), 'valign' => 'center');
+                $table->addCell(count($subtitles) * 350, $cellColSpan)->addText($col['uii'], null, $cellHCentered);
+            }
+        });
+
+        $table->addRow();
+        $rsrReport['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
+            if (count($col['subtitle']) === 0) {
+                $cellRowContinue = array('vMerge' => 'continue');
+                $table->addCell(350, $cellRowContinue);
+            }
+            if (count($col['subtitle']) > 0) {
+                $subtitles = collect($col['subtitle'])->pluck('values')->flatten(1)->values();
+                foreach ($subtitles as $key => $value) {
+                    $name = $value;
+                    if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
+                        if (Str::contains($name, "Male")) {
+                            $name = "M";
+                        }
+                        if (Str::contains($name, "Female")) {
+                            $name = "F";
+                        }
+                    }
+                    if (Str::contains($name, ">") || Str::contains($name, "<")) {
+                        if (Str::contains($name, "Male") && Str::contains($name, ">")) {
+                            $name = "SM";
+                        }
+                        if (Str::contains($name, "Male") && Str::contains($name, "<")) {
+                            $name = "JM";
+                        }
+                        if (Str::contains($name, "Female") && Str::contains($name, ">")) {
+                            $name = "SF";
+                        }
+                        if (Str::contains($name, "Female") && Str::contains($name, "<")) {
+                            $name = "JF";
+                        }
+                    }
+                    $table->addCell(350, $cellVCentered)->addText($name, null, $cellHCentered);
+                }
+            }
+        });
+        // end of header row
+
+        // Body
+        $table->addRow();
+        $rsrReport['data']['columns']->each(function ($col) use ($table, $cellHCentered, $cellVCentered) {
+            if (count($col['rsr_dimensions']) === 0) {
+                $table->addCell(1000)->addText($col['total_actual_value'], $cellHCentered);
+            }
+            if (count($col['rsr_dimensions']) > 0) {
+                $dimensions = collect($col['rsr_dimensions'])->pluck('rsr_dimension_values')->flatten(1);
+                foreach ($dimensions as $key => $value) {
+                    $table->addCell(700, $cellVCentered)->addText($value['total_actual_value'], null, $cellHCentered);
+                }
+            }
+        });
+        // end of body
+
+        // save file
+        $writers = ['format' => 'Word2007', 'extension' => 'docx'];
+        $filename = "test";
+        $targetFile = "{$filename}.{$writers['extension']}";
+        return (string) $phpWord->save($targetFile, $writers['format']);
     }
 
 }
