@@ -23,7 +23,7 @@ class CreateRsrPeriodDimensionValuesTable extends Migration
 
             $table->foreign('rsr_period_id')->references('id')
                 ->on('rsr_periods')->onDelete('cascade');
-            
+
             $table->foreign('rsr_dimension_value_id')->references('id')
                 ->on('rsr_dimension_values')->onDelete('cascade');
         });

@@ -217,9 +217,13 @@ class RsrSeedController extends Controller
 
         $this->collections = collect();
         $periodTable = $this->periods->flatten(1)->map(function ($val) use ($period) {
-            if (count($val['disaggregation_targets']) > 0) {
-                $val['disaggregation_targets']['period'] = $val['id'];
-                $this->collections->push($val['disaggregation_targets']); // dimension value updated per period
+            if (isset($val['disaggregations']) && count($val['disaggregations']) > 0) {
+                $periodDimVal = collect($val['disaggregations'])->map(function ($ds) use ($val) {
+                    $ds['period'] = $val['id'];
+                    return $ds;
+                });
+                $this->collections->push($periodDimVal); // dimension value updated per period
+                // then input this data to db on $periodDimValTable
             }
             if (count($val['data']) > 0) {
                 $this->periodData->push($val['data']);
@@ -239,7 +243,7 @@ class RsrSeedController extends Controller
         });
 
         $periodDimValTable = $this->collections->flatten(1)->map(function ($val) use ($dimensionValue, $periodDimensionValue) {
-            if ($dimensionValue->find($val['dimension_value']) === null) {
+            if ($dimensionValue->find($val['dimension_value']['id']) === null) {
                 return [];
             }
             return $periodDimensionValue->updateOrCreate(
@@ -247,7 +251,7 @@ class RsrSeedController extends Controller
                 [
                     'id' => $val['id'],
                     'rsr_period_id' => $val['period'],
-                    'rsr_dimension_value_id' => $val['dimension_value'],
+                    'rsr_dimension_value_id' => $val['dimension_value']['id'],
                     'value' => ($val['value'] === null) ? $val['value'] : floatval($val['value']),
                 ]
             );
