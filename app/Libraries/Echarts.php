@@ -31,7 +31,7 @@ class Echarts
             return $d;
         });
         $legendStyle = array(
-            'fontFamily' => 'sans-serif',
+            'fontFamily' => 'MarkPro',
             'fontWeight' => 200,
             'fontSize' => 14,
         );
@@ -155,11 +155,11 @@ class Echarts
             return $l;
         });
         $textStyle = array(
-            'fontFamily' => 'sans-serif',
+            'fontFamily' => 'MarkPro',
             'fontWeight' => 200
         );
         $legendStyle = array(
-            'fontFamily' => 'sans-serif',
+            'fontFamily' => 'MarkPro',
             'fontWeight' => 200,
             'fontSize' => 14,
         );

@@ -10,7 +10,7 @@ import sumBy from "lodash/sumBy";
 
 const Pie = (data, extra, roseType = false) => {
     data = !data ? [] : data;
-    let total = { name: "total", value: 0 };
+    let total = { name: "", value: 0 };
     let labels = [];
     if (data.length > 0) {
         data = data.map((x) => {
@@ -49,7 +49,7 @@ const Pie = (data, extra, roseType = false) => {
                 name: "main",
                 type: "pie",
                 right: "center",
-                radius: roseType ? ["20%", "70%"] : ["70%", "150%"],
+                radius: roseType ? ["20%", "70%"] : ["50%", "100%"],
                 label: {
                     normal: {
                         formatter: "{d}%",
@@ -66,13 +66,12 @@ const Pie = (data, extra, roseType = false) => {
                         },
                     },
                     emphasis: {
-                        fontSize: 12,
                         formatter: "{c} ({d} %)",
                         position: "center",
                         show: true,
+                        padding: 5,
+                        borderRadius: 100,
                         backgroundColor: "#f2f2f2",
-                        borderRadius: 5,
-                        padding: 10,
                         textStyle: textStyle,
                     },
                 },

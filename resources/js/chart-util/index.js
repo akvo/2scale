@@ -31,7 +31,7 @@ const generateOptions = (type, dataset, extra = {}) => {
 
 const generateCharts = (
     { endpoint, type, title, id, parentId, md, height },
-    tranform = false
+    transform = false
 ) => {
     const html = (
         <div class={`col-md-${md ? md : "6"}`}>
@@ -65,7 +65,12 @@ const generateCharts = (
         .then((res) => {
             setTimeout(function () {
                 document.getElementById(`loader-${id}`).remove();
-                const option = generateOptions(type, res.data);
+                let option = res.data;
+                if (transform) {
+                    option = transform(option);
+                    console.log(option);
+                }
+                option = generateOptions(type, option);
                 myChart.setOption(option);
             }, 1000);
         })

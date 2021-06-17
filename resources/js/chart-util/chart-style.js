@@ -25,8 +25,9 @@ export const TextStyle = {
 
 export const Color = {
     color: [
-        "#00adef",
-        "#e21836",
+        "#a43332",
+        "#609ba7",
+        "#C9CDC0",
         "#f68e1f",
         "#ec008b",
         "#07bbc1",

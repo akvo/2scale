@@ -13,25 +13,35 @@ const info = {
 /* First Row */
 $("main").append(
     <div>
-        <div class="row" id="test-row"></div>
         <div class="row" id="first-row"></div>
         <div class="row" id="second-row"></div>
     </div>
 );
 
+const countChildren = (data) => {
+    return data.map((d) => ({
+        name: d.name,
+        value: d.childrens.length,
+    }));
+};
+
+generateCharts(
+    {
+        type: "PIE",
+        endpoint: "flow/sectors?sum=industry,country_id&form_id=20020001",
+        title: "Sector Distribution",
+        id: "sector-ddistribution",
+        parentId: "first-row",
+    },
+    countChildren
+);
+
 generateCharts({
     type: "PIE",
-    endpoint: "flow/sectors?sum=country_id&form_id=20020001",
+    endpoint: "flow/partnerships",
     title: "Number of PPPs Percountry",
     id: "ppp-per-country",
-    parentId: "test-row",
+    parentId: "first-row",
 });
-getCharts("home/sector-distribution", "first-row", info, "6", "blue");
-getCharts(
-    "home/partnership-per-country",
-    "first-row",
-    info,
-    "6",
-    "morpheus-den"
-);
+
 getCharts("home/investment-tracking", "second-row", info, "12", "blue");

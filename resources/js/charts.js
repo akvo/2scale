@@ -108,6 +108,7 @@ const fetchData = (endpoint) => {
         axios
             .get("/charts/" + endpoint)
             .then((res) => {
+                /*
                 storeDB({
                     table: table,
                     data: {
@@ -120,6 +121,7 @@ const fetchData = (endpoint) => {
                         filter: filter,
                     },
                 });
+                */
                 resolve(res.data);
             })
             .catch((err) => {
