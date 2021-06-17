@@ -28,12 +28,12 @@ const uui = (x, idx) => {
                 val: percentage,
                 suf: "%",
             });
-            counts.push({
-                id: `achived-${idx}-${i}`,
-                val: c.target_value,
-                suf: "",
-            });
         }
+        counts.push({
+            id: `achived-${idx}-${i}`,
+            val: c.actual_value,
+            suf: "",
+        });
         return (
             <div class={`card col-md-${c.dimensions?.length ? 12 : 6}`}>
                 <div class="card-body">
