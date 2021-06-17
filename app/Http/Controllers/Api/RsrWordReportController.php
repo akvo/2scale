@@ -258,7 +258,7 @@ class RsrWordReportController extends Controller
                         $valCount = count($sub['values']);
                         $name = $sub['name'];
                         if (Str::contains($name, "Total")) {
-                            $name = "Total";
+                            $name = "Total (€)";
                         } else {
                             $name = Str::after($name, "Newly registered ");
                         }
