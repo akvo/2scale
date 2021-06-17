@@ -36,6 +36,8 @@ class ApiController extends Controller
                 });
             } else if ($x === "year") {
                 $params->push("event_date");
+            } else if ($x === "month") {
+                $params->push("event_date");
             } else {
                 $params->push($x);
             }
@@ -247,11 +249,12 @@ class ApiController extends Controller
             return [
                 "group" => $chart['group'],
                 "title" => Str::after($rs['title'], ": "),
+                "uii" => Str::before($rs['title'],":"),
                 "target_value" => $rs['rsr_indicators']->sum('target_value'),
                 "actual_value" => $rs['rsr_indicators']->sum('actual_value'),
                 "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1)
             ];
-        });
+        })->groupBy('group');
 
         return $results;
     }
