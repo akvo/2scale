@@ -34,7 +34,14 @@ class RsrWordReportController extends Controller
             // $pid = $request->partnership_id;
         }
 
-        $rsrReport = $chart->getAndTransformRsrData($pid);
+        $start = false;
+        $end = false;
+        if (isset($request->start) && isset($request->end)) {
+            $start = $request->start;
+            $end = $request->end;
+        }
+
+        $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
         if (count($rsrReport) === 0) {
             return response('no data available', 503);
         }
