@@ -45,6 +45,7 @@ class RsrWordReportController extends Controller
         if (count($rsrReport) === 0) {
             return response('no data available', 503);
         }
+        // return $rsrReport;
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -98,7 +99,7 @@ class RsrWordReportController extends Controller
 
         // Start table rendering
         $section->addListItem('Summary of the PPPs contribution to the UIIs', 1, $listItemStyle, 'multilevel-'.$n);
-        $phpWord = $this->renderTable($phpWord, $section, $data, $columns);
+        // $phpWord = $this->renderTable($phpWord, $section, $data, $columns);
 
         // config render split table
         $split = [
@@ -142,6 +143,8 @@ class RsrWordReportController extends Controller
 
     private function renderTable($phpWord, $section, $data, $columns, $split=false)
     {
+        $width = $split ? 800 : 350;
+        $firstColumnWidth = $width + 50;
         $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999', 'layout' => Table::LAYOUT_AUTO);
         $spanTableStyleName = 'Rsr Table';
         $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
@@ -149,14 +152,39 @@ class RsrWordReportController extends Controller
 
         // Header row
         $table->addRow();
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, true, $split);
+        $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
+        $table->addCell($firstColumnWidth, $cellRowSpan)->addText('Value', $this->alignHCentered);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'first', $split);
         $table->addRow();
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, false, $split);
+        $cellRowContinue = array('vMerge' => 'continue');
+        $table->addCell($firstColumnWidth, $cellRowContinue);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'second', $split);
+        $table->addRow();
+        $table->addCell($firstColumnWidth, $cellRowContinue);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'third', $split);
         // end of header row
 
         // Body
         $table->addRow();
-        $width = $split ? 800 : 350;
+        $table->addCell($firstColumnWidth)->addText('Target', $this->alignHCentered);
+        $data['columns']->each(function ($col) use ($table, $width) {
+            if (count($col['rsr_dimensions']) === 0) {
+                $table->addCell($width)->addText($col['total_target_value'], $this->alignHCentered);
+            }
+            if (count($col['rsr_dimensions']) > 0) {
+                $dimensions = collect($col['rsr_dimensions'])->pluck('rsr_dimension_values')->flatten(1);
+                foreach ($dimensions as $key => $value) {
+                    $table->addCell($width, $this->alignVCentered)->addText($value['value'], null, $this->alignHCentered);
+                }
+            }
+            if (count($col['rsr_dimensions']) > 0 && count($col['rsr_indicators']) > 0) {
+                foreach ($col['rsr_indicators'] as $key => $ind) {
+                    $table->addCell($width, $this->alignVCentered)->addText($ind['target_value'], null, $this->alignHCentered);
+                }
+            }
+        });
+        $table->addRow();
+        $table->addCell($firstColumnWidth)->addText('Actual', $this->alignHCentered);
         $data['columns']->each(function ($col) use ($table, $width) {
             if (count($col['rsr_dimensions']) === 0) {
                 $table->addCell($width)->addText($col['total_actual_value'], $this->alignHCentered);
@@ -167,57 +195,114 @@ class RsrWordReportController extends Controller
                     $table->addCell($width, $this->alignVCentered)->addText($value['total_actual_value'], null, $this->alignHCentered);
                 }
             }
+            if (count($col['rsr_dimensions']) > 0 && count($col['rsr_indicators']) > 0) {
+                foreach ($col['rsr_indicators'] as $key => $ind) {
+                    $table->addCell($width, $this->alignVCentered)->addText($ind['total_actual_value'], null, $this->alignHCentered);
+                }
+            }
         });
         // end of body
         return $phpWord;
     }
 
-    private function renderTableHeader($phpWord, $table, $columns, $firstRow=true, $split)
+    private function renderTableHeader($phpWord, $table, $columns, $row, $split)
     {
         $width = $split ? 800 : 350;
-        $columns->each(function ($col) use ($table, $firstRow, $width) {
+        $columns->each(function ($col) use ($table, $row, $width) {
             // for first row
-            if (count($col['subtitle']) === 0 && $firstRow) {
+            if (count($col['subtitle']) === 0 && $row === "first") {
                 $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
                 $table->addCell($width, $cellRowSpan)->addText($col['uii'], $this->alignHCentered);
             }
-            if (count($col['subtitle']) > 0 && $firstRow) {
-                $subtitles = collect($col['subtitle'])->pluck('values')->flatten(1);
-                $cellColSpan = array('gridSpan' => count($subtitles), 'valign' => 'center');
-                $table->addCell(count($subtitles) * $width, $cellColSpan)->addText($col['uii'], null, $this->alignHCentered);
+            if (count($col['subtitle']) > 0 && $row === "first") {
+                $values = collect($col['subtitle'])->map(function ($s) {
+                    if (count($s['values']) === 0) {
+                        return 1;
+                    }
+                    return count($s['values']);
+                })->sum();
+                $subCount = count($col['subtitle']);
+                if ($subCount === 1) {
+                    $cellColSpan = array('gridSpan' => $values, 'vMerge' => 'restart', 'valign' => 'center');
+                    $table->addCell($values * $width, $cellColSpan)->addText($col['uii'], null, $this->alignHCentered);
+                } else {
+                    $cellColSpan = array('gridSpan' => $values, 'valign' => 'center');
+                    $table->addCell($values * $width)->addText($col['uii'], null, $this->alignHCentered);
+                }
             }
             // for second row
-            if (count($col['subtitle']) === 0 && !$firstRow) {
+            if (count($col['subtitle']) === 0 && $row === "second") {
                 $cellRowContinue = array('vMerge' => 'continue');
                 $table->addCell($width, $cellRowContinue);
             }
-            if (count($col['subtitle']) > 0 && !$firstRow) {
-                $subtitles = collect($col['subtitle'])->pluck('values')->flatten(1)->values();
-                foreach ($subtitles as $key => $value) {
-                    $name = $value;
-                    if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
-                        if (Str::contains($name, "Male")) {
-                            $name = "M";
+            if (count($col['subtitle']) > 0 && $row === "second") {
+                $values = collect($col['subtitle'])->map(function ($s) {
+                    if (count($s['values']) === 0) {
+                        return 1;
+                    }
+                    return count($s['values']);
+                })->sum();
+                $subCount = count($col['subtitle']);
+                if ($subCount === 1) {
+                    $cellRowContinue = array('vMerge' => 'continue', 'gridSpan' => $values, 'valign' => 'center');
+                    $table->addCell($width, $cellRowContinue);
+                } else {
+                    foreach ($col['subtitle'] as $key => $sub) {
+                        $valCount = count($sub['values']);
+                        $name = $sub['name'];
+                        if (Str::contains($name, "Total")) {
+                            $name = "Total";
+                        } else {
+                            $name = Str::after($name, "Newly registered ");
                         }
-                        if (Str::contains($name, "Female")) {
-                            $name = "F";
+                        if (count($sub['values']) === 0) {
+                            $cellColSpan = array('vMerge' => 'restart', 'valign' => 'center');
+                            $table->addCell($valCount * $width, $cellColSpan)->addText($name, null, $this->alignHCentered);
+                        } else {
+                            $cellColSpan = array('gridSpan' => $valCount, 'valign' => 'center');
+                            $table->addCell($valCount * $width, $cellColSpan)->addText($name, null, $this->alignHCentered);
                         }
                     }
-                    if (Str::contains($name, ">") || Str::contains($name, "<")) {
-                        if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-                            $name = "SM";
-                        }
-                        if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-                            $name = "JM";
-                        }
-                        if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-                            $name = "SF";
-                        }
-                        if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-                            $name = "JF";
+                }
+            }
+            // for third row
+            if (count($col['subtitle']) === 0 && $row === "third") {
+                $cellRowContinue = array('vMerge' => 'continue');
+                $table->addCell($width, $cellRowContinue);
+            }
+            if (count($col['subtitle']) > 0 && $row === "third") {
+                foreach ($col['subtitle'] as $key => $sub) {
+                    if (count($sub['values']) === 0) {
+                        $cellRowContinue = array('vMerge' => 'continue', 'valign' => 'center');
+                        $table->addCell($width, $cellRowContinue);
+                    } else {
+                        foreach ($sub['values'] as $key => $value) {
+                            $name = $value;
+                            if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
+                                if (Str::contains($name, "Male")) {
+                                    $name = "M";
+                                }
+                                if (Str::contains($name, "Female")) {
+                                    $name = "F";
+                                }
+                            }
+                            if (Str::contains($name, ">") || Str::contains($name, "<")) {
+                                if (Str::contains($name, "Male") && Str::contains($name, ">")) {
+                                    $name = "SM";
+                                }
+                                if (Str::contains($name, "Male") && Str::contains($name, "<")) {
+                                    $name = "JM";
+                                }
+                                if (Str::contains($name, "Female") && Str::contains($name, ">")) {
+                                    $name = "SF";
+                                }
+                                if (Str::contains($name, "Female") && Str::contains($name, "<")) {
+                                    $name = "JF";
+                                }
+                            }
+                            $table->addCell($width, $this->alignVCentered)->addText($name, null, $this->alignHCentered);
                         }
                     }
-                    $table->addCell($width, $this->alignVCentered)->addText($name, null, $this->alignHCentered);
                 }
             }
         });
