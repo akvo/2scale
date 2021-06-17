@@ -1,48 +1,54 @@
+import createElement from "./app";
+import generateCharts from "./chart-util";
+import { getMaps, getCharts } from "./charts";
 const axios = window.axios;
-import { getMaps, getCharts, getCards } from "./charts.js";
-import { renderRsrTableTemplate, renderRsrTable } from "./rsrDatatables.js";
-
-/* Static */
-const country_id = $("meta[name='country']").attr("content");
-const partnership_id = $("meta[name='partnership']").attr("content");
-const start_date = $("meta[name='start-date']").attr("content");
-const end_date = $("meta[name='end-date']").attr("content");
-const endpoints = [country_id, partnership_id, start_date, end_date].join("/");
-const baseurl = $("meta[name=path]").attr("content");
-
-$("main").append("<div class='row' id='first-row'></div>");
-// $("main").append("<hr/><div class='row' id='second-row'></div>");
-
-/* Cards Row */
-// getCards('home/top-three');
-
-/* UII Row */
-// getCharts(
-//     "reachreact/food-nutrition-and-security/0/0",
-//     "uii-row",
-//     info,
-//     "4",
-//     "blue"
-// );
-// getCharts(
-//     "reachreact/private-sector-development/0/0",
-//     "uii-row",
-//     info,
-//     "4",
-//     "blue"
-// );
-// getCharts("reachreact/input-adittionality/0/0", "uii-row", info, "4", "blue");
-
-/* Zero Row */
-getCharts("reachreact/country-total/0/0", "zero-row", "6");
 
 /* First Row */
-getCharts("reachreact/gender/" + endpoints, "first-row", "12");
+$("main").append(
+    <div>
+        <div class="row" id="maps"></div>
+        <div class="graphic">
+            <img src="/images/2scale-infographic.svg" class="img img-fluid" />
+        </div>
+        <div class="row" id="first-row">
+            <div
+                class="col-md-12"
+                style="text-align: center; font-size:24px; margin-top: 30px; margin-bottom: 30px;"
+            >
+                2SCALE partners with business champions to leverage food
+                nutrition and security:
+            </div>
+        </div>
+        <hr />
+        <div class="row" id="second-row"></div>
+    </div>
+);
 
-/* Second Row */
-// getCharts("home/workstream", "second-row", info, "7", "blue");
-// getCharts("home/organisation-forms", "second-row", info, "5", "morpheus-den");
+const countChildren = (data) => {
+    return data.map((d) => ({
+        name: d.name,
+        value: d.childrens.length,
+    }));
+};
 
-// Rsr Datatables
-// renderRsrTableTemplate('datatables');
-// renderRsrTable(['0', '0'].join('/'), baseurl, 'datatables');
+generateCharts(
+    {
+        type: "DOUGHNUT",
+        endpoint: "flow/sectors?sum=industry,country_id&form_id=20020001",
+        title: "Sector Distribution",
+        id: "sector-ddistribution",
+        parentId: "first-row",
+    },
+    countChildren
+);
+
+generateCharts({
+    type: "PIE",
+    endpoint: "flow/partnerships",
+    title: "Number of PPPs Percountry",
+    id: "ppp-per-country",
+    parentId: "first-row",
+});
+
+getMaps("maps", "home/map");
+getCharts("home/investment-tracking", "second-row", "12", null, 375);

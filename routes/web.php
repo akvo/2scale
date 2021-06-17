@@ -13,8 +13,8 @@ Route::middleware(['auth'])->group(function() {
 });
 
 Route::get('/dashboard', 'PageController@dashboard')->name('dashboard');
-Route::get('/organisation', 'PageController@organisation')->name('organisation');
-Route::get('/reach-and-react', 'PageController@reachreact')->name('reachreact');
+Route::get('/impactreach', 'PageController@impactreach')->name('impactreach');
+Route::get('/partners', 'PageController@partners')->name('partners');
 Route::get('/partnership', 'PageController@partnership')->name('partnership');
 
 Route::get('/', 'PageController@home')->name('home');

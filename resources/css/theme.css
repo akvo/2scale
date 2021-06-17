@@ -17,7 +17,29 @@
     font-weight: bold;
     font-style: normal;
 }
+html {
+    height: 100%;
+}
 
+html,
+body {
+    overflow: hidden;
+    font-family: "MarkPro", sans-serif;
+    color: #333433;
+    height: 100%;
+}
+
+body {
+    padding-top: 56px;
+}
+iframe {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+}
+iframe.has-filter {
+    height: calc(100% - 56px);
+}
 .graphic {
     background-image: url(/images/2scale-infographic.svg);
     height: 365px;
@@ -51,18 +73,6 @@
     .bd-placeholder-img-lg {
         font-size: 3.5rem;
     }
-}
-
-html,
-body {
-    overflow-x: hidden;
-    font-family: "MarkPro", sans-serif;
-    color: #333433;
-    /* Prevent scroll on narrow devices */
-}
-
-body {
-    padding-top: 56px;
 }
 
 @media (max-width: 991.98px) {

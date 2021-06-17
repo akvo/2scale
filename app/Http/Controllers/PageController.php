@@ -69,16 +69,17 @@ class PageController extends Controller
         );
 	}
 
-	public function organisation()
-	{
-		return view('pages.organisation');
-	}
-
-	public function reachreact(Partnership $partnerships, Request $request)
+	public function impactreach(Partnership $partnerships, Request $request)
 	{
         $countries = $partnerships->has('childrens')->get();
-		return view('pages.reachreact', ['surveys' => config('surveys'), 'countries' => $countries]);
+		return view('pages.impactreach');
 	}
+
+	public function partners()
+	{
+		return view('pages.partners');
+	}
+
 
 	public function partnership(Partnership $partnerships, Request $request)
 	{
@@ -90,10 +91,10 @@ class PageController extends Controller
     {
         return view('pages.support');
 	}
-	
+
 	public function report()
     {
         return view('pages.report');
 	}
-	
+
 }

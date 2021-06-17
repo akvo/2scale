@@ -1,4 +1,3 @@
-
 @extends ('template')
 
 @section ('content')
@@ -33,9 +32,7 @@
     </div>
 </div>
 
-<main role="main" class="row">
-    <iframe id="data-frame" src="/frame/partnership/0/0" frameborder=0 width="100%"></iframe>
-</main>
+<iframe id="data-frame" class="has-filter" src="/frame/partnership/0/0" frameborder=0 width="100%"></iframe>
 
 <!--Modal: modalCookie-->
 <div class="modal fade top" id="notable" tabindex="-1" role="dialog" aria-labelledby="notable" aria-hidden="true" data-backdrop="true">

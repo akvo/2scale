@@ -9,13 +9,13 @@
     <meta name="keywords" content="2SCALE">
     <title>2SCALE</title>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <!-- Vendor CSS-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 	<!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/css/mdb.min.css" rel="stylesheet">
     <link href="{{ mix('/css/frame.css') }}" rel="stylesheet" media="all">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js" type="text/javascript"></script>
+  <link href="{{ asset('vendor/font-awesome-5/css/fontawesome-all.min.css') }}" rel="stylesheet" media="all">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.1/axios.min.js" type="text/javascript"></script>
 </head>
 <style>
@@ -53,12 +53,9 @@ input.btn.dropdown-toggle.btn-light{
 button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     color: #FFF;
 }
-.jumbotron.card {
-    background-image: url(https://mdbootstrap.com/img/Photos/Others/gradient1.jpg);
-    background-size:cover;
-}
-#loader-spinner {
-    margin-top: 20%;
+.loader-spinner {
+    position:absolute;
+    top: 45%;
 }
 </style>
 <body>
@@ -92,6 +89,7 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
         <div>
       </main>
     </div>
+@include('components.footer')
     <!-- Global Dependencies -->
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -104,6 +102,6 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
 	<!-- MDB core JavaScript -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/js/mdb.min.js"></script>
 	<!-- Bootstrap Select -->
-    <script src="{{ mix('/js/organisation.js') }}"></script>
+    <script src="{{ mix('/js/partners.js') }}"></script>
 </body>
 </html>

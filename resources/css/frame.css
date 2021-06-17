@@ -23,7 +23,6 @@ body {
     font-family: "MarkPro", sans-serif;
     color: #333433;
 }
-
 .graphic {
     padding: 60px 0px;
     background: #edeeea;
@@ -34,6 +33,11 @@ body {
 }
 .graphic img {
     padding: 20px;
+}
+
+.row {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
 }
 
 .card,

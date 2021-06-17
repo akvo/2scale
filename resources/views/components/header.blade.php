@@ -11,17 +11,14 @@
         <?php Session::forget('status'); ?>
       </li>
 
-      <li class="nav-item {{Route::is('dashboard') ? 'active' : '' }}">
-          <a class="nav-link" href="/dashboard">Impact and Reach</a>
+      <li class="nav-item {{Route::is('impactreach') ? 'active' : '' }}">
+          <a class="nav-link" href="/impactreach">Impact and Reach</a>
       </li>
       <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
           <a class="nav-link" href="/partnership">Partnership</a>
       </li>
-      {{-- <li class="nav-item {{Route::is('reachreact') ? 'active' : '' }}">
-          <a class="nav-link" href="/reach-and-react">Reach and Reaction</a>
-      </li> --}}
-      <li class="nav-item {{Route::is('organisation') ? 'active' : '' }}">
-        <a class="nav-link" href="/organisation">Partners</a>
+      <li class="nav-item {{Route::is('partners') ? 'active' : '' }}">
+        <a class="nav-link" href="/partners">Partners</a>
       </li>
 
       @if (Auth::check())

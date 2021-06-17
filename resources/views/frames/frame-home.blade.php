@@ -13,11 +13,10 @@
   <!-- Material Design Bootstrap -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/css/mdb.min.css" rel="stylesheet">
   <link href="{{ asset('vendor/font-awesome-4.7/css/font-awesome.min.css') }}" rel="stylesheet" media="all">
+  <link href="{{ asset('vendor/font-awesome-5/css/fontawesome-all.min.css') }}" rel="stylesheet" media="all">
+  <link href="{{ mix('/css/frame.css') }}" rel="stylesheet" media="all">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.1/axios.min.js" type="text/javascript"></script>
-  <link href="{{ asset('vendor/font-awesome-5/css/fontawesome-all.min.css') }}" rel="stylesheet" media="all">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-  <link href="{{ mix('/css/frame.css') }}" rel="stylesheet" media="all">
 
   <style>
     html,
@@ -28,9 +27,6 @@
         position:absolute;
         top: 45%;
     }
-    .view.view-cascade {
-        border-radius: 3px;
-    }
     #maps {
       height: 670px;
     }
@@ -40,6 +36,7 @@
   <div class="cover-container d-flex h-100 mx-auto flex-column">
     <main role="main" id="main" class="inner cover"></main>
   </div>
+@include('components.footer')
 
   <!-- Global Dependencies -->
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -51,6 +48,6 @@
   <!-- MDB core JavaScript -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/js/mdb.min.js"></script>
   <!-- Bootstrap Select -->
-  <script src="{{ mix('/js/main-home.js') }}"></script>
+  <script src="{{ mix('/js/home.js') }}"></script>
 </body>
 </html>
