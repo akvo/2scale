@@ -18,6 +18,12 @@
     font-style: normal;
 }
 
+.graphic {
+    background-image: url(/images/2scale-infographic.svg);
+    height: 365px;
+    background-repeat: no-repeat;
+}
+
 /* survey dropdown custom */
 .dropdown-menu.show {
     min-height: auto !important;
@@ -93,6 +99,11 @@ body {
 }
 .nav-item a:hover {
     color: #a43332 !important;
+}
+.nav-item.active > a.nav-link {
+    color: #a43332 !important;
+    font-weight: bold;
+    border-bottom: solid 2px #a43332;
 }
 .nav-scroller {
     position: relative;

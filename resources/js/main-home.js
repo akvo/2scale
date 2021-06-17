@@ -9,10 +9,19 @@ const axios = window.axios;
 $("main").append(
     <div>
         <div class="row" id="maps"></div>
-        <hr />
-        <div class="row" id="first-row"></div>
-        <hr />
-        <div class="row" id="second-row"></div>
+        <div class="graphic">
+            <img src="/images/2scale-infographic.svg" class="img img-fluid" />
+        </div>
+        <div class="row" id="first-row">
+            <div
+                class="col-md-12"
+                style="text-align: center; font-size:24px; margin-top: 30px; margin-bottom: 30px;"
+            >
+                2SCALE partners with business champions to leverage food
+                nutrition and security:
+            </div>
+        </div>
+        <div class="row graphic" id="second-row"></div>
     </div>
 );
 
