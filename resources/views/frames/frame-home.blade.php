@@ -22,7 +22,6 @@
   <style>
     html,
     body{
-        width:100%;
         margin:auto;
     }
     .loader-spinner {

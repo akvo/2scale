@@ -14,8 +14,8 @@ const generateOptions = (type, dataset, extra = {}) => {
             return Maps(dataset, extra);
         case "PIE":
             return Pie(dataset, extra);
-        case "ROSEPIE":
-            return Pie(dataset, extra, { roseType: "area" });
+        case "DOUGHNUT":
+            return Pie(dataset, extra, true);
         case "TREEMAP":
             return TreeMap(dataset, extra);
         case "SANKEY":

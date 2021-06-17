@@ -17,6 +17,7 @@ use App\Datapoint;
 use App\Partnership;
 use App\Sector;
 use App\Option;
+use App\RsrDetail;
 
 class ChartController extends Controller
 {
@@ -577,13 +578,11 @@ class ChartController extends Controller
     public function mapCharts(Request $request, Partnership $partnerships, Datapoint $datapoints)
     {
         $data = $partnerships
-            ->has('country_datapoints')
-            ->with('country_datapoints')
             ->get()
             ->transform(function($dt){
                 return array (
                     'name' => $dt->name,
-                    'value' => $dt->country_datapoints->count()
+                    'value' => 1
                 );
             });
         $min = collect($data)->min('value');
@@ -1098,28 +1097,19 @@ class ChartController extends Controller
     private function getUiiValueByConfig($config, $charts)
     {
         $programId = $config['projects']['parent'];
-        $partnershipIds = \App\Partnership::where('level', 'partnership')->pluck('id');
-        $partnerLevel = \App\RsrProject::whereIn('partnership_id', $partnershipIds)->pluck('id');
-        $results = $charts->map(function ($item) {
-            // return \App\RsrTitleable::where('rsr_title_id', $item['id'])->get()->pluck('rsr_titleable_id'); // using title id from config give a risk when we reseed the db (can be change)
-            $titleId = \App\RsrTitleable::where('rsr_titleable_id', $item['id'])->where('rsr_titleable_type', 'App\RsrResult')->get()->pluck('rsr_title_id');
+        $rsrDetail =  \App\RsrDetail::where('project_id', $programId)
+            ->whereIn('result_id', [48191,48259])->get();
+        $rsrDetail = collect($rsrDetail)->groupBy('result_title')->map(function ($v, $k){
+            $pav = $v->sum('period_actual_value');
+            $itv = $v->first()->indicator_target_value;
             return [
-                'name' => $item['name'],
-                'titleables' => \App\RsrTitleable::whereIn('rsr_title_id', $titleId)->get()->pluck('rsr_titleable_id'),
+                'name' => $k,
+                'achieved' => $pav,
+                'target' => $itv,
+                'toGo' => $itv - $pav
             ];
-        })->map(function ($item) use ($programId, $partnerLevel) {
-            $results = \App\RsrResult::whereIn('id', $item['titleables'])->with('rsr_indicators')->get();
-            $program = $results->where('rsr_project_id', $programId)->pluck('rsr_indicators')->flatten(1);
-            // $partnerships = $results->where('rsr_project_id', '!=', $programId)->pluck('rsr_indicators')->flatten(1)->sum('baseline_value'); // include country
-            $partnerships = $results->where('rsr_project_id', '!=', $programId)->whereIn('rsr_project_id', $partnerLevel)->pluck('rsr_indicators')->flatten(1)->sum('baseline_value'); // partnership only
-            return [
-                "name" => $item['name'],
-                "target" => $program->sum('target_value'),
-                "toGo" => $program->sum('target_value') - $partnerships,
-                "achieved" => $partnerships,
-            ];
-        })->values();
-        return $results;
+        });
+        return $rsrDetail;
     }
 
     public function homeInvestmentTracking(Request $request)
@@ -1170,6 +1160,11 @@ class ChartController extends Controller
                     "position" => "insideBottomRight",
                     "formatter" => "{@p_togo}%"
                 ],
+                "itemStyle" => [
+                    "color" => "transparent",
+                    "borderType" => "dashed",
+                    "borderColor" => "#000"
+                ],
                 "encode" => [
                     "x" => "togo",
                     "y" => "name",
@@ -1177,7 +1172,8 @@ class ChartController extends Controller
             ]
         ];
         $xMax = $results->pluck('target')->max();
-        return $this->echarts->generateBarCharts($legend, $categories, "Horizontal", $series, $xMax, $dataset);
+        $data = $this->echarts->generateBarCharts($legend, $categories, "Horizontal", $series, $xMax, $dataset);
+        return collect($data)->forget('legend');
     }
 
     public function foodNutritionAndSecurity(Request $request)

@@ -31,7 +31,6 @@
 <body class="bg-light">
 	@include('components.header')
     @yield('content')
-    @include('components.footer')
     @include('components.modal')
 
     @if (env('APP_ENV') === 'production')

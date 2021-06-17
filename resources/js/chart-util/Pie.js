@@ -8,9 +8,9 @@ import {
 } from "./chart-style.js";
 import sumBy from "lodash/sumBy";
 
-const Pie = (data, extra, roseType = false) => {
+const Pie = (data, extra, Doughnut = false) => {
     data = !data ? [] : data;
-    let total = { name: "", value: 0 };
+    let total = { name: "total", value: 0 };
     let labels = [];
     if (data.length > 0) {
         data = data.map((x) => {
@@ -28,9 +28,6 @@ const Pie = (data, extra, roseType = false) => {
         };
     }
     let rose = {};
-    if (roseType) {
-        rose = { roseType: roseType };
-    }
     const { textStyle } = TextStyle;
     let option = {
         tooltip: {
@@ -49,15 +46,15 @@ const Pie = (data, extra, roseType = false) => {
                 name: "main",
                 type: "pie",
                 right: "center",
-                radius: roseType ? ["20%", "70%"] : ["50%", "100%"],
+                radius: Doughnut ? ["0%", "100%"] : ["50%", "100%"],
                 label: {
                     normal: {
                         formatter: "{d}%",
                         show: true,
-                        position: roseType ? "outside" : "inner",
+                        position: Doughnut ? "inner" : "outside",
                         padding: 5,
                         borderRadius: 100,
-                        backgroundColor: roseType
+                        backgroundColor: Doughnut
                             ? "rgba(0,0,0,.5)"
                             : "rgba(0,0,0,.3)",
                         textStyle: {
@@ -87,19 +84,27 @@ const Pie = (data, extra, roseType = false) => {
                 data: [total],
                 type: "pie",
                 right: "center",
-                radius: roseType ? ["0%", "20%"] : ["0%", "40%"],
+                radius: Doughnut ? ["0%", "0%"] : ["0%", "40%"],
+                color: ["#f1f1f5"],
                 label: {
                     normal: {
-                        show: true,
+                        formatter: function (params) {
+                            let values = params.data.value;
+                            return "Total" + "\n" + values;
+                        },
+                        show: !Doughnut,
                         position: "center",
                         textStyle: {
                             ...textStyle,
+                            fontSize: 16,
+                            backgroundColor: "transparent",
+                            padding: 0,
+                            borderRadius: 0,
                             fontWeight: "bold",
-                            color: "#495057",
+                            color: "#333433",
                         },
                     },
                 },
-                color: ["#f1f1f5"],
             },
         ],
         legend: {

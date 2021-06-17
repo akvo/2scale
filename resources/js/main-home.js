@@ -21,7 +21,16 @@ $("main").append(
                 nutrition and security:
             </div>
         </div>
-        <div class="row graphic" id="second-row"></div>
+        <hr />
+        <div class="row" id="second-row"></div>
+        <footer class="footer">
+            <div class="col-md-12">
+                <div class="text-center">
+                    <a href="https://2scale.org">2SCALE</a> |{" "}
+                    <i class="fa fa-envelope"></i> info@2scale.org
+                </div>
+            </div>
+        </footer>
     </div>
 );
 
@@ -34,7 +43,7 @@ const countChildren = (data) => {
 
 generateCharts(
     {
-        type: "PIE",
+        type: "DOUGHNUT",
         endpoint: "flow/sectors?sum=industry,country_id&form_id=20020001",
         title: "Sector Distribution",
         id: "sector-ddistribution",

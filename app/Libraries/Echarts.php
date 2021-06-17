@@ -263,11 +263,16 @@ class Echarts
                 ),
             );
             $dt['label'] = array(
-                'show' => true,
+                'show' => false,
                 'fontSize' => 12,
 				'color' => '#fff'
             );
 			$dt['itemStyle'] = array(
+                'normal' => array(
+                    'color' => $this->pallete[0],
+                    'borderWidth' => 2,
+                    'borderColor' => "#fff"
+                ),
 				'emphasis' => array(
                     'shadowOffsetX' =>  0,
                     'shadowOffsetY' => 0,
@@ -307,7 +312,6 @@ class Echarts
             'color' => array("#a43332", "#609ba7", "#C9CDC0")
         );
         return array (
-          'dataRange' => $steps,
           'tooltip' => array (
             'trigger' => 'item',
             'showDelay' => 0,
