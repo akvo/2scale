@@ -5,44 +5,77 @@ import TreeMap from "./TreeMap";
 import SanKey from "./SanKey";
 import Radar from "./Radar";
 import BarStack from "./BarStack";
+import axios from "axios";
+import createElement from "../app";
 
-const loadingState = {
-    id: 1,
-    name: "",
-    units: "",
-    description: "Loading",
-    values: [{ id: 1, code: "", name: "Loading", value: 0 }],
-};
-
-const generateData = (col, line, height) => {
-    return {
-        column: col,
-        line: line,
-        style: {
-            height: height,
-        },
-    };
-};
-
-const generateOptions = (type, title, subtitle, dataset, extra = {}) => {
+const generateOptions = (type, dataset, extra = {}) => {
     switch (type) {
         case "MAPS":
-            return Maps(title, subtitle, dataset, extra);
+            return Maps(dataset, extra);
         case "PIE":
-            return Pie(title, subtitle, dataset, extra);
+            return Pie(dataset, extra);
         case "ROSEPIE":
-            return Pie(title, subtitle, dataset, extra, { roseType: "area" });
+            return Pie(dataset, extra, { roseType: "area" });
         case "TREEMAP":
-            return TreeMap(title, subtitle, dataset, extra);
+            return TreeMap(dataset, extra);
         case "SANKEY":
-            return SanKey(title, subtitle, dataset, extra);
+            return SanKey(dataset, extra);
         case "RADAR":
-            return Radar(title, subtitle, dataset, extra);
+            return Radar(dataset, extra);
         case "BARSTACK":
-            return BarStack(title, subtitle, dataset, extra);
+            return BarStack(dataset, extra);
         default:
-            return Bar(title, subtitle, dataset, extra);
+            return Bar(dataset, extra);
     }
 };
 
-export default { generateOptions, generateData };
+const generateCharts = (
+    { endpoint, type, title, id, parentId, md, height },
+    tranform = false
+) => {
+    const html = (
+        <div class={`col-md-${md ? md : "6"}`}>
+            <div class="card">
+                <div class="card-header">{title}</div>
+                <div class="card-body">
+                    <div
+                        class="d-flex justify-content-center"
+                        id={`loader-${id}`}
+                    >
+                        <div
+                            class="spinner-border text-primary loader-spinner"
+                            role="status"
+                        >
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <div
+                        id={id}
+                        style={`height:${height ? height : 450}px`}
+                    ></div>
+                </div>
+            </div>
+        </div>
+    );
+    document.getElementById(parentId).appendChild(html);
+    const element = document.getElementById(id);
+    const myChart = echarts.init(element);
+    axios
+        .get(`/api/${endpoint}`)
+        .then((res) => {
+            setTimeout(function () {
+                document.getElementById(`loader-${id}`).remove();
+                const option = generateOptions(type, res.data);
+                myChart.setOption(option);
+            }, 1000);
+        })
+        .catch((e) => {
+            document.getElementById(`loader-${id}`).remove();
+            myChart.setOption({
+                title: { text: "No Data available for this request" },
+            });
+        });
+    return true;
+};
+
+export default generateCharts;

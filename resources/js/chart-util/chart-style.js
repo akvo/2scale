@@ -63,6 +63,7 @@ export const rsrColor = {
 export const Legend = {
     orient: "horizontal",
     x: "center",
+    y: "top",
     bottom: "40px",
     textStyle: {
         fontFamily: "MarkPro",

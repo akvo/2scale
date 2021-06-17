@@ -12,7 +12,7 @@ const baseurl = $("meta[name=path]").attr("content");
 
 const info = {
     head: "Header Lorem Ipsum",
-    content: "Lorem Ipsum Dolor Sit Amet for Footer"
+    content: "Lorem Ipsum Dolor Sit Amet for Footer",
 };
 
 $("main").append("<div class='row' id='first-row'></div>");
@@ -20,7 +20,7 @@ $("main").append("<div class='row' id='first-row'></div>");
 
 /* Cards Row */
 // getCards('home/top-three');
-getMaps("maps", "home/map");
+// getMaps("maps", "home/map");
 
 /* UII Row */
 // getCharts(

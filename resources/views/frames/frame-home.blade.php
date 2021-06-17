@@ -199,22 +199,8 @@
   </header> --}}
   {{-- End Old --}}
 
-  <div class="text-center py-2 px-4 mt-3">
-    <div class="row" id="zero-row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header 2scale-brand">
-            Incubating Inclusive Agribusiness
-          </div>
-          <div class="card-body mask">
-            <div id="maps"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-    <main role="main" class="inner cover"></main>
+    <main role="main" id="main" class="inner cover"></main>
   </div>
 
   <!-- Global Dependencies -->

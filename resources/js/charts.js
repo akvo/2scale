@@ -1,3 +1,4 @@
+import createElement from "./app";
 import { CountUp } from "countup.js";
 import { staticText, gradients, titleCase } from "./util.js";
 import { db, storeDB } from "./dexie";
@@ -28,42 +29,38 @@ const mapOption = (endpoint) => {
 };
 
 const generateCards = (info, color, rank) => {
-    let rankhtml = (rank) => {
-        if (rank !== "") {
-            return "";
-        }
-        return rank;
-    };
-    if (info.project === undefined) {
+    let rankhtml = rank !== "" ? "" : rank;
+    if (!info?.project) {
         info.project = "";
     }
-    if (info.commodity === undefined) {
+    if (!info?.commodity) {
         info.commodity = "";
     }
-    let html =
-        `<div class="col-md-3">
-                    <div class="card card-cascade wider">
-                        <div class="view view-cascade">
-                            <h5 class="card-header-title mb-3 mt-3 text-bold">` +
-        rankhtml(rank) +
-        `</h5>
-                            <h5 class="card-header-title mb-3 mt-3 text-bold">` +
-        info.country +
-        `</h5>
-                            <h3 class="card-header-title mb-3 mt-3" id="count-up-` +
-        color +
-        `">` +
-        0 +
-        `</h3>
-                            <p class="mb-3"><i class="fas fa-calendar mr-2"></i>` +
-        info.project +
-        ` - <strong>` +
-        info.commodity +
-        `</strong></p>
-                        </div>
-                    </div>
-                </div>`;
-    $("#jumbotron").append(html);
+    let html = (
+        <div class="col-md-3">
+            <div class="card card-cascade wider">
+                <div class="view view-cascade">
+                    <h5 class="card-header-title mb-3 mt-3 text-bold">
+                        {rankhtml(rank)}
+                    </h5>
+                    <h5 class="card-header-title mb-3 mt-3 text-bold">
+                        {info.country}
+                    </h5>
+                    <h3
+                        class="card-header-title mb-3 mt-3"
+                        id={`count-up-${color}`}
+                    >
+                        0
+                    </h3>
+                    <p class="mb-3">
+                        <i class="fas fa-calendar mr-2"></i>
+                        {info.project} -<strong>{info.commodity}</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+    document.getElementById("jumbotron").appendChild(html);
     const countUp = new CountUp("count-up-" + color, info.value);
     if (!countUp.error) {
         countUp.start();
@@ -73,27 +70,28 @@ const generateCards = (info, color, rank) => {
 };
 
 const generateSingleCards = (info, color, id) => {
-    let html =
-        `<div class="col-md-12" id="` +
-        id +
-        `-value" dataTitle="` +
-        info.title +
-        `" dataValue="` +
-        info.value +
-        `">
-                    <div class="card card-cascade wider">
-                        <div class="text-center view view-cascade" style="color:white;">
-                            <h5 class="card-header-title mb-3 mt-3 text-bold">` +
-        info.title +
-        `</h5>
-                            <h3 class="card-header-title mb-3 mt-3" id="single-count-up-` +
-        color +
-        `">` +
-        0 +
-        `</h3>
-                        </div>
-                    </div>
-                </div>`;
+    let html = (
+        <div
+            class="col-md-12"
+            id={`${id}-value`}
+            dataTitle={info.title}
+            dataValue={info.value}
+        >
+            <div class="card card-cascade wider">
+                <div class="text-center view view-cascade" style="color:white;">
+                    <h5 class="card-header-title mb-3 mt-3 text-bold">
+                        {info.title}
+                    </h5>
+                    <h3
+                        class="card-header-title mb-3 mt-3"
+                        id={`single-count-up-${color}`}
+                    >
+                        0 +
+                    </h3>
+                </div>
+            </div>
+        </div>
+    );
     $("#" + id).append(html);
     const countUp = new CountUp("single-count-up-" + color, info.value);
     if (!countUp.error) {
@@ -104,7 +102,6 @@ const generateSingleCards = (info, color, id) => {
 };
 
 const fetchData = (endpoint) => {
-    // console.log(endpoint);
     const split = endpoint.split("/");
     const filter = [split[1], split[2], split[3], split[4]].join("/");
     return new Promise((resolve, reject) => {
@@ -163,31 +160,30 @@ export const getSingleCards = (cards, id) => {
 export const getCharts = (chart, row, info, md, color, customTitle = null) => {
     let chartname = chart.split("/")[1];
     chartname = customTitle !== null ? customTitle : chartname;
-    let html =
-        `<div class="col-md-` +
-        md +
-        `">
-                <div class="card">
-                  <div class="card-header">` +
-        titleCase(chartname) +
-        `</div>
-                  <div class="card-body">
-                    <div class="d-flex justify-content-center" id="loader-` +
-        chartname +
-        `">
-                      <div class="spinner-border text-primary loader-spinner" role="status">
-                        <span class="sr-only">Loading...</span>
-                      </div>
+    let html = (
+        <div class={`col-md-${md}`}>
+            <div class="card">
+                <div class="card-header">{titleCase(chartname)}</div>
+                <div class="card-body">
+                    <div
+                        class="d-flex justify-content-center"
+                        id={`loader-${chartname}`}
+                    >
+                        <div
+                            class="spinner-border text-primary loader-spinner"
+                            role="status"
+                        >
+                            <span class="sr-only">Loading...</span>
+                        </div>
                     </div>
-                    <div id="` +
-        chartname +
-        `" style="height:450px"></div>
-                  </div>
+                    <div id={`${chartname}`} style="height:450px"></div>
                 </div>
-                </div>`;
-    $("#" + row).append(html);
-    var element = document.getElementById(chartname);
-    var myChart = echarts.init(element);
+            </div>
+        </div>
+    );
+    document.getElementById(row).appendChild(html);
+    const element = document.getElementById(chartname);
+    const myChart = echarts.init(element);
     loadData(chart)
         .then((res) => {
             setTimeout(function () {

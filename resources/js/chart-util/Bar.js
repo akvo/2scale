@@ -10,7 +10,7 @@ import sum from "lodash/sum";
 import sortBy from "lodash/sortBy";
 import reverse from "lodash/reverse";
 
-const Bar = (title, subtitle, props, data, extra) => {
+const Bar = (data, extra) => {
     let values = [];
     let labels = [];
     data = !data ? [] : data;
@@ -20,21 +20,9 @@ const Bar = (title, subtitle, props, data, extra) => {
         values = data.map((x) => x.value);
         labels = data.map((x) => x.name);
     }
-    let avg = 0;
-    if (values.length > 0) {
-        avg = sum(values) / values.length;
-        avg = avg < 100 ? true : false;
-    }
     const text_style = TextStyle;
     let option = {
         ...Color,
-        title: {
-            text: title,
-            subtext: subtitle,
-            right: "center",
-            top: "20px",
-            ...text_style,
-        },
         grid: {
             top: "15%",
             left: "20%",
@@ -99,7 +87,6 @@ const Bar = (title, subtitle, props, data, extra) => {
                     color: "#222",
                     fontFamily: "MarkPro",
                     padding: 5,
-                    borderRadius: avg ? 20 : 5,
                     backgroundColor: "rgba(0,0,0,.3)",
                     textStyle: {
                         ...text_style.textStyle,

@@ -8,7 +8,7 @@ import {
 } from "./chart-style.js";
 import sumBy from "lodash/sumBy";
 
-const Pie = (title, subtitle, data, extra, roseType = false) => {
+const Pie = (data, extra, roseType = false) => {
     data = !data ? [] : data;
     let total = { name: "total", value: 0 };
     let labels = [];
@@ -31,28 +31,8 @@ const Pie = (title, subtitle, data, extra, roseType = false) => {
     if (roseType) {
         rose = { roseType: roseType };
     }
-    if (sumBy(data, "value") === 0) {
-        return {
-            title: {
-                text: title,
-                subtext: "No Data",
-                left: "center",
-                top: "20px",
-                ...TextStyle,
-            },
-        };
-    }
-    const text_style = TextStyle;
-    const legend = Legend;
+    const { textStyle } = TextStyle;
     let option = {
-        ...Color,
-        title: {
-            text: title,
-            subtext: subtitle,
-            right: "center",
-            top: "20px",
-            ...text_style,
-        },
         tooltip: {
             show: true,
             trigger: "item",
@@ -60,23 +40,16 @@ const Pie = (title, subtitle, data, extra, roseType = false) => {
             padding: 5,
             backgroundColor: "#f2f2f2",
             textStyle: {
-                ...text_style.textStyle,
+                ...textStyle,
                 fontSize: 12,
             },
         },
-        toolbox: {
-            show: true,
-            orient: "horizontal",
-            left: "right",
-            top: "top",
-            backgroundColor: "#FFF",
-        },
         series: [
             {
-                name: title,
+                name: "main",
                 type: "pie",
                 right: "center",
-                radius: roseType ? ["20%", "70%"] : ["40%", "90%"],
+                radius: roseType ? ["20%", "70%"] : ["70%", "150%"],
                 label: {
                     normal: {
                         formatter: "{d}%",
@@ -88,7 +61,7 @@ const Pie = (title, subtitle, data, extra, roseType = false) => {
                             ? "rgba(0,0,0,.5)"
                             : "rgba(0,0,0,.3)",
                         textStyle: {
-                            ...text_style.textStyle,
+                            ...textStyle,
                             color: "#fff",
                         },
                     },
@@ -100,7 +73,7 @@ const Pie = (title, subtitle, data, extra, roseType = false) => {
                         backgroundColor: "#f2f2f2",
                         borderRadius: 5,
                         padding: 10,
-                        ...text_style,
+                        textStyle: textStyle,
                     },
                 },
                 labelLine: {
@@ -115,13 +88,13 @@ const Pie = (title, subtitle, data, extra, roseType = false) => {
                 data: [total],
                 type: "pie",
                 right: "center",
-                radius: roseType ? ["0%", "20%"] : ["0%", "30%"],
+                radius: roseType ? ["0%", "20%"] : ["0%", "40%"],
                 label: {
                     normal: {
                         show: true,
                         position: "center",
                         textStyle: {
-                            ...text_style.textStyle,
+                            ...textStyle,
                             fontWeight: "bold",
                             color: "#495057",
                         },
@@ -132,7 +105,7 @@ const Pie = (title, subtitle, data, extra, roseType = false) => {
         ],
         legend: {
             data: labels,
-            ...legend,
+            ...Legend,
         },
         ...Color,
         ...backgroundColor,
