@@ -9,25 +9,25 @@ const tableTitle = "Reported Values for Universal Impact Indicators";
 var footerColspan = 1;
 var mainColumn = [];
 
-const fetchData = endpoint => {
+const fetchData = (endpoint) => {
     return new Promise((resolve, reject) => {
         axios
             .get("/charts/rsr-datatables/" + endpoint)
-            .then(res => {
+            .then((res) => {
                 // console.log('fetch network', res);
                 // storeDB({
                 //     table : table, data : {name: endpoint, data: res.data}, key : {name: endpoint}
                 // });
                 resolve(res.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 reject(error);
             });
     });
 };
 
 // load from dixie if exist
-export const loadData = async endpoint => {
+export const loadData = async (endpoint) => {
     // console.log(endpoint);
     const res = await table.get({ name: endpoint });
     if (res === undefined) {
@@ -37,26 +37,26 @@ export const loadData = async endpoint => {
     return res.data;
 };
 
-const refactorDimensionValue = columns => {
-    return columns.map(item => {
+const refactorDimensionValue = (columns) => {
+    return columns.map((item) => {
         let tmp = [];
         if (item.rsr_dimensions.length > 0) {
-            item.rsr_dimensions.forEach(dimensions => {
-                dimensions.rsr_dimension_values.forEach(dimension => {
+            item.rsr_dimensions.forEach((dimensions) => {
+                dimensions.rsr_dimension_values.forEach((dimension) => {
                     tmp.push({
                         name: dimension.name,
                         total_actual_value: dimension.total_actual_value,
-                        value: dimension.value
+                        value: dimension.value,
                     });
                 });
             });
         }
         if (item.rsr_indicators_count > 1) {
-            item.rsr_indicators.forEach(ind => {
+            item.rsr_indicators.forEach((ind) => {
                 tmp.push({
                     name: ind.title,
                     total_actual_value: ind.total_actual_value,
-                    value: ind.target_value
+                    value: ind.target_value,
                 });
             });
         }
@@ -112,9 +112,9 @@ const refactorDimensionValue = columns => {
     });
 };
 
-const refactorChildrens = childrens => {
+const refactorChildrens = (childrens) => {
     if (typeof childrens !== "undefined" && childrens.length > 0) {
-        return childrens.map(child => {
+        return childrens.map((child) => {
             child.columns = refactorDimensionValue(child.columns);
             child.childrens = refactorChildrens(child.childrens);
             child["extras"] = [];
@@ -144,12 +144,12 @@ const titleFormat = (title, css) => {
     return title;
 };
 
-const agregateExtras = data => {
+const agregateExtras = (data) => {
     let sum_values = [],
         target_values = [],
         gap_values = [],
         percent_values = [];
-    data.forEach(item => {
+    data.forEach((item) => {
         let sum = [],
             target = [],
             gap = [],
@@ -161,7 +161,7 @@ const agregateExtras = data => {
             has_dimension = false;
         if (item.dimensions.length > 0) {
             has_dimension = true;
-            item.dimensions.forEach(val => {
+            item.dimensions.forEach((val) => {
                 dim_sum = dim_sum + val.total_actual_value;
                 dim_target = dim_target + val.value;
                 dim_gap = dim_gap + (val.total_actual_value - val.value);
@@ -205,22 +205,22 @@ const agregateExtras = data => {
         sum_values.push({
             total: sum,
             dimension_total: dim_sum,
-            has_dimension: has_dimension
+            has_dimension: has_dimension,
         });
         target_values.push({
             total: target,
             dimension_total: dim_target,
-            has_dimension: has_dimension
+            has_dimension: has_dimension,
         });
         gap_values.push({
             total: gap,
             dimension_total: dim_gap,
-            has_dimension: has_dimension
+            has_dimension: has_dimension,
         });
         percent_values.push({
             total: percent,
             dimension_total: dim_percent,
-            has_dimension: has_dimension
+            has_dimension: has_dimension,
         });
     });
     return [
@@ -230,16 +230,16 @@ const agregateExtras = data => {
         // },
         {
             name: "TARGET",
-            values: target_values
+            values: target_values,
         },
         {
             name: "GAP",
-            values: gap_values
+            values: gap_values,
         },
         {
             name: "%",
-            values: percent_values
-        }
+            values: percent_values,
+        },
     ];
 };
 
@@ -279,10 +279,10 @@ const renderRow = (
 
     // manage the child columns not match with children columns
     if (mainColumn.length !== data.columns.length && level !== 1) {
-        let tmp = mainColumn.map(val => {
-            let find = data.columns.find(x => x.title === val.title);
+        let tmp = mainColumn.map((val) => {
+            let find = data.columns.find((x) => x.title === val.title);
             if (typeof find === "undefined") {
-                let dimensions = val.dimensions.map(d => {
+                let dimensions = val.dimensions.map((d) => {
                     d.total_actual_value = 0;
                     d.value = 0;
                     return d;
@@ -291,7 +291,7 @@ const renderRow = (
                     ...val,
                     dimensions: dimensions,
                     total_actual_value: 0,
-                    total_target_value: 0
+                    total_target_value: 0,
                 };
             }
             return find;
@@ -301,10 +301,10 @@ const renderRow = (
 
     // there was a dimensions value not match with their parent
     if (mainColumn.length === data.columns.length && level !== 1) {
-        let tmp = mainColumn.map(val => {
-            let find = data.columns.find(x => x.title === val.title);
+        let tmp = mainColumn.map((val) => {
+            let find = data.columns.find((x) => x.title === val.title);
             if (val.dimensions.length !== find.dimensions.length) {
-                find.dimensions = val.dimensions.map(d => {
+                find.dimensions = val.dimensions.map((d) => {
                     d.total_actual_value = 0;
                     d.value = 0;
                     return d;
@@ -350,9 +350,9 @@ const renderRow = (
               " " +
               titleFormat(data.project) +
               "</td>");
-    data.columns.forEach(val => {
+    data.columns.forEach((val) => {
         if (val.dimensions.length > 0) {
-            val.dimensions.forEach(val => {
+            val.dimensions.forEach((val) => {
                 if (level === 1) {
                     footerColspan = footerColspan + 1;
                 }
@@ -378,9 +378,9 @@ const renderLastRow = (data, last) => {
     if (data.childrens.length > 0 && last) {
         row += '<tr class="last_row" style="display:none;">';
         row += '<td class="partner">&nbsp</td>';
-        data.columns.forEach(val => {
+        data.columns.forEach((val) => {
             if (val.dimensions.length > 0) {
-                val.dimensions.forEach(val => {
+                val.dimensions.forEach((val) => {
                     row += "<td>&nbsp</td>";
                 });
             } else {
@@ -416,10 +416,10 @@ const renderExtra = (
                 '<td rowspan="2" class="partner align-middle name">' +
                 val.name +
                 "</td>";
-            val.values.forEach(val => {
+            val.values.forEach((val) => {
                 let span = val.has_dimension ? "" : 'rowspan="2"';
                 let align = val.has_dimension ? "" : "align-middle";
-                val.total.forEach(val => {
+                val.total.forEach((val) => {
                     extras +=
                         '<td class="' +
                         align +
@@ -441,7 +441,7 @@ const renderExtra = (
                 total +
                 '">';
             extras += '<td style="display:none;">&nbsp</td>';
-            val.values.forEach(val => {
+            val.values.forEach((val) => {
                 if (val.has_dimension) {
                     extras +=
                         '<td class="text-right" colspan="' +
@@ -450,7 +450,7 @@ const renderExtra = (
                         val.dimension_total.toLocaleString() +
                         "</td>";
                 }
-                val.total.forEach(val => {
+                val.total.forEach((val) => {
                     extras += '<td style="display:none;">&nbsp</td>';
                 });
             });
@@ -461,8 +461,8 @@ const renderExtra = (
             if (index === data.length - 1 && grandTotal) {
                 extras += '<tr class="last_row" style="display:none;">';
                 extras += '<td class="partner">&nbsp</td>';
-                val.values.forEach(val => {
-                    val.total.forEach(val => {
+                val.values.forEach((val) => {
+                    val.total.forEach((val) => {
                         extras += "<td>&nbsp</td>";
                     });
                 });
@@ -510,7 +510,7 @@ export const datatableOptions = (id, res, baseurl) => {
             {
                 extend: "print",
                 title: res.data.project,
-                customize: function(win) {
+                customize: function (win) {
                     $(".child").show();
                     $(".extras").show();
                     // $('.grand_total').hide();
@@ -528,12 +528,8 @@ export const datatableOptions = (id, res, baseurl) => {
                                 '/css/print.css" rel="stylesheet">'
                         )
                     );
-                    $(win.document.body)
-                        .find("table thead")
-                        .remove();
-                    $(win.document.body)
-                        .find("table tbody")
-                        .remove();
+                    $(win.document.body).find("table thead").remove();
+                    $(win.document.body).find("table tbody").remove();
                     $(win.document.body).prepend(
                         "<h5>" + tableTitle + "</h5></hr>"
                     );
@@ -544,8 +540,8 @@ export const datatableOptions = (id, res, baseurl) => {
                         .find("table")
                         .append($("#datatables").html());
                     // $(win.document.body).append($('#table-legend').html());
-                }
-            }
+                },
+            },
             // {
             //     text: 'Collapse',
             //     action: function(e, dt, node, config) {
@@ -563,7 +559,7 @@ export const datatableOptions = (id, res, baseurl) => {
         // fixedColumns: true,
         scrollCollapse: true,
         autoWidth: true,
-        columnDefs: [{ targets: 0, width: "12%" }]
+        columnDefs: [{ targets: 0, width: "12%" }],
     };
     let hideColumns = {
         columnDefs: [
@@ -589,12 +585,12 @@ export const datatableOptions = (id, res, baseurl) => {
                     16,
                     17,
                     18,
-                    19
+                    19,
                 ],
-                visible: true
+                visible: true,
             },
-            { targets: "_all", visible: false }
-        ]
+            { targets: "_all", visible: false },
+        ],
     };
     dtoptions =
         res.columns.length > 8 ? { ...dtoptions, ...hideColumns } : dtoptions;
@@ -602,14 +598,12 @@ export const datatableOptions = (id, res, baseurl) => {
     let table = $(id).DataTable(dtoptions);
     $("#datatables_wrapper")
         .find("label")
-        .each(function() {
-            $(this)
-                .parent()
-                .append($(this).children());
+        .each(function () {
+            $(this).parent().append($(this).children());
         });
     $("#datatables_wrapper .dataTables_filter")
         .find("input")
-        .each(function() {
+        .each(function () {
             const $this = $(this);
             $this.attr("placeholder", "Search");
             $this.removeClass("form-control-sm");
@@ -618,41 +612,35 @@ export const datatableOptions = (id, res, baseurl) => {
     // $('#datatables_wrapper .dataTables_filter').addClass('md-form');
     // $('#datatables_wrapper select').removeClass( 'custom-select custom-select-sm form-control form-control-sm');
     // $('#datatables_wrapper select').addClass('mdb-select');
-    $("#datatables_wrapper .dataTables_filter")
-        .find("label")
-        .remove();
+    $("#datatables_wrapper .dataTables_filter").find("label").remove();
 
-    $(".buttons-print")
-        .detach()
-        .prependTo(".dataTables_filter");
-    $(".buttons-copy")
-        .detach()
-        .prependTo(".dataTables_filter");
+    $(".buttons-print").detach().prependTo(".dataTables_filter");
+    $(".buttons-copy").detach().prependTo(".dataTables_filter");
     $(".dt-buttons").remove();
 
     return table;
 };
 
-const formatDetails = d => {
+const formatDetails = (d) => {
     let dtcache = JSON.parse(localStorage.getItem("dtcache"));
-    let data = dtcache.find(x => x.id === d);
+    let data = dtcache.find((x) => x.id === d);
     let details = '<div style="margin:15px;">';
     details +=
         '<table class="table table-bordered" style="width:100%;" cellspacing="0">';
     details += "<tbody>";
-    data.columns.forEach(val => {
+    data.columns.forEach((val) => {
         if (val.rsr_dimensions.length > 0) {
             details +=
                 '<tr style="background: #E2E3E5;"><td class="parent" colspan="3">' +
                 val.title +
                 "</td></tr>";
-            val.rsr_dimensions.forEach(val => {
+            val.rsr_dimensions.forEach((val) => {
                 details += '<tr style="background: #F2F2F2;">';
                 details += '<td class="parent">' + val.name + "</td>";
                 details += '<td class="parent text-center">Target</td>';
                 details += '<td class="parent text-center">Actual</td>';
                 details += "</tr>";
-                val.rsr_dimension_values.forEach(val => {
+                val.rsr_dimension_values.forEach((val) => {
                     details += "<tr>";
                     details += "<td>" + val.name + "</td>";
                     details += '<td class="text-right">' + val.value + "</td>";
@@ -676,10 +664,10 @@ let datas = {};
 let status = {};
 export const renderRsrTable = (endpoint, baseurl, datatableId) => {
     return loadData(endpoint)
-        .then(res => {
+        .then((res) => {
             datas = res;
             // data refactoring
-            datas.columns = datas.columns.map(column => {
+            datas.columns = datas.columns.map((column) => {
                 // if (column.subtitle.length > 0) {
                 //     column.subtitle = column.subtitle.map(subtitle => {
                 //         let name = subtitle.toLowerCase();
@@ -714,11 +702,11 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
                 if (column.subtitle.length === 0) {
                     return column;
                 }
-                column.subtitle = column.subtitle.map(subtitle => {
+                column.subtitle = column.subtitle.map((subtitle) => {
                     if (subtitle.values.length === 0) {
                         return subtitle;
                     }
-                    subtitle.values = subtitle.values.map(value => {
+                    subtitle.values = subtitle.values.map((value) => {
                         let name = value.toLowerCase();
                         let isGender = name.includes("male");
                         let isFemale = name.includes("female");
@@ -758,7 +746,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             // EOL data refactoring
             return datas;
         })
-        .then(res => {
+        .then((res) => {
             // console.log(res);
             // Header 1
             html += '<thead class="thead-dark">';
@@ -774,10 +762,10 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             html += "<tr>";
             html +=
                 '<th rowspan="3" class="partner">Country / Partnership / Partner</th>';
-            res.columns.forEach(column => {
+            res.columns.forEach((column) => {
                 let colspan =
                     column.subtitle.length > 0
-                        ? column.subtitle.map(x =>
+                        ? column.subtitle.map((x) =>
                               x.values.length === 0 ? 1 : x.values.length
                           )
                         : [];
@@ -797,12 +785,12 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             html += "</tr>";
             return res;
         })
-        .then(res => {
+        .then((res) => {
             // Header 2
             html += "<tr>";
-            res.columns.forEach(column => {
+            res.columns.forEach((column) => {
                 if (column.subtitle.length > 1) {
-                    column.subtitle.forEach(subtitle => {
+                    column.subtitle.forEach((subtitle) => {
                         let colspan = subtitle.values.length;
                         let span =
                             colspan > 0
@@ -820,7 +808,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             html += "</tr>";
             return res;
         })
-        .then(res => {
+        .then((res) => {
             // Header 3
             // html += '<tr>';
             // res.columns.forEach(column => {
@@ -834,11 +822,11 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             // html += '</thead>';
 
             html += "<tr>";
-            res.columns.forEach(column => {
+            res.columns.forEach((column) => {
                 if (column.subtitle.length > 0) {
-                    column.subtitle.forEach(subtitle => {
+                    column.subtitle.forEach((subtitle) => {
                         if (subtitle.values.length > 0) {
-                            subtitle.values.forEach(value => {
+                            subtitle.values.forEach((value) => {
                                 html +=
                                     '<th scope="col" class="text-center">' +
                                     value +
@@ -852,7 +840,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             html += "</thead>";
             return res;
         })
-        .then(res => {
+        .then((res) => {
             let url = res.config.url;
             let parentId = res.data.rsr_project_id;
             html += "<tbody>";
@@ -873,7 +861,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
                     );
 
                     if (val.childrens.length > 0) {
-                        val.childrens.forEach(val => {
+                        val.childrens.forEach((val) => {
                             html += renderRow(
                                 val,
                                 3,
@@ -901,7 +889,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             $("#" + datatableId).append(html);
             return res;
         })
-        .then(res => {
+        .then((res) => {
             if (res) {
                 // $('.child').hide('fast');
                 $(".level_3").hide("fast");
@@ -912,7 +900,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             }
             return false;
         })
-        .then(table => {
+        .then((table) => {
             if (table) {
                 const adjust = setInterval(() => {
                     table.columns.adjust();
@@ -920,7 +908,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
                 }, 500);
             }
             // value click to show pop up dimension
-            $("#datatables tbody").on("click", "tr", function() {
+            $("#datatables tbody").on("click", "tr", function () {
                 // disable parent/level 1 collapse
                 let className = $(this).attr("class");
                 if (className.includes("level_1")) {

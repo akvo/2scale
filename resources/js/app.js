@@ -1,5 +1,4 @@
 require("./bootstrap");
-window.$ = window.jQuery = require("jquery");
 
 const createElement = (tag, props, ...children) => {
     if (typeof tag === "function") {
