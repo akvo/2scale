@@ -3,17 +3,15 @@ import generateCharts from "./chart-util";
 import { getMaps, getCharts } from "./charts";
 const axios = window.axios;
 
-const info = {
-    head: "Header Lorem Ipsum",
-    content: "Lorem Ipsum Dolor Sit Amet for Footer",
-};
-
 // getMaps("maps", "home/map/partnership");
 
 /* First Row */
 $("main").append(
     <div>
+        <div class="row" id="maps"></div>
+        <hr />
         <div class="row" id="first-row"></div>
+        <hr />
         <div class="row" id="second-row"></div>
     </div>
 );
@@ -44,4 +42,5 @@ generateCharts({
     parentId: "first-row",
 });
 
-getCharts("home/investment-tracking", "second-row", info, "12", "blue");
+getMaps("maps", "home/map");
+getCharts("home/investment-tracking", "second-row", "12", null, 375);

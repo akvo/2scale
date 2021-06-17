@@ -10,7 +10,7 @@ class Echarts
         // $this->pallete = array(
         //     '#ff4444','#ffbb33', '#00C851', '#33b5e5', '#2BBBAD','#4285F4',  '#aa66cc', '#ff7043','#b2dfdb', '#b3e5fc', '#8d6e63','#f78bba','#231fa1'
         // );
-        $this->pallete = array('#a43332', '#333433', '#609ba7', '#C9CDC0');
+        $this->pallete = array("#a43332", "#609ba7", "#C9CDC0", "#3D588A", "#5C616A", "#DBC2CF", "#2E4756", "#CC9485", "#CCD3B6", "#FFE800");
     }
     private function generateLegend($legend, $textStyle, $orient = 'horizontal', $x = 'center', $y = 'top') {
         return array(
@@ -58,7 +58,7 @@ class Echarts
                 ),
             ),
           ),
-          'legend' => $this->generateLegend($legend, $legendStyle, 'vertical', 'left', 'top'),
+          'legend' => $this->generateLegend($legend, $legendStyle, 'horizontal', 'center', 'bottom'),
           'series' => array (
             array (
               'type' => 'pie',
@@ -213,7 +213,7 @@ class Echarts
             'axisPointer' => array ('type' => 'shadow'),
         );
         $option = [
-            'color' => ($xMax) ? ['#609CA7', '#C9CDC0'] : $this->pallete,
+            'color' => ($xMax) ? ['#609CA7', '#a43332'] : $this->pallete,
             'dataZoom' => array(
                 'type' => 'inside',
                 'yAxisIndex' => [0]
@@ -226,7 +226,7 @@ class Echarts
 				'top' => '3%',
 				'containLabel' => true
 			),
-            'legend' => $this->generateLegend($legend, $legendStyle, 'horizontal', 'left', 'bottom'),
+            'legend' => $this->generateLegend($legend, $legendStyle, 'horizontal', 'center', 'bottom'),
             'toolbox' => array(
                 'show' => true,
                 'feature' => array(
@@ -248,6 +248,10 @@ class Echarts
         return $option;
     }
     public function generateMapCharts($data, $min, $max){
+        $textStyle = array(
+            'fontFamily' => 'MarkPro',
+            'fontWeight' => 200
+        );
         $data = collect($data)->map(function($dt){
             $dt = collect($dt);
             $dt['emphasis'] = array(
@@ -271,46 +275,55 @@ class Echarts
                     'borderWidth' => 2,
                     'borderColor' => '#FFF',
                     'shadowColor' => 'rgba(0, 0, 0, .7)',
+                    'color' => $this->pallete[0]
 				)
 			);
             return $dt;
         })->toArray();
-        return array (
-          'visualMap' => array (
-            'min' => $min,
-            'max' => $max,
-            'text' => array ('High','Low'),
-            'realtime' => false,
-            'calculable' => true,
-            'inRange' => array(
-                'color' => array('#ff4444','#33b5e5', '#2BBBAD'),
+        $steps = array (
+            'right' => 'center',
+            'top' => 'bottom',
+            'orient' => 'horizontal',
+            'splitList' => array (
+                    array (
+                      'start' => 1000,
+                      'label' => '> 1000',
+                    ),
+                    array (
+                      'start' => 100,
+                      'end' => 1000,
+                    ),
+                    array (
+                       'label' => '100 <',
+                       'start' => 0,
+                       'end' => 100,
+                    ),
             ),
-          ),
+            'textStyle' => array (
+                'fontFamily' => 'MarkPro',
+                'fontWeight' => 600,
+                'fontSize' => 12
+            ),
+            'color' => array("#a43332", "#609ba7", "#C9CDC0")
+        );
+        return array (
+          'dataRange' => $steps,
           'tooltip' => array (
             'trigger' => 'item',
             'showDelay' => 0,
             'transitionDuration' => 0.2,
           ),
-          'toolbox' => array (
-            'show' => true,
-            'right' => 'right',
-            'bottom' => 'bottom',
-            'feature' => array (
-                'saveAsImage' => array(
-                    'title' => 'Save Image',
-                ),
-            ),
-          ),
           'series' => array(
             array(
               'type' => 'map',
-              'zoom' => 1.2,
+              'zoom' => 1,
               'room' => true,
               'aspectScale' => 1,
               'map' => 'africa',
               'data' => $data,
             ),
           ),
+          'textStyle' => $textStyle,
         );
     }
 
@@ -433,7 +446,8 @@ class Echarts
                 ],
                 'levels' => $levelOption,
                 'data' => $data
-            ],],
+            ],
+            ],
         ];
     }
 }

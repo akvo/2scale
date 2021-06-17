@@ -28,12 +28,12 @@ export const Color = {
         "#a43332",
         "#609ba7",
         "#C9CDC0",
-        "#f68e1f",
-        "#ec008b",
-        "#07bbc1",
-        "#006eb6",
-        "#87c440",
-        "#40ae49",
+        "#3D588A",
+        "#5C616A",
+        "#DBC2CF",
+        "#2E4756",
+        "#CC9485",
+        "#CCD3B6",
         "#FFE800",
     ],
 };
@@ -64,7 +64,7 @@ export const rsrColor = {
 export const Legend = {
     orient: "horizontal",
     x: "center",
-    y: "top",
+    y: "bottom",
     bottom: "40px",
     textStyle: {
         fontFamily: "MarkPro",

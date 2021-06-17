@@ -21,6 +21,7 @@
 html,
 body {
     font-family: "MarkPro", sans-serif;
+    color: #333433;
 }
 
 .card,
@@ -33,6 +34,7 @@ body {
     background: none !important;
     text-align: center;
     border-bottom: none;
+    font-weight: bold;
 }
 
 .loader-spinner {

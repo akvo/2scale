@@ -12,22 +12,16 @@ const start_date = $("meta[name='start-date']").attr("content");
 const end_date = $("meta[name='end-date']").attr("content");
 const endpoints = [country_id, partnership_id, start_date, end_date].join("/");
 
-/* Static */
-const info = {
-    head: "Header Lorem Ipsum",
-    content: "Lorem Ipsum Dolor Sit Amet for Footer"
-};
-
 // getCards("partnership/top-three/" + endpoints);
 
 /* First Row */
 $("main").append("<div class='row' id='first-row'></div>");
-getCharts("partnership/commodities/" + endpoints, "first-row", info, "12");
+getCharts("partnership/commodities/" + endpoints, "first-row", "12");
 
 /* Second Row */
 $("main").append("<hr><div class='row' id='second-row'></div>");
-getCharts("partnership/countries-total/" + endpoints, "second-row", info, "6");
-getCharts("partnership/project-total/" + endpoints, "second-row", info, "6");
+getCharts("partnership/countries-total/" + endpoints, "second-row", "6");
+getCharts("partnership/project-total/" + endpoints, "second-row", "6");
 
 // Table container
 renderRsrTableTemplate("datatables", "142%");
@@ -45,17 +39,17 @@ getSingleCards("report/reachreact/card/" + endpoints, "third-row");
 $("#chart-report-container").append(
     "<hr><div class='row' id='fourth-row'></div>"
 );
-getCharts("report/workstream/" + endpoints, "fourth-row", info, "12");
+getCharts("report/workstream/" + endpoints, "fourth-row", "12");
 
 $("#chart-report-container").append(
     "<hr><div class='row' id='fifth-row'></div>"
 );
-getCharts("report/program-theme/" + endpoints, "fifth-row", info, "12");
+getCharts("report/program-theme/" + endpoints, "fifth-row", "12");
 
 $("#chart-report-container").append(
     "<hr><div class='row' id='sixth-row'></div>"
 );
-getCharts("report/target-audience/" + endpoints, "sixth-row", info, "12");
+getCharts("report/target-audience/" + endpoints, "sixth-row", "12");
 
 $("#chart-report-container").append(
     "<hr><div class='row' id='seventh-row'></div>"
@@ -63,9 +57,7 @@ $("#chart-report-container").append(
 getCharts(
     "reachreact/gender/" + endpoints,
     "seventh-row",
-    info,
     "12",
-    "",
     "age-category"
 );
 

@@ -159,7 +159,7 @@ export const getSingleCards = (cards, id) => {
     single.then((res) => generateSingleCards(res, gradients[2], id));
 };
 
-export const getCharts = (chart, row, info, md, color, customTitle = null) => {
+export const getCharts = (chart, row, md, customTitle = null, height = 450) => {
     let chartname = chart.split("/")[1];
     chartname = customTitle !== null ? customTitle : chartname;
     let html = (
@@ -178,7 +178,7 @@ export const getCharts = (chart, row, info, md, color, customTitle = null) => {
                             <span class="sr-only">Loading...</span>
                         </div>
                     </div>
-                    <div id={`${chartname}`} style="height:450px"></div>
+                    <div id={`${chartname}`} style={`height:${height}px`}></div>
                 </div>
             </div>
         </div>

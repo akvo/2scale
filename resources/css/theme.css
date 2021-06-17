@@ -51,6 +51,7 @@ html,
 body {
     overflow-x: hidden;
     font-family: "MarkPro", sans-serif;
+    color: #333433;
     /* Prevent scroll on narrow devices */
 }
 
@@ -244,6 +245,7 @@ input.btn.dropdown-toggle.btn-light {
 }
 button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     color: #fff;
+    background-color: #a43332 !important;
 }
 .daterangepicker .ranges li.active,
 .dropdown-item.active,
@@ -270,7 +272,11 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
 .page-link {
     box-shadow: none !important;
 }
+.card-header {
+    font-weight: bold;
+}
 .card-header.2scale-brand {
+    font-weight: 700;
     padding: 0.75rem 1.25rem;
     margin-bottom: 0;
     background-color: #c9cdc0 !important;

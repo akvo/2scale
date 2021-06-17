@@ -95,6 +95,10 @@ const Bar = (data, extra) => {
                 },
             },
         ],
+        legend: {
+            data: labels,
+            ...Legend,
+        },
         ...Color,
         ...backgroundColor,
         ...Easing,

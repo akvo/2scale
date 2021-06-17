@@ -6,7 +6,6 @@ import { parentDeep, formatNumber } from "../util.js";
 import {
     Color,
     Easing,
-    Legend,
     TextStyle,
     backgroundColor,
     Icons,
