@@ -194,9 +194,10 @@ class ApiController extends Controller
             ->get();
 
         $results = $rsrResults->map(function ($rs) use ($charts) {
-            $rs['rsr_indicators'] = $rs->rsr_indicators->transform(function ($ind) {
+            $chart = $charts->where('id', $rs['id'])->first();
+            $rs['rsr_indicators'] = $rs->rsr_indicators->transform(function ($ind) use ($chart) {
                 if ($ind['has_dimension']) {
-                    $ind['rsr_dimensions'] = $ind->rsr_dimensions->transform(function ($dim) use ($ind) {
+                    $ind['rsr_dimensions'] = $ind->rsr_dimensions->transform(function ($dim) use ($ind, $chart) {
                         $dimVal = $dim->rsr_dimension_values->map(function ($dv) use ($ind) {
                             $actualDimValues = $ind['rsr_periods']->pluck('rsr_period_dimension_values')
                                 ->flatten(1)->where('rsr_dimension_value_id', $dv['id']);
@@ -231,8 +232,19 @@ class ApiController extends Controller
                                 'actual_value' => $actualDimValues->sum('value')
                             ];
                         });
+
+                        $text = null;
+                        if (isset($chart['dimensions'])) {
+                            foreach ($chart['dimensions'] as $key => $item) {
+                                if (Str::contains($dim['name'], $item['dimension'])) {
+                                    $text = $item['target_text'];
+                                }
+                            }
+                        }
+
                         return [
                             'name' => $dim['name'],
+                            'target_text' => $text,
                             'values' => $dimVal
                         ];
                     });
@@ -242,19 +254,36 @@ class ApiController extends Controller
                         return $p;
                     });
                 }
+
+                if (Str::contains($ind['title'], "Total value(Euros) of financial services")) {
+                    $ind['rsr_dimensions'] = collect($ind['rsr_dimensions'])->push(
+                        [
+                            'name' => $ind['title'],
+                            'target_text' => '{number} Euros as value of additional financial services.',
+                            'values' => [],
+                            'target_value' => $ind['target_value'],
+                            'actual_value' => $ind['rsr_periods']->sum('actual_value')
+                        ]
+                    );
+                }
                 $ind['actual_value'] = $ind['rsr_periods']->sum('actual_value');
                 return $ind;
             });
-            $chart = $charts->where('id', $rs['id'])->first();
+
             return [
                 "group" => $chart['group'],
-                "title" => Str::after($rs['title'], ": "),
                 "uii" => Str::before($rs['title'],":"),
+                "target_text" => $chart['target_text'],
                 "target_value" => $rs['rsr_indicators']->sum('target_value'),
                 "actual_value" => $rs['rsr_indicators']->sum('actual_value'),
                 "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1)
             ];
-        })->groupBy('group');
+        })->groupBy('group')->map(function ($res, $key) {
+            return [
+                "group" => $key,
+                "chidlrens" => $res
+            ];
+        })->values();
 
         return $results;
     }
