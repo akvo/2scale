@@ -33,6 +33,7 @@ class RsrWordReportController extends Controller
             $pid = $request->country_id;
             // $pid = $request->partnership_id;
         }
+
         $rsrReport = $chart->getAndTransformRsrData($pid);
         if (count($rsrReport) === 0) {
             return response('no data available', 503);
@@ -91,6 +92,20 @@ class RsrWordReportController extends Controller
         // Start table rendering
         $section->addListItem('Summary of the PPPs contribution to the UIIs', 1, $listItemStyle, 'multilevel-'.$n);
         $phpWord = $this->renderTable($phpWord, $section, $data, $columns);
+
+        // config render split table
+        $split = [
+            ['UII-1 BoP', 'UII-2 SHF', 'UII-3 EEP'],
+            ['UII-4 SME', 'UII-5 NonFE', 'UII-6 MSME', 'UII-7 INNO'],
+            ['UII-8 FSERV'],
+        ];
+        foreach ($split as $key => $sp) {
+            $section->addTextBreak(2);
+            $filteredColumns = $columns->whereIn('uii', $sp)->values();
+            $filteredData = $data;
+            $filteredData['columns'] = $data['columns']->whereIn('uii', $sp)->values();
+            $phpWord = $this->renderTable($phpWord, $section, $filteredData, $filteredColumns, true);
+        }
         // EOL of Table
 
         $section->addTextBreak(2);
@@ -118,7 +133,7 @@ class RsrWordReportController extends Controller
         return $phpWord;
     }
 
-    private function renderTable($phpWord, $section, $data, $columns)
+    private function renderTable($phpWord, $section, $data, $columns, $split=false)
     {
         $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999', 'layout' => Table::LAYOUT_AUTO);
         $spanTableStyleName = 'Rsr Table';
@@ -127,21 +142,22 @@ class RsrWordReportController extends Controller
 
         // Header row
         $table->addRow();
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, true, $split);
         $table->addRow();
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, false);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, false, $split);
         // end of header row
 
         // Body
         $table->addRow();
-        $data['columns']->each(function ($col) use ($table) {
+        $width = $split ? 800 : 350;
+        $data['columns']->each(function ($col) use ($table, $width) {
             if (count($col['rsr_dimensions']) === 0) {
-                $table->addCell(1000)->addText($col['total_actual_value'], $this->alignHCentered);
+                $table->addCell($width)->addText($col['total_actual_value'], $this->alignHCentered);
             }
             if (count($col['rsr_dimensions']) > 0) {
                 $dimensions = collect($col['rsr_dimensions'])->pluck('rsr_dimension_values')->flatten(1);
                 foreach ($dimensions as $key => $value) {
-                    $table->addCell(700, $this->alignVCentered)->addText($value['total_actual_value'], null, $this->alignHCentered);
+                    $table->addCell($width, $this->alignVCentered)->addText($value['total_actual_value'], null, $this->alignHCentered);
                 }
             }
         });
@@ -149,23 +165,24 @@ class RsrWordReportController extends Controller
         return $phpWord;
     }
 
-    private function renderTableHeader($phpWord, $table, $columns, $firstRow=true)
+    private function renderTableHeader($phpWord, $table, $columns, $firstRow=true, $split)
     {
-        $columns->each(function ($col) use ($table, $firstRow) {
+        $width = $split ? 800 : 350;
+        $columns->each(function ($col) use ($table, $firstRow, $width) {
             // for first row
             if (count($col['subtitle']) === 0 && $firstRow) {
                 $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
-                $table->addCell(350, $cellRowSpan)->addText($col['uii'], $this->alignHCentered);
+                $table->addCell($width, $cellRowSpan)->addText($col['uii'], $this->alignHCentered);
             }
             if (count($col['subtitle']) > 0 && $firstRow) {
                 $subtitles = collect($col['subtitle'])->pluck('values')->flatten(1);
                 $cellColSpan = array('gridSpan' => count($subtitles), 'valign' => 'center');
-                $table->addCell(count($subtitles) * 350, $cellColSpan)->addText($col['uii'], null, $this->alignHCentered);
+                $table->addCell(count($subtitles) * $width, $cellColSpan)->addText($col['uii'], null, $this->alignHCentered);
             }
             // for second row
             if (count($col['subtitle']) === 0 && !$firstRow) {
                 $cellRowContinue = array('vMerge' => 'continue');
-                $table->addCell(350, $cellRowContinue);
+                $table->addCell($width, $cellRowContinue);
             }
             if (count($col['subtitle']) > 0 && !$firstRow) {
                 $subtitles = collect($col['subtitle'])->pluck('values')->flatten(1)->values();
@@ -193,7 +210,7 @@ class RsrWordReportController extends Controller
                             $name = "JF";
                         }
                     }
-                    $table->addCell(350, $this->alignVCentered)->addText($name, null, $this->alignHCentered);
+                    $table->addCell($width, $this->alignVCentered)->addText($name, null, $this->alignHCentered);
                 }
             }
         });

@@ -796,6 +796,7 @@ class ChartController extends Controller
                 ];
                 # EOL UII 8 : As in RSR
             }
+            $res['uii'] = Str::before($res['title'], ': ');
             $this->collections->push($res);
             return $res;
         });
@@ -808,7 +809,7 @@ class ChartController extends Controller
                     !Str::contains($item['title'], "Private sector contribution");
         })->values();
         $results = $parents->first()->only('rsr_project_id', 'project');
-        $results['columns'] = $parents;
+        $results['columns'] = $parents->sortBy('uii')->values();
 
         $childs = $this->collections->where('parent_project', $results['rsr_project_id']);
         $results['childrens'] = $childs->unique('project')->values();
@@ -821,7 +822,10 @@ class ChartController extends Controller
                     return !Str::contains($item['title'], 'Amount of co-financing') &&
                             !Str::contains($item['title'], "2SCALE's Contribution") &&
                             !Str::contains($item['title'], "Private sector contribution");
-                })->values();
+                })->values()->map(function ($col) {
+                    $col['uii'] = Str::before($col['title'], ': ');
+                    return $col;
+                })->sortBy('uii')->values();
 
                 $childs = $this->collections->where('parent_project', $child['rsr_project_id']);
                 $child['childrens'] = $childs->unique('project')->values();
@@ -834,7 +838,11 @@ class ChartController extends Controller
                             return !Str::contains($item['title'], 'Amount of co-financing') &&
                                     !Str::contains($item['title'], "2SCALE's Contribution") &&
                                     !Str::contains($item['title'], "Private sector contribution");
-                        })->values();
+                        })->values()->map(function ($col) {
+                            $col['uii'] = Str::before($col['title'], ': ');
+                            return $col;
+                        })->sortBy('uii')->values();
+
                         return $child;
                     });
                 }
@@ -854,7 +862,7 @@ class ChartController extends Controller
                             return !Str::contains($item['title'], 'Amount of co-financing') &&
                                     !Str::contains($item['title'], "2SCALE's Contribution") &&
                                     !Str::contains($item['title'], "Private sector contribution");
-                        })->values(),
+                        })->values()->sortBy('uii')->values(),
             "data" => $results,
         ];
     }
