@@ -120,6 +120,18 @@ return [
                     "sector_qid" => null,
                 ]
             )
+        ],
+        [
+            "name" => "Reporting Forms",
+            "list" => array(
+                [
+                    "form_id" => 149600165,
+                    "name" => "Quarterly Report - Country level",
+                    "survey_id" => 153740151,
+                    "partner_qid"=> 149590228,
+                    "sector_qid" => null,
+                ]
+            )
         ]
     ),
     // unused

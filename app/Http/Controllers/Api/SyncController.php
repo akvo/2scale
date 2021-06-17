@@ -221,6 +221,18 @@ class SyncController extends Controller
                     'repeat' => $group['repeatable']
                 ]
             );
+            $isQObject = Arr::isAssoc($group['question']);
+            if ($isQObject) {
+                dump($group);
+                $qs = $this->breakQuestions($form_id, $group['question'], $qgroup);
+                return $questions->updateOrCreate(
+                    [
+                        'question_id' => $qs['question_id'],
+                        'form_id' => $qs['form_id']
+                    ],
+                    $qs
+                );
+            }
             $questionlist = collect($group['question'])->map(function($question)
                 use ($form_id, $questions, $qgroup) {
                 // return $this->breakQuestions($form_id, $question);
