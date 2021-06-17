@@ -259,7 +259,7 @@ class ApiController extends Controller
                     $ind['rsr_dimensions'] = collect($ind['rsr_dimensions'])->push(
                         [
                             'name' => $ind['title'],
-                            'target_text' => '{number} Euros as value of additional financial services.',
+                            'target_text' => '##number## Euros as value of additional financial services.',
                             'values' => [],
                             'target_value' => $ind['target_value'],
                             'actual_value' => $ind['rsr_periods']->sum('actual_value')
@@ -281,7 +281,7 @@ class ApiController extends Controller
         })->groupBy('group')->map(function ($res, $key) {
             return [
                 "group" => $key,
-                "chidlrens" => $res
+                "childrens" => $res
             ];
         })->values();
 

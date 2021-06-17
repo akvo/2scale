@@ -31,7 +31,7 @@ body{
     margin: 5px;
 }
 </style>
-<body class="text-center">
+<body>
     <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
       </main>

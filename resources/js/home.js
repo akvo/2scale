@@ -11,12 +11,11 @@ $("main").append(
             <img src="/images/2scale-infographic.svg" class="img img-fluid" />
         </div>
         <div class="row" id="first-row">
-            <div
-                class="col-md-12"
-                style="text-align: center; font-size:24px; margin-top: 30px; margin-bottom: 30px;"
-            >
-                2SCALE partners with business champions to leverage food
-                nutrition and security:
+            <div class="col-md-12">
+                <h3 class="responsive font-weight-bold text-center my-4">
+                    2SCALE partners with business champions to leverage food
+                    nutrition and security:
+                </h3>
             </div>
         </div>
         <hr />
