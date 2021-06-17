@@ -683,21 +683,42 @@ class ChartController extends Controller
         return $this->getAndTransformRsrData($partnershipId);
     }
 
-    public function getAndTransformRsrData($partnershipId)
+    public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false)
     {
         $data = \App\RsrProject::where('partnership_id', $partnershipId)
-                ->with(['rsr_results' => function ($query) {
+                ->with(['rsr_results' => function ($query) use ($period_start, $period_end) {
                     // $query->orderBy('order');
                     $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
-                    $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
-                    $query->with(['childrens' => function ($query) {
+                    // $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
+                    $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
+                        if ($period_start && $period_end) {
+                            $query->where('period_start', date($period_start));
+                            $query->where('period_end', date($period_end));
+                        }
+                        $query->with('rsr_period_dimension_values');
+                    }]);
+                    $query->with(['childrens' => function ($query) use ($period_start, $period_end) {
                         // $query->orderBy('order');
                         $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
-                        $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
-                        $query->with(['childrens' => function ($query) {
+                        // $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
+                        $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
+                            if ($period_start && $period_end) {
+                                $query->where('period_start', date($period_start));
+                                $query->where('period_end', date($period_end));
+                            }
+                            $query->with('rsr_period_dimension_values');
+                        }]);
+                        $query->with(['childrens' => function ($query) use ($period_start, $period_end) {
                             // $query->orderBy('order');
                             $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
-                            $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
+                            // $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
+                            $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
+                                if ($period_start && $period_end) {
+                                    $query->where('period_start', date($period_start));
+                                    $query->where('period_end', date($period_end));
+                                }
+                                $query->with('rsr_period_dimension_values');
+                            }]);
                         }]);
                     }]);
                 }])->first();
