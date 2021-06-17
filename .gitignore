@@ -8,7 +8,7 @@
 /public/storage
 /public/uploads
 /public/mix-manifest.json
-/public/.docx
+/public/*.docx
 /storage/*.key
 /vendor
 *.sql
