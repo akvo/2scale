@@ -21,6 +21,7 @@ class RsrWordReportController extends Controller
 
     public function getRsrWordReport(Request $request)
     {
+        $reportConfig = config('rsr-word-report');
         $chart = new ChartController();
         $partnership = $this->getPartnershipCache();
         $pid = null;
@@ -49,18 +50,18 @@ class RsrWordReportController extends Controller
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $country);
+        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $country, $reportConfig['questions']);
 
         if (count($rsrReport['data']['childrens']) > 0) {
             // render document for the childrens
             foreach ($rsrReport['data']['childrens'] as $key => $child) {
-                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $country);
+                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $country, $reportConfig['questions']);
             }
         }
 
         // save file
         $writers = ['format' => 'Word2007', 'extension' => 'docx'];
-        $filename = "test";
+        $filename = "RSR_Report_".$country;
         $targetFile = "{$filename}.{$writers['extension']}";
         $save = $phpWord->save($targetFile, $writers['format']);
         if (!$save) {
@@ -69,7 +70,7 @@ class RsrWordReportController extends Controller
         return ["link" => env('APP_URL')."/".$filename.".".$writers['extension']];
     }
 
-    private function renderWordDoc($phpWord, $columns, $data, $country)
+    private function renderWordDoc($phpWord, $columns, $data, $country, $reportBody)
     {
         $n = microtime(true);
         // start section
@@ -97,43 +98,45 @@ class RsrWordReportController extends Controller
         $section->addText('Partnership Name: '.$data['project'], $titleStyle);
         $section->addLine($lineStyle);
 
-        // Start table rendering
-        $section->addListItem('Summary of the PPPs contribution to the UIIs', 1, $listItemStyle, 'multilevel-'.$n);
-        // $phpWord = $this->renderTable($phpWord, $section, $data, $columns);
+        $lipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras varius molestie ipsum. Vestibulum maximus eget elit id mattis. Aliquam quis felis ac neque imperdiet maximus. Vestibulum molestie nibh mauris, at vehicula neque fringilla sit amet. Praesent vel posuere lectus. Sed sagittis magna est, condimentum suscipit purus facilisis et. Vestibulum ante.";
+        foreach ($reportBody as $key => $body) {
+            $numberingLevelStart = ($body['section']) === 1 ? 1 : 0;
+            $section->addTextBreak(1);
+            $section->addListItem($body['heading'], $numberingLevelStart, $listItemStyle, 'multilevel-'.$n);
 
-        // config render split table
-        $split = [
-            ['UII-1 BoP', 'UII-2 SHF', 'UII-3 EEP'],
-            ['UII-4 SME', 'UII-5 NonFE', 'UII-6 MSME', 'UII-7 INNO'],
-            ['UII-8 FSERV'],
-        ];
-        foreach ($split as $key => $sp) {
-            $section->addTextBreak(2);
-            $filteredColumns = $columns->whereIn('uii', $sp)->values();
-            $filteredData = $data;
-            $filteredData['columns'] = $data['columns']->whereIn('uii', $sp)->values();
-            $phpWord = $this->renderTable($phpWord, $section, $filteredData, $filteredColumns, true);
+            // Start table rendering
+            if (isset($body['table']) && $body['table']) {
+                // $phpWord = $this->renderTable($phpWord, $section, $data, $columns);
+                // config render split table
+                $split = [
+                    ['UII-1 BoP', 'UII-2 SHF', 'UII-3 EEP'],
+                    ['UII-4 SME', 'UII-5 NonFE', 'UII-6 MSME', 'UII-7 INNO'],
+                    ['UII-8 FSERV'],
+                ];
+                foreach ($split as $key => $sp) {
+                    $section->addTextBreak(2);
+                    $filteredColumns = $columns->whereIn('uii', $sp)->values();
+                    $filteredData = $data;
+                    $filteredData['columns'] = $data['columns']->whereIn('uii', $sp)->values();
+                    $phpWord = $this->renderTable($phpWord, $section, $filteredData, $filteredColumns, true);
+                }
+            }
+            // EOL of Table
+            $section->addTextBreak(1);
+
+            foreach ($body['question'] as $key => $question) {
+                if ($question['numbering']) {
+                    $section->addListItem($question['text'], $numberingLevelStart+1, $listItemStyle, 'multilevel-'.$n);
+                    // render value
+                    $section->addText($lipsum, null, $this->alignJustify);
+                } else {
+                    // render value
+                    $section->addText($lipsum, null, $this->alignJustify);
+                }
+                $section->addTextBreak(1);
+            }
+            $section->addTextBreak(1);
         }
-        // EOL of Table
-
-        $section->addTextBreak(2);
-        $section->addListItem('Incubating inclusive model', 1, $listItemStyle, 'multilevel-'.$n);
-        $section->addTextBreak(1);
-        $section->addListItem('Govern and adopt inclusive agribusiness partnership', 2, $listItemStyle, 'multilevel-'.$n);
-        $section->addListItem('Improve access to nutritional food for the BoP consumer', 2, $listItemStyle, 'multilevel-'.$n);
-        $section->addListItem('Foster competitiveness and inclusiveness of the food value chain', 2, $listItemStyle, 'multilevel-'.$n);
-        $section->addListItem('Professionalize Agribusiness Clusters', 2, $listItemStyle, 'multilevel-'.$n);
-        $section->addListItem('Strengthen the enabling agribusiness environment', 2, $listItemStyle, 'multilevel-'.$n);
-
-        $section->addTextBreak(2);
-        $section->addListItem('Other activities', 0, $listItemStyle, 'multilevel-'.$n);
-        $section->addTextBreak(1);
-        $section->addListItem('Action research', 1, $listItemStyle, 'multilevel-'.$n);
-        $section->addListItem('Monitoring and Evaluation', 1, $listItemStyle, 'multilevel-'.$n);
-        $section->addListItem('Communications', 1, $listItemStyle, 'multilevel-'.$n);
-
-        $section->addTextBreak(2);
-        $section->addListItem('Conclusion and follow-up', 0, $listItemStyle, 'multilevel-'.$n);
 
         $footer = $section->addFooter();
         $footer->addPreserveText('Page {PAGE} of {NUMPAGES}', null, $this->alignRight);
@@ -143,7 +146,7 @@ class RsrWordReportController extends Controller
 
     private function renderTable($phpWord, $section, $data, $columns, $split=false)
     {
-        $width = $split ? 800 : 350;
+        $width = $split ? 850 : 350;
         $firstColumnWidth = $width + 50;
         $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999', 'layout' => Table::LAYOUT_AUTO);
         $spanTableStyleName = 'Rsr Table';
@@ -207,7 +210,7 @@ class RsrWordReportController extends Controller
 
     private function renderTableHeader($phpWord, $table, $columns, $row, $split)
     {
-        $width = $split ? 800 : 350;
+        $width = $split ? 850 : 350;
         $columns->each(function ($col) use ($table, $row, $width) {
             // for first row
             if (count($col['subtitle']) === 0 && $row === "first") {
