@@ -27,9 +27,9 @@ export const Color = {
     color: [
         "#a43332",
         "#609ba7",
-        "#C9CDC0",
         "#3D588A",
         "#5C616A",
+        "#C9CDC0",
         "#DBC2CF",
         "#2E4756",
         "#CC9485",

@@ -87,10 +87,11 @@ body {
 .uii-col.uii-percentage {
     width: 100px;
     font-weight: bold;
-    font-size: 38px;
+    font-size: 34px;
     vertical-align: middle;
     text-align: center;
 }
 .uii-charts {
+    margin-top: 1rem;
     text-align: center;
 }

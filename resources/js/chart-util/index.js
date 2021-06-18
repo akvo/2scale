@@ -5,6 +5,7 @@ import TreeMap from "./TreeMap";
 import SanKey from "./SanKey";
 import Radar from "./Radar";
 import BarStack from "./BarStack";
+import BarGroup from "./BarGroup";
 import axios from "axios";
 import createElement from "../app";
 
@@ -24,6 +25,8 @@ export const generateOptions = (type, dataset, extra = {}) => {
             return Radar(dataset, extra);
         case "BARSTACK":
             return BarStack(dataset, extra);
+        case "BARGROUP":
+            return BarGroup(dataset, extra);
         default:
             return Bar(dataset, extra);
     }
@@ -69,6 +72,23 @@ const generateCharts = (
                 if (transform) {
                     option = transform(option);
                     console.log(option);
+                }
+                if (
+                    !transform &&
+                    (type === "BARSTACK" || type === "BARGROUP")
+                ) {
+                    let collections = [];
+                    option.map((x) => {
+                        x.childrens?.map((c) => {
+                            collections.push({
+                                name: c.name,
+                                group: x.name,
+                                stack: x.stack,
+                                value: c.value,
+                            });
+                        });
+                    });
+                    option = collections;
                 }
                 option = generateOptions(type, option);
                 myChart.setOption(option);

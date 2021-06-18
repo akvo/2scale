@@ -4,6 +4,7 @@ import {
     TextStyle,
     backgroundColor,
     Icons,
+    Legend,
 } from "./chart-style.js";
 import { formatNumber } from "../util.js";
 import sum from "lodash/sum";

@@ -1,5 +1,5 @@
 import createElement from "./app";
-import { generateOptions } from "./chart-util";
+import generateCharts, { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
 const axios = window.axios;
 
@@ -8,9 +8,9 @@ let charts = [];
 
 const dimensions = (x, idx) => {
     return x.map((d, i) => {
-        let series = [];
         const id = `uii-chart-${i}-${idx}`;
         if (d.values.length > 0) {
+            let series = [];
             d.values.map((v) => {
                 let restTarget = v.target_value - v.actual_value;
                 series.push({
@@ -156,5 +156,29 @@ axios
             const options = generateOptions(x.type, x.data);
             const myChart = echarts.init(document.getElementById(x.id));
             myChart.setOption(options);
+        });
+        return true;
+    })
+    .then((x) => {
+        $("main").append(
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="responsive font-weight-bold text-center my-4">
+                        Number of smallholder farmers participating in one of
+                        the programs
+                    </h3>
+                    <div class="number-of-farmer-stack" id="first-row"></div>
+                    <hr />
+                </div>
+            </div>
+        );
+        generateCharts({
+            type: "BARGROUP",
+            endpoint: "flow/rnr-gender?sum=country_id,gender+age",
+            title: "",
+            id: "number-of-farmer-stack",
+            md: 12,
+            height: 600,
+            parentId: "first-row",
         });
     });

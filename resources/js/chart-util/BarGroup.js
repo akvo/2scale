@@ -7,7 +7,7 @@ import {
 } from "./chart-style.js";
 import _ from "lodash";
 
-const BarStack = (data, extra) => {
+const BarGroup = (data, extra) => {
     if (!data) {
         return {
             title: {
@@ -24,34 +24,14 @@ const BarStack = (data, extra) => {
     let series = _.chain(data)
         .groupBy("name")
         .map((x, i) => {
-            if (i === "target value") {
-                return {
-                    name: i,
-                    label: {
-                        show: true,
-                        position: "inside",
-                        color: "#a43332",
-                    },
-                    stack: "t",
-                    type: "bar",
-                    barWidth: 50,
-                    data: x.map((v) => v.value),
-                    itemStyle: {
-                        color: "transparent",
-                        borderType: "dashed",
-                        borderColor: "#000",
-                    },
-                };
-            }
             return {
                 name: i,
                 label: {
                     show: true,
-                    position: "inside",
+                    position: "top",
                 },
-                barWidth: 50,
-                stack: "t",
                 type: "bar",
+                barWidth: 200 / x.length,
                 data: x.map((v) => v.value),
             };
         })
@@ -74,7 +54,7 @@ const BarStack = (data, extra) => {
         },
         grid: {
             top: "50px",
-            left: "auto",
+            left: "100px",
             right: "auto",
             bottom: "25px",
             borderColor: "#ddd",
@@ -96,7 +76,7 @@ const BarStack = (data, extra) => {
             {
                 type: "value",
                 axisLabel: {
-                    inside: true,
+                    inside: false,
                     backgroundColor: "#f2f2f2",
                     padding: 5,
                     fontFamily: "MarkPro",
@@ -128,4 +108,4 @@ const BarStack = (data, extra) => {
     return option;
 };
 
-export default BarStack;
+export default BarGroup;
