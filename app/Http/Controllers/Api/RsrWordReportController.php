@@ -95,11 +95,11 @@ class RsrWordReportController extends Controller
         $sectionStyle->setMarginRight(\PhpOffice\PhpWord\Shared\Converter::cmToTwip(1.5));
         $sectionStyle->setMarginLeft(\PhpOffice\PhpWord\Shared\Converter::cmToTwip(1.5));
 
-        $section->addText('Quarterly report month-month 2020', $titleStyle, $this->alignHCentered);
+        $section->addText(htmlspecialchars('Quarterly report month-month 2020'), $titleStyle, $this->alignHCentered);
         $section->addText($country, $titleStyle, $this->alignHCentered);
         $section->addTextBreak(2);
 
-        $section->addText('Partnership Name: '.$data['project'], $titleStyle);
+        $section->addText(htmlspecialchars('Partnership Name: '.$data['project']), $titleStyle);
         $section->addLine($lineStyle);
 
         $lipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras varius molestie ipsum. Vestibulum maximus eget elit id mattis. Aliquam quis felis ac neque imperdiet maximus. Vestibulum molestie nibh mauris, at vehicula neque fringilla sit amet. Praesent vel posuere lectus. Sed sagittis magna est, condimentum suscipit purus facilisis et. Vestibulum ante.";
@@ -132,10 +132,10 @@ class RsrWordReportController extends Controller
                 if ($question['numbering']) {
                     $section->addListItem($question['text'], $numberingLevelStart+1, $listItemStyle, 'multilevel-'.$n);
                     // render value
-                    $section->addText($lipsum, null, $this->alignJustify);
+                    $section->addText(htmlspecialchars($lipsum), null, $this->alignJustify);
                 } else {
                     // render value
-                    $section->addText($lipsum, null, $this->alignJustify);
+                    $section->addText(htmlspecialchars($lipsum), null, $this->alignJustify);
                 }
                 $section->addTextBreak(1);
             }
@@ -160,7 +160,7 @@ class RsrWordReportController extends Controller
         // Header row
         $table->addRow();
         $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
-        $table->addCell($firstColumnWidth, $cellRowSpan)->addText('Value', 'tableFont', $this->alignHCentered);
+        $table->addCell($firstColumnWidth, $cellRowSpan)->addText(htmlspecialchars('Value'), 'tableFont', $this->alignHCentered);
         $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'first', $split);
         $table->addRow();
         $cellRowContinue = array('vMerge' => 'continue');
@@ -173,38 +173,38 @@ class RsrWordReportController extends Controller
 
         // Body
         $table->addRow();
-        $table->addCell($firstColumnWidth)->addText('Target', 'tableFont', $this->alignHCentered);
+        $table->addCell($firstColumnWidth)->addText(htmlspecialchars('Target'), 'tableFont', $this->alignHCentered);
         $data['columns']->each(function ($col) use ($table, $width) {
             if (count($col['rsr_dimensions']) === 0) {
-                $table->addCell($width)->addText($col['total_target_value'], 'tableFont', $this->alignHCentered);
+                $table->addCell($width)->addText(htmlspecialchars($col['total_target_value']), 'tableFont', $this->alignHCentered);
             }
             if (count($col['rsr_dimensions']) > 0) {
                 $dimensions = collect($col['rsr_dimensions'])->pluck('rsr_dimension_values')->flatten(1);
                 foreach ($dimensions as $key => $value) {
-                    $table->addCell($width, $this->alignVCentered)->addText($value['value'], 'tableFont', $this->alignHCentered);
+                    $table->addCell($width, $this->alignVCentered)->addText(htmlspecialchars($value['value']), 'tableFont', $this->alignHCentered);
                 }
             }
             if (count($col['rsr_dimensions']) > 0 && count($col['rsr_indicators']) > 0) {
                 foreach ($col['rsr_indicators'] as $key => $ind) {
-                    $table->addCell($width, $this->alignVCentered)->addText($ind['target_value'], 'tableFont', $this->alignHCentered);
+                    $table->addCell($width, $this->alignVCentered)->addText(htmlspecialchars($ind['target_value']), 'tableFont', $this->alignHCentered);
                 }
             }
         });
         $table->addRow();
-        $table->addCell($firstColumnWidth)->addText('Actual', 'tableFont', $this->alignHCentered);
+        $table->addCell($firstColumnWidth)->addText(htmlspecialchars('Actual'), 'tableFont', $this->alignHCentered);
         $data['columns']->each(function ($col) use ($table, $width) {
             if (count($col['rsr_dimensions']) === 0) {
-                $table->addCell($width)->addText($col['total_actual_value'], 'tableFont', $this->alignHCentered);
+                $table->addCell($width)->addText(htmlspecialchars($col['total_actual_value']), 'tableFont', $this->alignHCentered);
             }
             if (count($col['rsr_dimensions']) > 0) {
                 $dimensions = collect($col['rsr_dimensions'])->pluck('rsr_dimension_values')->flatten(1);
                 foreach ($dimensions as $key => $value) {
-                    $table->addCell($width, $this->alignVCentered)->addText($value['total_actual_value'], 'tableFont', $this->alignHCentered);
+                    $table->addCell($width, $this->alignVCentered)->addText(htmlspecialchars($value['total_actual_value']), 'tableFont', $this->alignHCentered);
                 }
             }
             if (count($col['rsr_dimensions']) > 0 && count($col['rsr_indicators']) > 0) {
                 foreach ($col['rsr_indicators'] as $key => $ind) {
-                    $table->addCell($width, $this->alignVCentered)->addText($ind['total_actual_value'], 'tableFont', $this->alignHCentered);
+                    $table->addCell($width, $this->alignVCentered)->addText(htmlspecialchars($ind['total_actual_value']), 'tableFont', $this->alignHCentered);
                 }
             }
         });
@@ -219,7 +219,7 @@ class RsrWordReportController extends Controller
             // for first row
             if (count($col['subtitle']) === 0 && $row === "first") {
                 $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
-                $table->addCell($width, $cellRowSpan)->addText($col['uii'], 'tableFont', $this->alignHCentered);
+                $table->addCell($width, $cellRowSpan)->addText(htmlspecialchars($col['uii']), 'tableFont', $this->alignHCentered);
             }
             if (count($col['subtitle']) > 0 && $row === "first") {
                 $values = collect($col['subtitle'])->map(function ($s) {
@@ -231,10 +231,10 @@ class RsrWordReportController extends Controller
                 $subCount = count($col['subtitle']);
                 if ($subCount === 1) {
                     $cellColSpan = array('gridSpan' => $values, 'vMerge' => 'restart', 'valign' => 'center');
-                    $table->addCell($values * $width, $cellColSpan)->addText($col['uii'], 'tableFont', $this->alignHCentered);
+                    $table->addCell($values * $width, $cellColSpan)->addText(htmlspecialchars($col['uii']), 'tableFont', $this->alignHCentered);
                 } else {
                     $cellColSpan = array('gridSpan' => $values, 'valign' => 'center');
-                    $table->addCell($values * $width)->addText($col['uii'], 'tableFont', $this->alignHCentered);
+                    $table->addCell($values * $width)->addText(htmlspecialchars($col['uii']), 'tableFont', $this->alignHCentered);
                 }
             }
             // for second row
@@ -264,10 +264,10 @@ class RsrWordReportController extends Controller
                         }
                         if (count($sub['values']) === 0) {
                             $cellColSpan = array('vMerge' => 'restart', 'valign' => 'center');
-                            $table->addCell($valCount * $width, $cellColSpan)->addText($name, 'tableFont', $this->alignHCentered);
+                            $table->addCell($valCount * $width, $cellColSpan)->addText(htmlspecialchars($name), 'tableFont', $this->alignHCentered);
                         } else {
                             $cellColSpan = array('gridSpan' => $valCount, 'valign' => 'center');
-                            $table->addCell($valCount * $width, $cellColSpan)->addText($name, 'tableFont', $this->alignHCentered);
+                            $table->addCell($valCount * $width, $cellColSpan)->addText(htmlspecialchars($name), 'tableFont', $this->alignHCentered);
                         }
                     }
                 }
@@ -307,7 +307,7 @@ class RsrWordReportController extends Controller
                                     $name = "JF";
                                 }
                             }
-                            $table->addCell($width, $this->alignVCentered)->addText($name, 'tableFont', $this->alignHCentered);
+                            $table->addCell($width, $this->alignVCentered)->addText(htmlspecialchars($name), 'tableFont', $this->alignHCentered);
                         }
                     }
                 }
