@@ -5,9 +5,9 @@ import {
     backgroundColor,
     Icons,
 } from "./chart-style.js";
-import sum from "lodash/sum";
+import _ from "lodash";
 
-const BarStack = (title, subtitle, data, extra) => {
+const BarStack = (data, extra) => {
     if (!data) {
         return {
             title: {
@@ -19,17 +19,44 @@ const BarStack = (title, subtitle, data, extra) => {
             },
         };
     }
+    let xAxis = _.uniq(data.map((x) => x.group));
+    let legends = _.uniq(data.map((x) => x.name));
+    const series = _.chain(data)
+        .groupBy("name")
+        .map((x, i) => {
+            if (i === "target value") {
+                return {
+                    name: i,
+                    label: {
+                        show: true,
+                        position: "inside",
+                    },
+                    stack: "t",
+                    type: "bar",
+                    data: x.map((v) => v.value),
+                    itemStyle: {
+                        color: "transparent",
+                        borderType: "dashed",
+                        borderColor: "#000",
+                    },
+                };
+            }
+            return {
+                name: i,
+                label: {
+                    show: true,
+                    position: "inside",
+                },
+                stack: "t",
+                type: "bar",
+                data: x.map((v) => v.value),
+            };
+        })
+        .value();
     let option = {
         ...Color,
-        title: {
-            text: title,
-            subtext: subtitle,
-            left: "center",
-            top: "20px",
-            ...TextStyle,
-        },
         legend: {
-            data: data.legends,
+            data: legends,
             icon: "circle",
             top: "0px",
             left: "center",
@@ -74,23 +101,21 @@ const BarStack = (title, subtitle, data, extra) => {
                 axisLine: { show: false },
             },
         ],
-        xAxis: data.xAxis.map((x) => {
-            return {
-                ...x,
-                type: "category",
-                axisLine: {
-                    lineStyle: {
-                        color: "#ddd",
-                    },
+        xAxis: {
+            data: xAxis,
+            type: "category",
+            axisLine: {
+                lineStyle: {
+                    color: "#ddd",
                 },
-                axisLabel: {
-                    fontFamily: "MarkPro",
-                    fontSize: 12,
-                    color: "#222",
-                },
-            };
-        }),
-        series: data.series,
+            },
+            axisLabel: {
+                fontFamily: "MarkPro",
+                fontSize: 12,
+                color: "#222",
+            },
+        },
+        series: series,
         ...Color,
         ...backgroundColor,
         ...Easing,

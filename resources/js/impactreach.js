@@ -1,9 +1,40 @@
 import createElement from "./app";
-import { getCharts, getCards } from "./charts.js";
+import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
 const axios = window.axios;
 
 let counts = [];
+let charts = [];
+
+const dimensions = (x, idx) => {
+    return x.map((d, i) => {
+        let series = [];
+        const id = `uii-chart-${i}-${idx}`;
+        const xAxis = d.values.map((v) => {
+            series.push({
+                group: v.name,
+                value: v.target_value,
+                name: "target value",
+            });
+            series.push({
+                group: v.name,
+                value: v.actual_value,
+                name: "actual value",
+            });
+            return v.name;
+        });
+        charts.push({
+            id: id,
+            data: series,
+        });
+        return (
+            <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
+                {d.name}
+                <div id={id} style="height:450px"></div>
+            </div>
+        );
+    });
+};
 
 const uui = (x, idx) => {
     return x.childrens.map((c, i) => {
@@ -34,6 +65,9 @@ const uui = (x, idx) => {
             val: c.actual_value,
             suf: "",
         });
+        const dim = c.dimensions?.length
+            ? dimensions(c.dimensions, `${idx}-${i}`)
+            : false;
         return (
             <div class={`card col-md-${c.dimensions?.length ? 12 : 6}`}>
                 <div class="card-body">
@@ -55,6 +89,7 @@ const uui = (x, idx) => {
                         <span style="font-weight:bold;">TARGET: </span>
                         {target.length > 1 ? target : " - "}
                     </div>
+                    {dim ? <div class="row">{dim}</div> : ""}
                 </div>
             </div>
         );
@@ -84,15 +119,22 @@ axios
                 return groups(x, i);
             })
         );
-        return counts;
+        return { counts: counts, charts: charts };
     })
     .then((res) => {
+        //generate countup
         setTimeout(() => {
-            res.forEach((x, i) => {
+            res.counts.forEach((x, i) => {
                 const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
                 if (!countUp.error) {
                     countUp.start();
                 }
             });
         }, 300);
+        //generate chart option
+        res.charts.forEach((x, i) => {
+            const options = generateOptions("BARSTACK", x.data);
+            const myChart = echarts.init(document.getElementById(x.id));
+            myChart.setOption(options);
+        });
     });

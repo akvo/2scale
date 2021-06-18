@@ -8,7 +8,7 @@ import BarStack from "./BarStack";
 import axios from "axios";
 import createElement from "../app";
 
-const generateOptions = (type, dataset, extra = {}) => {
+export const generateOptions = (type, dataset, extra = {}) => {
     switch (type) {
         case "MAPS":
             return Maps(dataset, extra);
