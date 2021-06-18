@@ -769,8 +769,8 @@ class SyncController extends Controller
                 );
                 $answer = collect($data_point["answers"])->map(function ($answer) use ($dp, $answers) {
                     $answer['datapoint_id'] = $dp['id'];
-                    $answer['text'] = json_encode($answer['text']);
-                    $answer['options'] = json_encode($answer['options']);
+                    $answer['text'] = is_array($answer['text']) ? json_encode($answer['text']) : $answer['text'];
+                    $answer['options'] = is_array($answer['options']) ? json_encode($answer['options']) : strval($answer['options']);
                     $answer = $answers->updateOrCreate(
                         [
                             'datapoint_id' => $answer['datapoint_id'],
