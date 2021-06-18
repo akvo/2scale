@@ -10,24 +10,43 @@ const dimensions = (x, idx) => {
     return x.map((d, i) => {
         let series = [];
         const id = `uii-chart-${i}-${idx}`;
-        const xAxis = d.values.map((v) => {
-            let restTarget = v.target_value - v.actual_value;
-            series.push({
-                group: v.name,
-                value: restTarget < 0 ? 0 : restTarget,
-                name: "target value",
+        if (d.values.length > 0) {
+            d.values.map((v) => {
+                let restTarget = v.target_value - v.actual_value;
+                series.push({
+                    group: v.name,
+                    value: restTarget < 0 ? 0 : restTarget,
+                    name: "target value",
+                });
+                series.push({
+                    group: v.name,
+                    value: v.actual_value,
+                    name: "actual value",
+                });
+                return v.name;
             });
-            series.push({
-                group: v.name,
-                value: v.actual_value,
-                name: "actual value",
+            charts.push({
+                id: id,
+                data: series,
+                type: "BARSTACK",
             });
-            return v.name;
-        });
-        charts.push({
-            id: id,
-            data: series,
-        });
+        }
+        if (d.values.length === 0 && d?.target_value && d?.actual_value) {
+            charts.push({
+                id: id,
+                data: [
+                    {
+                        name: "target value",
+                        value: d.target_value - d.actual_value,
+                    },
+                    {
+                        name: "actual value",
+                        value: d.actual_value,
+                    },
+                ],
+                type: "DOUGHNUT",
+            });
+        }
         return (
             <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
                 {d.name}
@@ -134,7 +153,7 @@ axios
         }, 300);
         //generate chart option
         res.charts.forEach((x, i) => {
-            const options = generateOptions("BARSTACK", x.data);
+            const options = generateOptions(x.type, x.data);
             const myChart = echarts.init(document.getElementById(x.id));
             myChart.setOption(options);
         });
