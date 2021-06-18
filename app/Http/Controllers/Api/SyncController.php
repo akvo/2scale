@@ -223,7 +223,6 @@ class SyncController extends Controller
             );
             $isQObject = Arr::isAssoc($group['question']);
             if ($isQObject) {
-                dump($group);
                 $qs = $this->breakQuestions($form_id, $group['question'], $qgroup);
                 return $questions->updateOrCreate(
                     [
@@ -690,11 +689,20 @@ class SyncController extends Controller
                 }
                 if (!$isObject) {
                     $partner_qs = collect($updatedFlowApi['questionGroup'])->map(function ($qgroup) use ($partner_qids) {
-                        $qs = collect($qgroup['question'])->map(function ($q) {
-                            $q['id'] = (int) $q['id'];
-                            return $q;
-                        });
-                        return $qs->whereIn('id', $partner_qids);
+                        $isObjectqGroup = Arr::isAssoc($qgroup['question']);
+                        if ($isObjectqGroup) {
+                            $qs = $qgroup['question'];
+                            $qs['id'] = (int) $qs['id'];
+                            return collect([$qs])->whereIn('id', $partner_qids);
+                        }
+
+                        if (!$isObjectqGroup) {
+                            $qs = collect($qgroup['question'])->map(function ($q) use ($qgroup) {
+                                $q['id'] = (int) $q['id'];
+                                return $q;
+                            });
+                            return $qs->whereIn('id', $partner_qids);
+                        }
                     })->reject(function ($item) {
                         return count($item) === 0;
                     })->flatten(1);
@@ -761,7 +769,8 @@ class SyncController extends Controller
                 );
                 $answer = collect($data_point["answers"])->map(function ($answer) use ($dp, $answers) {
                     $answer['datapoint_id'] = $dp['id'];
-                    $answer['options'] = strval($answer['options']);
+                    $answer['text'] = json_encode($answer['text']);
+                    $answer['options'] = json_encode($answer['options']);
                     $answer = $answers->updateOrCreate(
                         [
                             'datapoint_id' => $answer['datapoint_id'],
