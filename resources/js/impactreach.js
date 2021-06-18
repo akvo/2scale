@@ -132,8 +132,9 @@ const groups = (x, i) => {
 };
 
 const reduceDate = (current, max, result = []) => {
+    // JS .getMonth() starting from 0 so we need to + by 1
     if (current < max) {
-        result.push(`${current.getFullYear()}-${current.getMonth()}`);
+        result.push(`${current.getFullYear()}-${current.getMonth() + 1}`);
         reduceDate(
             new Date(current.setMonth(current.getMonth() + 1)),
             max,
@@ -149,8 +150,8 @@ const increments = (data) => {
         x.childrens.map((m) => {
             if (m.name.length > 5) {
                 monthList.push({
-                    year: m.name.split("-")[0],
-                    month: m.name.split("-")[1],
+                    year: Number(m.name.split("-")[0]),
+                    month: Number(m.name.split("-")[1]),
                 });
             }
         })

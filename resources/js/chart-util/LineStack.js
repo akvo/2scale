@@ -61,12 +61,12 @@ const LineStack = (data, extra) => {
                 }
                 return "";
             },
-            offset: [50, -20],
+            offset: [50, -5],
         },
         grid: {
             top: "50px",
             left: "auto",
-            right: "50px",
+            right: "70px",
             bottom: "25px",
             borderColor: "#ddd",
             borderWidth: 0.5,
