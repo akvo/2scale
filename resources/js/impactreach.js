@@ -11,9 +11,10 @@ const dimensions = (x, idx) => {
         let series = [];
         const id = `uii-chart-${i}-${idx}`;
         const xAxis = d.values.map((v) => {
+            let restTarget = v.target_value - v.actual_value;
             series.push({
                 group: v.name,
-                value: v.target_value,
+                value: restTarget < 0 ? 0 : restTarget,
                 name: "target value",
             });
             series.push({
@@ -51,7 +52,7 @@ const uui = (x, idx) => {
         });
         const percentage =
             target.length > 1
-                ? Math.ceil(c.target_value / c.actual_value)
+                ? ((c.actual_value / c.target_value) * 100).toFixed(3)
                 : null;
         if (target.length > 1) {
             counts.push({

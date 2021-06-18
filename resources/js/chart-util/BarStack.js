@@ -21,7 +21,7 @@ const BarStack = (data, extra) => {
     }
     let xAxis = _.uniq(data.map((x) => x.group));
     let legends = _.uniq(data.map((x) => x.name));
-    const series = _.chain(data)
+    let series = _.chain(data)
         .groupBy("name")
         .map((x, i) => {
             if (i === "target value") {
@@ -30,9 +30,11 @@ const BarStack = (data, extra) => {
                     label: {
                         show: true,
                         position: "inside",
+                        color: "#a43332",
                     },
                     stack: "t",
                     type: "bar",
+                    barWidth: 50,
                     data: x.map((v) => v.value),
                     itemStyle: {
                         color: "transparent",
@@ -47,12 +49,16 @@ const BarStack = (data, extra) => {
                     show: true,
                     position: "inside",
                 },
+                barWidth: 50,
                 stack: "t",
                 type: "bar",
                 data: x.map((v) => v.value),
             };
         })
         .value();
+    if (legends.includes("target value")) {
+        series = _.sortBy(series, "name");
+    }
     let option = {
         ...Color,
         legend: {
@@ -69,7 +75,7 @@ const BarStack = (data, extra) => {
             },
         },
         grid: {
-            top: "23px",
+            top: "50px",
             left: "auto",
             right: "auto",
             bottom: "25px",
