@@ -28,19 +28,19 @@ return [
         [
             'id' => 42401,
             'name' => 'UII1 - BoP',
-            'group' => 'Food Nutrition and Security',
+            'group' => 'Food and Nutrition Security',
             'target_text' => '##number## BoP consumers with improved access to food products.',
         ],
         [
             'id' => 42865,
             'name' => 'UII2 - SHF',
-            'group' => 'Food Nutrition and Security',
+            'group' => 'Food and Nutrition Security',
             'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved productivity and access to markets.',
         ],
         [
             'id' => 42698,
             'name' => 'UII3 - EEP',
-            'group' => 'Food Nutrition and Security',
+            'group' => 'Food and Nutrition Security',
             'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.'
         ],
         [

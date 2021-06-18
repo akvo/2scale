@@ -53,10 +53,20 @@ const LineStack = (data, extra) => {
                 fontSize: 12,
             },
         },
+        label: {
+            show: true,
+            formatter: function (params) {
+                if (params.dataIndex === xAxis.length - 1) {
+                    return params.value + "\n" + params.seriesName;
+                }
+                return "";
+            },
+            offset: [50, -20],
+        },
         grid: {
             top: "50px",
             left: "auto",
-            right: "auto",
+            right: "50px",
             bottom: "25px",
             borderColor: "#ddd",
             borderWidth: 0.5,

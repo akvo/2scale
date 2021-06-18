@@ -28,8 +28,14 @@ const BarStack = (data, extra) => {
                 return {
                     name: i,
                     label: {
+                        formatter: function (params) {
+                            let total = data
+                                .filter((d) => d.name === "actual value")
+                                .find((d) => d.group === params.name);
+                            return total.value + params.value;
+                        },
                         show: true,
-                        position: "inside",
+                        position: "top",
                         color: "#a43332",
                     },
                     stack: "t",
