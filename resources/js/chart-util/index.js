@@ -9,6 +9,7 @@ import BarGroup from "./BarGroup";
 import LineStack from "./LineStack";
 import axios from "axios";
 import createElement from "../app";
+import _ from "lodash";
 
 export const generateOptions = (type, dataset, extra = {}) => {
     switch (type) {
@@ -42,7 +43,7 @@ const generateCharts = (
     const html = (
         <div class={`col-md-${md ? md : "6"}`}>
             <div class="card">
-                <div class="card-header">{title}</div>
+                <div class="card-header"><h4>{title}</h4></div>
                 <div class="card-body">
                     <div
                         class="d-flex justify-content-center"
@@ -72,6 +73,9 @@ const generateCharts = (
             setTimeout(function () {
                 document.getElementById(`loader-${id}`).remove();
                 let option = res.data;
+                if (type === "BARGROUP") {
+                    option = _.sortBy(option, "name");
+                }
                 if (transform) {
                     option = transform(option);
                 }

@@ -159,11 +159,11 @@ export const getSingleCards = (cards, id) => {
 
 export const getCharts = (chart, row, md, customTitle = null, height = 450) => {
     let chartname = chart.split("/")[1];
-    chartname = customTitle !== null ? customTitle : chartname;
+    let title = customTitle !== null ? customTitle : titleCase(chartname);
     let html = (
         <div class={`col-md-${md}`}>
             <div class="card">
-                <div class="card-header">{titleCase(chartname)}</div>
+                <div class="card-header"><h4>{title}</h4></div>
                 <div class="card-body">
                     <div
                         class="d-flex justify-content-center"

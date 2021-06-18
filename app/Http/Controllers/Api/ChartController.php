@@ -582,7 +582,7 @@ class ChartController extends Controller
             ->transform(function($dt){
                 return array (
                     'name' => $dt->name,
-                    'value' => 1
+                    'value' => ""
                 );
             });
         $min = collect($data)->min('value');

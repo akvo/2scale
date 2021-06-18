@@ -195,6 +195,20 @@ const increments = (data) => {
     return data;
 };
 
+// Page Title
+$("main").append(
+    <div>
+        <div class="row" id="zero-row">
+            <div class="col-md-12">
+                <h2 class="responsive font-weight-bold text-center my-4">
+                    Reaching Targets
+                </h2>
+            </div>
+        </div>
+        <hr/>
+    </div>
+);
+
 axios
     .get("/api/rsr/impact-reach/uii")
     .then((res) => {
@@ -229,8 +243,7 @@ axios
             <div class="row">
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
-                        Number of smallholder farmers participating in one of
-                        the programs
+                        Target audiences reached with program activities
                     </h3>
                     <div id="first-row"></div>
                     <div id="second-row"></div>

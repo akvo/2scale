@@ -214,10 +214,10 @@ class Echarts
         );
         $option = [
             'color' => ($xMax) ? ['#609CA7', '#a43332'] : $this->pallete,
-            'dataZoom' => array(
-                'type' => 'inside',
-                'yAxisIndex' => [0]
-            ),
+            // 'dataZoom' => array(
+            //     'type' => 'inside',
+            //     'yAxisIndex' => [0]
+            // ),
 			'tooltip' => $tooltip,
 			'grid' => array(
 				'left' => '3%',
@@ -250,7 +250,8 @@ class Echarts
     public function generateMapCharts($data, $min, $max){
         $textStyle = array(
             'fontFamily' => 'MarkPro',
-            'fontWeight' => 200
+            'fontWeight' => 500,
+            'fontStyle' => 'italic',
         );
         $data = collect($data)->map(function($dt){
             $dt = collect($dt);
@@ -316,6 +317,7 @@ class Echarts
             'trigger' => 'item',
             'showDelay' => 0,
             'transitionDuration' => 0.2,
+            'formatter' => '{a}',
           ),
           'series' => array(
             array(
