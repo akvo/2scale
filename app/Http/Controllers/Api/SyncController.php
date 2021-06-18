@@ -771,17 +771,21 @@ class SyncController extends Controller
                     $answer['datapoint_id'] = $dp['id'];
                     $answer['text'] = is_array($answer['text']) ? json_encode($answer['text']) : $answer['text'];
                     $answer['options'] = is_array($answer['options']) ? json_encode($answer['options']) : strval($answer['options']);
-                    $answer = $answers->updateOrCreate(
-                        [
-                            'datapoint_id' => $answer['datapoint_id'],
-                            'question_id' => $answer['question_id'],
-                        ],
-                        [
-                            'text' => $answer['text'],
-                            'value' => $answer['value'],
-                            'options' => $answer['options'],
-                        ],
-                    );
+                    try {
+                        $answer = $answers->updateOrCreate(
+                            [
+                                'datapoint_id' => $answer['datapoint_id'],
+                                'question_id' => $answer['question_id'],
+                            ],
+                            [
+                                'text' => $answer['text'],
+                                'value' => $answer['value'],
+                                'options' => $answer['options'],
+                            ],
+                        );
+                    } catch (\Throwable $th) {
+                        dump($answer);
+                    }
                     return $answer;
                 });
                 return ["answers" => $answer,"datapoints" => $dp];
