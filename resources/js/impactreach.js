@@ -1,6 +1,7 @@
 import createElement from "./app";
 import generateCharts, { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
+import _ from "lodash";
 const axios = window.axios;
 
 let counts = [];
@@ -130,6 +131,70 @@ const groups = (x, i) => {
     );
 };
 
+const reduceDate = (current, max, result = []) => {
+    if (current < max) {
+        result.push(`${current.getFullYear()}-${current.getMonth()}`);
+        reduceDate(
+            new Date(current.setMonth(current.getMonth() + 1)),
+            max,
+            result
+        );
+    }
+    return result;
+};
+
+const increments = (data) => {
+    let monthList = [];
+    data.map((x) =>
+        x.childrens.map((m) => {
+            if (m.name.length > 5) {
+                monthList.push({
+                    year: m.name.split("-")[0],
+                    month: m.name.split("-")[1],
+                });
+            }
+        })
+    );
+    monthList = _.sortBy(monthList, ["year", "month"]);
+    let startDate = monthList[0];
+    let endDate = monthList[monthList.length - 1];
+    startDate = new Date(`${startDate.year}-${startDate.month}-01`);
+    endDate = new Date(`${endDate.year}-${endDate.month}-01`);
+    monthList = reduceDate(startDate, endDate);
+    let flattenData = [];
+    data = data.map((x) => {
+        let newData = [];
+        monthList.map((m) => {
+            let value = x.childrens.find((x) => x.name === m);
+            if (value) {
+                newData.push({
+                    name: m,
+                    value: newData.length
+                        ? newData[newData.length - 1].value + value.value
+                        : value.value,
+                });
+            } else {
+                newData.push({
+                    name: m,
+                    value: newData.length
+                        ? newData[newData.length - 1].value
+                        : 0,
+                });
+            }
+        });
+        newData.map((n) => flattenData.push({ country: x.name, ...n }));
+        return { ...x, childrens: newData };
+    });
+    data = _.chain(flattenData)
+        .groupBy("name")
+        .map((x, i) => ({
+            name: i,
+            childrens: x.map((c) => ({ name: c.country, value: c.value })),
+        }))
+        .value();
+    return data;
+};
+
 axios
     .get("/api/rsr/impact-reach/uii")
     .then((res) => {
@@ -167,7 +232,8 @@ axios
                         Number of smallholder farmers participating in one of
                         the programs
                     </h3>
-                    <div class="number-of-farmer-stack" id="first-row"></div>
+                    <div id="first-row"></div>
+                    <div id="second-row"></div>
                     <hr />
                 </div>
             </div>
@@ -181,4 +247,17 @@ axios
             height: 600,
             parentId: "first-row",
         });
+        generateCharts(
+            {
+                type: "LINESTACK",
+                endpoint: "flow/rnr-gender?sum=country_id,year_month",
+                title: "",
+                id: "number-of-farmer-stack-monthly",
+                md: 12,
+                height: 600,
+                parentId: "second-row",
+            },
+            increments
+        );
+        return true;
     });

@@ -6,6 +6,7 @@ import SanKey from "./SanKey";
 import Radar from "./Radar";
 import BarStack from "./BarStack";
 import BarGroup from "./BarGroup";
+import LineStack from "./LineStack";
 import axios from "axios";
 import createElement from "../app";
 
@@ -27,6 +28,8 @@ export const generateOptions = (type, dataset, extra = {}) => {
             return BarStack(dataset, extra);
         case "BARGROUP":
             return BarGroup(dataset, extra);
+        case "LINESTACK":
+            return LineStack(dataset, extra);
         default:
             return Bar(dataset, extra);
     }
@@ -71,11 +74,11 @@ const generateCharts = (
                 let option = res.data;
                 if (transform) {
                     option = transform(option);
-                    console.log(option);
                 }
                 if (
-                    !transform &&
-                    (type === "BARSTACK" || type === "BARGROUP")
+                    type === "BARSTACK" ||
+                    type === "BARGROUP" ||
+                    type === "LINESTACK"
                 ) {
                     let collections = [];
                     option.map((x) => {

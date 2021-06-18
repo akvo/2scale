@@ -38,6 +38,8 @@ class ApiController extends Controller
                 $params->push("event_date");
             } else if ($x === "month") {
                 $params->push("event_date");
+            } else if ($x === "year_month") {
+                $params->push("event_date");
             } else {
                 $params->push($x);
             }

@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 class RnrGender extends Model
 {
     protected $table = 'rnr_gender';
-    protected $appends = ['year', 'month'];
+    protected $appends = ['year', 'month','year_month'];
 
     public function getYearAttribute($value)
     {
@@ -20,5 +20,11 @@ class RnrGender extends Model
     {
         $date = new Carbon($this->event_date);
         return $date->month;
+    }
+
+    public function getYearMonthAttribute()
+    {
+        $date = new Carbon($this->event_date);
+        return $date->year.'-'.$date->month;
     }
 }
