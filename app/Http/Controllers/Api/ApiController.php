@@ -218,6 +218,15 @@ class ApiController extends Controller
         $customAgg = RsrMaxAggValues::whereIn('partnership_id', $childPartnershipIds)
             ->whereIn('result_title',$resultTitles)
             ->get();
+
+        /*
+        return $customAgg->map(function($r){
+            $r['uii'] = Str::beforeLast($r['result_title'],':');
+            return $r;
+        })->where('uii', 'UII-2 SHF')
+          ->whereNotNull('max_dimension_value')->values();
+         */
+
         $customAgg = $customAgg->groupBy(['result_title'])->map(function($result, $resultTitle){
             $hasDimension = $result
                 ->whereNotNull('dimension_value_title')
