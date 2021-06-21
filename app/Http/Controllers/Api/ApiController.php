@@ -13,6 +13,7 @@ use App\RnrGender;
 use App\Partnership;
 use App\RsrResult;
 use App\RsrDetail;
+use App\RsrPeriodDetail;
 
 class ApiController extends Controller
 {
@@ -182,6 +183,28 @@ class ApiController extends Controller
         $groups = ['result', 'period', 'dimension'];
         return $this->sumRsr($rsrDetail,$groups);
 
+    }
+
+    public function getRsrUiiReportAfter(Request $request)
+    {
+        $config = config('akvo-rsr');
+        $charts = collect($config['impact_react_charts']);
+        $maxId = $charts->where('max', true)->pluck('id');
+        $programId = $config['projects']['parent'];
+        $parentProject = RsrPeriodDetail::select('result_id', 'parent_result_id', 'project_title')
+                        ->whereIn('parent_result_id', $maxId)->get();
+        return $parentProject->map(function ($p) {
+            $childrens = RsrPeriodDetail::where('parent_result_id', $p['result_id'])->get()
+                        ->groupBy('project_title');
+
+            return [
+                'parent_project_title' => $p['project_title'],
+                'childrens' => $childrens,
+            ];
+        });
+        return $rsrPeriodDetail->groupBy('project_title')->map(function ($parent) {
+            return $parent->groupBy('parent_result_id');
+        });
     }
 
     public function getRsrUiiReport(Request $request, RsrDetail $rsrDetail)

@@ -25,53 +25,62 @@ return [
     ],
     'impact_react_charts' => [
         # using program rsr result id
+        # MAX is aggregation type, if false aggregation is SUM (default)
         [
             'id' => 42401,
             'name' => 'UII1 - BoP',
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## BoP consumers with improved access to food products.',
+            'max' => true,
         ],
         [
             'id' => 42865,
             'name' => 'UII2 - SHF',
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved productivity and access to markets.',
+            'max' => true,
         ],
         [
             'id' => 42698,
             'name' => 'UII3 - EEP',
             'group' => 'Food and Nutrition Security',
-            'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.'
+            'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.',
+            'max' => true,
         ],
         [
             'id' => 42804,
             'name' => 'UII4 - SME',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## SMEs driving inclusive business in target industries (125 women-led/women-owned).',
+            'max' => false,
         ],
         [
             'id' => 42825,
             'name' => 'UII5 - NONFE',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000youth).',
+            'max' => false,
         ],
         [
             'id' => 42835,
             'name' => 'UII6 - MSME',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
+            'max' => false,
         ],
         [
             'id' => 42845,
             'name' => 'UII7 - INNO',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming innovations adopted.',
+            'max' => false,
         ],
         [
             'id' => 42855,
             'name' => 'UII8 - FSERV',
             'group' => "Input Additionality",
             'target_text' => null,
+            'max' => false,
             'dimensions' => [
                 [
                     "dimension" => "SHF",
@@ -96,12 +105,14 @@ return [
             'name' => 'Private contribution',
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as private sector contribution.',
+            'max' => false,
         ],
         [
             'id' => 48259,
             'name' => '2SCALE contribution',
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as 2SCALE contribution.',
+            'max' => false,
         ],
     ],
     'charts' => [
