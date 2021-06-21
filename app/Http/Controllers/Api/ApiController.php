@@ -190,39 +190,8 @@ class ApiController extends Controller
     {
         $config = config('akvo-rsr');
         $charts = collect($config['impact_react_charts']);
-        $maxId = $charts->where('max', true)->pluck('id');
         $programId = $config['projects']['parent'];
-
-        $childPartnershipIds = $this->getPartnershipCache()->where('level','partnership')->values()->pluck('id');
-
-        $resultTitles = RsrResult::whereIn('id',$maxId)->get()->pluck('title');
-        $childrens = RsrMaxAggValues::whereIn('partnership_id', $childPartnershipIds)
-            ->whereIn('result_title',$resultTitles)
-            ->get();
-        return $childrens->groupBy(['result_title'])->map(function($result, $resultTitle){
-            $hasDimension = $result
-                ->whereNotNull('dimension_value_title')
-                ->whereNotNull('dimension_id')
-                                   ->groupBy('dimension_title')->map(function($values, $dimensionTitle){
-                $values = $values->groupBy('dimension_value_title')->map(function($actual, $dimensionValue){
-                    return [
-                        'dimension_value' => $dimensionValue,
-                        'actual_value' => $actual->sum('max_dimension_value')
-                    ];
-                })->values();
-                return [
-                    'dimension_name' => $dimensionTitle,
-                    'actual_values' => $values->sum('actual_value'),
-                    'dimension_values' => $values
-                ];
-            })->values();
-            $ndActualValue = $result->whereNull('dimension_id')->sum('max_actual_value');
-            return [
-                'result_title' => $resultTitle,
-                'dimensions' => $hasDimension,
-                'actual_value' => $ndActualValue + $hasDimension->sum('actual_values')
-            ];
-        })->values();
+        return [];
 
     }
 
@@ -230,12 +199,47 @@ class ApiController extends Controller
     {
         $config = config('akvo-rsr');
         $charts = collect($config['impact_react_charts']);
+        $maxId = $charts->where('max', true)->pluck('id');
         $programId = $config['projects']['parent'];
 
         $rsrResults = RsrResult::where('rsr_project_id', $programId)
             ->with('rsr_indicators.rsr_dimensions.rsr_dimension_values')
             ->with('rsr_indicators.rsr_periods.rsr_period_dimension_values')
             ->get();
+
+        // UII-1, UII-2, UII-3
+        $childPartnershipIds = $this->getPartnershipCache()->where('level','partnership')->values()->pluck('id');
+        $resultTitles = RsrResult::whereIn('id',$maxId)->get()->pluck('title');
+        $customAgg = RsrMaxAggValues::whereIn('partnership_id', $childPartnershipIds)
+            ->whereIn('result_title',$resultTitles)
+            ->get();
+        $customAgg = $customAgg->groupBy(['result_title'])->map(function($result, $resultTitle){
+            $hasDimension = $result
+                ->whereNotNull('dimension_value_title')
+                ->whereNotNull('dimension_id')
+                                   ->groupBy('dimension_title')->map(function($values, $dimensionTitle){
+                $values = $values->groupBy('dimension_value_title')->map(function($actual, $dimensionValue){
+                    return [
+                        'name' => $dimensionValue,
+                        'actual_value' => $actual->sum('max_dimension_value')
+                    ];
+                })->values();
+                return [
+                    'name' => $dimensionTitle,
+                    'actual_value' => $values->sum('actual_value'),
+                    'dimensions' => $values
+                ];
+            })->values();
+            $ndActualValue = $result->whereNull('dimension_id')->sum('max_actual_value');
+            return [
+                'uii' => Str::beforeLast($resultTitle,':'),
+                'dimensions' => $hasDimension,
+                'actual_value' => $ndActualValue + $hasDimension->sum('actual_values')
+            ];
+        })->values();
+
+        //return $customAgg;
+
 
         $results = $rsrResults->map(function ($rs) use ($charts) {
             $chart = $charts->where('id', $rs['id'])->first();
@@ -245,7 +249,6 @@ class ApiController extends Controller
                         $dimVal = $dim->rsr_dimension_values->map(function ($dv) use ($ind) {
                             $actualDimValues = $ind['rsr_periods']->pluck('rsr_period_dimension_values')
                                 ->flatten(1)->where('rsr_dimension_value_id', $dv['id']);
-
                             $name = $dv['name'];
                             if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
                                 if (Str::contains($name, "Male")) {
