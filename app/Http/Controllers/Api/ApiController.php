@@ -14,6 +14,7 @@ use App\Partnership;
 use App\RsrResult;
 use App\RsrDetail;
 use App\RsrPeriodDetail;
+use App\RsrMaxAggValues;
 
 class ApiController extends Controller
 {
@@ -191,20 +192,38 @@ class ApiController extends Controller
         $charts = collect($config['impact_react_charts']);
         $maxId = $charts->where('max', true)->pluck('id');
         $programId = $config['projects']['parent'];
-        $parentProject = RsrPeriodDetail::select('result_id', 'parent_result_id', 'project_title')
-                        ->whereIn('parent_result_id', $maxId)->get();
-        return $parentProject->map(function ($p) {
-            $childrens = RsrPeriodDetail::where('parent_result_id', $p['result_id'])->get()
-                        ->groupBy('project_title');
 
+        $childPartnershipIds = $this->getPartnershipCache()->where('level','partnership')->values()->pluck('id');
+
+        $resultTitles = RsrResult::whereIn('id',$maxId)->get()->pluck('title');
+        $childrens = RsrMaxAggValues::whereIn('partnership_id', $childPartnershipIds)
+            ->whereIn('result_title',$resultTitles)
+            ->get();
+        return $childrens->groupBy(['result_title'])->map(function($result, $resultTitle){
+            $hasDimension = $result
+                ->whereNotNull('dimension_value_title')
+                ->whereNotNull('dimension_id')
+                                   ->groupBy('dimension_title')->map(function($values, $dimensionTitle){
+                $values = $values->groupBy('dimension_value_title')->map(function($actual, $dimensionValue){
+                    return [
+                        'dimension_value' => $dimensionValue,
+                        'actual_value' => $actual->sum('max_dimension_value')
+                    ];
+                })->values();
+                return [
+                    'dimension_name' => $dimensionTitle,
+                    'actual_values' => $values->sum('actual_value'),
+                    'dimension_values' => $values
+                ];
+            })->values();
+            $ndActualValue = $result->whereNull('dimension_id')->sum('max_actual_value');
             return [
-                'parent_project_title' => $p['project_title'],
-                'childrens' => $childrens,
+                'result_title' => $resultTitle,
+                'dimensions' => $hasDimension,
+                'actual_value' => $ndActualValue + $hasDimension->sum('actual_values')
             ];
-        });
-        return $rsrPeriodDetail->groupBy('project_title')->map(function ($parent) {
-            return $parent->groupBy('parent_result_id');
-        });
+        })->values();
+
     }
 
     public function getRsrUiiReport(Request $request, RsrDetail $rsrDetail)

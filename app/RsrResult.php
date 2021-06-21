@@ -27,7 +27,7 @@ class RsrResult extends Model
     public function childrens()
     {
         return $this->hasMany('\App\RsrResult','parent_result','id');
-    } 
+    }
 
     public function parents()
     {
@@ -41,7 +41,7 @@ class RsrResult extends Model
 
     public function getTitleAttribute($value)
     {
-        return Str::replaceLast('.', '', $this->rsr_titles()->pluck('title')[0]);
+        return $this->rsr_titles()->pluck('title')[0];
     }
 
     public function getDescriptionAttribute($value)
