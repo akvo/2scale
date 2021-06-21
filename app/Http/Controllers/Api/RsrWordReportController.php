@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use App\Partnership;
+use App\Datapoint;
+use App\RsrProject;
 use App\Http\Controllers\Api\ChartController;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\Style\Table;
@@ -31,8 +33,8 @@ class RsrWordReportController extends Controller
             $country = $partnership->where('id', $request->country_id)->first()->name;
         }
         if (isset($request->partnership_id) && $request->partnership_id !== "0") {
-            $pid = $request->country_id;
-            // $pid = $request->partnership_id;
+            // $pid = $request->country_id;
+            $pid = $request->partnership_id;
         }
 
         $start = false;
@@ -42,22 +44,31 @@ class RsrWordReportController extends Controller
             $end = $request->end;
         }
 
-        $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
+        return $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
         if (count($rsrReport) === 0) {
             return response('no data available', 503);
         }
-        // return $rsrReport;
+
+        // get content from flow
+        $projects = [];
+        $datapoints = [];
+        // $projects = RsrProject::all();
+        // $datapoints = Datapoint::where('form_id', $reportConfig['fid'])
+        //     ->where('country_id', $pid)->with('answers')->get();
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $country, $reportConfig['questions']);
+        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $country, $reportConfig, $projects, $datapoints);
 
+        // Not included the children or PPPs
+        /*
         if (count($rsrReport['data']['childrens']) > 0) {
             // render document for the childrens
             foreach ($rsrReport['data']['childrens'] as $key => $child) {
-                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $country, $reportConfig['questions']);
+                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $country, $reportConfig, $projects, $datapoints);
             }
         }
+        */
 
         // save file
         $writers = ['format' => 'Word2007', 'extension' => 'docx'];
@@ -70,9 +81,15 @@ class RsrWordReportController extends Controller
         return ["link" => env('APP_URL')."/".$filename.".".$writers['extension']];
     }
 
-    private function renderWordDoc($phpWord, $columns, $data, $country, $reportBody)
+    private function renderWordDoc($phpWord, $columns, $data, $country, $reportConfig, $projects, $datapoints)
     {
+        $reportBody = $reportConfig['questions'];
         $n = microtime(true);
+
+        // find partnership_id from project
+        // $partnership_id = $projects->find((int) $data['rsr_project_id'])->partnership_id;
+        // $answers = $datapoints->where('partnership_id', $partnership_id)->pluck('answers')->flatten(1)->values();
+
         // Style
         $phpWord->addFontStyle('tableFont', array('size' => 8));
         $listFormat = $phpWord->addNumberingStyle(
@@ -102,8 +119,15 @@ class RsrWordReportController extends Controller
         $section->addText(htmlspecialchars('Partnership Name: '.$data['project']), $titleStyle);
         $section->addLine($lineStyle);
 
-        $lipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras varius molestie ipsum. Vestibulum maximus eget elit id mattis. Aliquam quis felis ac neque imperdiet maximus. Vestibulum molestie nibh mauris, at vehicula neque fringilla sit amet. Praesent vel posuere lectus. Sed sagittis magna est, condimentum suscipit purus facilisis et. Vestibulum ante.";
         foreach ($reportBody as $key => $body) {
+            // check if section have answers
+            // $qids = collect($body['question'])->pluck('qid');
+            // $checkAnswer = $answers->whereIn('question_id', $qids)->values();
+            // if (count($checkAnswer) === 0 && !isset($body['table'])) {
+            //     continue;
+            // }
+
+            // start rendering the section
             $numberingLevelStart = ($body['section']) === 1 ? 1 : 0;
             $section->addTextBreak(1);
             $section->addListItem($body['heading'], $numberingLevelStart, $listItemStyle, 'multilevel-'.$n);
@@ -129,14 +153,19 @@ class RsrWordReportController extends Controller
             $section->addTextBreak(1);
 
             foreach ($body['question'] as $key => $question) {
+                // find answer
+                // $answer = $answers->where('question_id', $question['qid']);
+                // if(count($answer) === 0) {
+                //     continue;
+                // }
                 if ($question['numbering']) {
                     $section->addListItem($question['text'], $numberingLevelStart+1, $listItemStyle, 'multilevel-'.$n);
-                    // render value
-                    $section->addText(htmlspecialchars($lipsum), null, $this->alignJustify);
-                } else {
-                    // render value
-                    $section->addText(htmlspecialchars($lipsum), null, $this->alignJustify);
                 }
+                // render value
+                // foreach ($answer as $key => $item) {
+                //     $val = $item['text'] ? $item['text'] : $item['value'];
+                //     $section->addText(htmlspecialchars($val), null, $this->alignJustify);
+                // }
                 $section->addTextBreak(1);
             }
             $section->addTextBreak(1);

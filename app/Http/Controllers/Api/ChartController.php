@@ -688,7 +688,6 @@ class ChartController extends Controller
                 ->with(['rsr_results' => function ($query) use ($period_start, $period_end) {
                     // $query->orderBy('order');
                     $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
-                    // $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
                     $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
                         if ($period_start && $period_end) {
                             $query->where('period_start', date($period_start));
@@ -699,7 +698,6 @@ class ChartController extends Controller
                     $query->with(['childrens' => function ($query) use ($period_start, $period_end) {
                         // $query->orderBy('order');
                         $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
-                        // $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
                         $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
                             if ($period_start && $period_end) {
                                 $query->where('period_start', date($period_start));
@@ -710,7 +708,6 @@ class ChartController extends Controller
                         $query->with(['childrens' => function ($query) use ($period_start, $period_end) {
                             // $query->orderBy('order');
                             $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
-                            // $query->with('rsr_indicators.rsr_periods.rsr_period_dimension_values');
                             $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
                                 if ($period_start && $period_end) {
                                     $query->where('period_start', date($period_start));
@@ -823,10 +820,8 @@ class ChartController extends Controller
 
         // $parents = $this->collections->where('level', 1)->values();
         // filter not to show contribution value
-        $parents = $this->collections->where('level', 1)->values()->filter(function ($item) {
-            return !Str::contains($item['title'], 'Amount of co-financing') &&
-                    !Str::contains($item['title'], "2SCALE's Contribution") &&
-                    !Str::contains($item['title'], "Private sector contribution");
+        $parents = $this->collections->where('level', 1)->values()->reject(function ($item) {
+            return !Str::contains($item['title'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
         })->values();
         $results = $parents->first()->only('rsr_project_id', 'project');
         $results['columns'] = $parents->sortBy('uii')->values();
@@ -838,10 +833,8 @@ class ChartController extends Controller
                 $child = $child->only('rsr_project_id', 'project');
                 // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
                 // filter not to show contribution value
-                $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->filter(function ($item) {
-                    return !Str::contains($item['title'], 'Amount of co-financing') &&
-                            !Str::contains($item['title'], "2SCALE's Contribution") &&
-                            !Str::contains($item['title'], "Private sector contribution");
+                $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
+                    return !Str::contains($item['title'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
                 })->values()->map(function ($col) {
                     $col['uii'] = Str::before($col['title'], ': ');
                     return $col;
@@ -854,10 +847,8 @@ class ChartController extends Controller
                         $child = $child->only('rsr_project_id', 'project');
                         // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
                         // filter not to show contribution value
-                        $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->filter(function ($item) {
-                            return !Str::contains($item['title'], 'Amount of co-financing') &&
-                                    !Str::contains($item['title'], "2SCALE's Contribution") &&
-                                    !Str::contains($item['title'], "Private sector contribution");
+                        $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
+                            return !Str::contains($item['title'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
                         })->values()->map(function ($col) {
                             $col['uii'] = Str::before($col['title'], ': ');
                             return $col;
@@ -876,12 +867,9 @@ class ChartController extends Controller
                 "result_ids" => config('akvo-rsr.datatables.uii8_results_ids'),
                 "url" => config('akvo-rsr.endpoints.rsr_page'),
             ],
-            // "columns" => $data->pluck('columns'),
             // filter not to show contribution value
-            "columns" => $data->pluck('columns')->filter(function ($item) {
-                            return !Str::contains($item['title'], 'Amount of co-financing') &&
-                                    !Str::contains($item['title'], "2SCALE's Contribution") &&
-                                    !Str::contains($item['title'], "Private sector contribution");
+            "columns" => $data->pluck('columns')->reject(function ($item) {
+                            return !Str::contains($item['uii'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
                         })->values()->sortBy('uii')->values(),
             "data" => $results,
         ];
