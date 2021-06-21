@@ -197,6 +197,11 @@ class ApiController extends Controller
 
     public function getRsrUiiReport(Request $request, RsrDetail $rsrDetail)
     {
+        $rsrUiiReport = Cache::get('rsr-uii-report');
+        if ($rsrUiiReport) {
+            return $rsrUiiReport;
+        }
+
         $config = config('akvo-rsr');
         $charts = collect($config['impact_react_charts']);
         $maxId = $charts->where('max', true)->pluck('id');
@@ -220,28 +225,25 @@ class ApiController extends Controller
                                    ->groupBy('dimension_title')->map(function($values, $dimensionTitle){
                 $values = $values->groupBy('dimension_value_title')->map(function($actual, $dimensionValue){
                     return [
-                        'name' => $dimensionValue,
+                        'name' => $this->transformDimensionValueName($dimensionValue),
                         'actual_value' => $actual->sum('max_dimension_value')
                     ];
                 })->values();
                 return [
                     'name' => $dimensionTitle,
                     'actual_value' => $values->sum('actual_value'),
-                    'dimensions' => $values
+                    'values' => $values
                 ];
             })->values();
             $ndActualValue = $result->whereNull('dimension_id')->sum('max_actual_value');
             return [
                 'uii' => Str::beforeLast($resultTitle,':'),
                 'dimensions' => $hasDimension,
-                'actual_value' => $ndActualValue + $hasDimension->sum('actual_values')
+                'actual_value' => $ndActualValue + $hasDimension->sum('actual_value')
             ];
         })->values();
 
-        //return $customAgg;
-
-
-        $results = $rsrResults->map(function ($rs) use ($charts) {
+        $results = $rsrResults->map(function ($rs) use ($charts, $customAgg) {
             $chart = $charts->where('id', $rs['id'])->first();
             $rs['rsr_indicators'] = $rs->rsr_indicators->transform(function ($ind) use ($chart) {
                 if ($ind['has_dimension']) {
@@ -249,32 +251,8 @@ class ApiController extends Controller
                         $dimVal = $dim->rsr_dimension_values->map(function ($dv) use ($ind) {
                             $actualDimValues = $ind['rsr_periods']->pluck('rsr_period_dimension_values')
                                 ->flatten(1)->where('rsr_dimension_value_id', $dv['id']);
-                            $name = $dv['name'];
-                            if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
-                                if (Str::contains($name, "Male")) {
-                                    $name = "Male";
-                                }
-                                if (Str::contains($name, "Female")) {
-                                    $name = "Female";
-                                }
-                            }
-                            if (Str::contains($name, ">") || Str::contains($name, "<")) {
-                                if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-                                    $name = "Senior Male";
-                                }
-                                if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-                                    $name = "Junior Male";
-                                }
-                                if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-                                    $name = "Senior Female";
-                                }
-                                if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-                                    $name = "Junior Female";
-                                }
-                            }
-
                             return [
-                                'name' => $name,
+                                'name' => $this->transformDimensionValueName($dv['name']),
                                 'target_value' => $dv['value'],
                                 'actual_value' => $actualDimValues->sum('value')
                             ];
@@ -317,9 +295,31 @@ class ApiController extends Controller
                 return $ind;
             });
 
+            $uii = Str::before($rs['title'],":");
+            if ($chart['max']) {
+                $agg = $customAgg->where('uii', $uii)->first();
+                return [
+                    "group" => $chart['group'],
+                    "uii" => $uii,
+                    "target_text" => $chart['target_text'],
+                    "target_value" => $rs['rsr_indicators']->sum('target_value'),
+                    "actual_value" => $agg['actual_value'],
+                    "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')
+                                        ->flatten(1)->map(function ($d) use ($agg) {
+                                            $match = $agg['dimensions']->where('name', $d['name'])->first();
+                                            $d['actual_value'] = $match['actual_value'];
+                                            $d['values'] = $d['values']->map(function ($v) use ($match) {
+                                                $v['actual_value'] = $match['values']->where('name', $v['name'])->first()['actual_value'];
+                                                return $v;
+                                            });
+                                            return $d;
+                                        })
+                ];
+            }
+
             return [
                 "group" => $chart['group'],
-                "uii" => Str::before($rs['title'],":"),
+                "uii" => $uii,
                 "target_text" => $chart['target_text'],
                 "target_value" => $rs['rsr_indicators']->sum('target_value'),
                 "actual_value" => $rs['rsr_indicators']->sum('actual_value'),
@@ -332,7 +332,35 @@ class ApiController extends Controller
             ];
         })->values();
 
+        Cache::put('rsr-uii-report', $results, 86400);
         return $results;
+    }
+
+    private function transformDimensionValueName($name)
+    {
+        if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
+            if (Str::contains($name, "Male")) {
+                $name = "Male";
+            }
+            if (Str::contains($name, "Female")) {
+                $name = "Female";
+            }
+        }
+        if (Str::contains($name, ">") || Str::contains($name, "<")) {
+            if (Str::contains($name, "Male") && Str::contains($name, ">")) {
+                $name = "Senior Male";
+            }
+            if (Str::contains($name, "Male") && Str::contains($name, "<")) {
+                $name = "Junior Male";
+            }
+            if (Str::contains($name, "Female") && Str::contains($name, ">")) {
+                $name = "Senior Female";
+            }
+            if (Str::contains($name, "Female") && Str::contains($name, "<")) {
+                $name = "Junior Female";
+            }
+        }
+        return $name;
     }
 
     private function getPartnershipCache() {
