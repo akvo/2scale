@@ -85,6 +85,7 @@ renderRsrTable(["0", "0"].join("/"), baseurl, "datatables");
 
 $("#country-level").on("change", () => {
     let country_id = $("#country-level").val();
+    $("#partnership-level").val(0);
     $(".partnerships").hide('fast');
     $(".ppp-"+country_id).show('fast');
 });
