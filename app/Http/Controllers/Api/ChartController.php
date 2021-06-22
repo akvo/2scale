@@ -943,9 +943,12 @@ class ChartController extends Controller
             $ind['total_actual_value'] = $indActValue ? $indActValue : 0;
             if ($ind['has_dimension']) {
                 // collect dimensions value all period
-                $periodDimensionValues = $ind['rsr_periods']->map(function ($per) {
-                    return $per['rsr_period_dimension_values'];
-                })->flatten(1);
+                $periodDimensionValues = $ind['rsr_periods'];
+                if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
+                    $periodDimensionValues = $ind['rsr_periods']->sortByDesc('actual_value')->values()->first();
+                    $periodDimensionValues = [$periodDimensionValues];
+                }
+                $periodDimensionValues = collect($periodDimensionValues)->pluck('rsr_period_dimension_values')->flatten(1);
                 // aggregate dimension value
                 $ind['rsr_dimensions'] = $ind['rsr_dimensions']->transform(function ($dim)
                     use ($res, $periodDimensionValues) {
