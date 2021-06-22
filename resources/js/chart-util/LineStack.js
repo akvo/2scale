@@ -31,7 +31,7 @@ const LineStack = (data, extra) => {
                     position: "inside",
                     color: "#a43332",
                 },
-                stack: "t",
+                stack: i,
                 type: "line",
                 data: x.map((v) => v.value),
             };
@@ -83,19 +83,18 @@ const LineStack = (data, extra) => {
             ...TextStyle,
         },
         toolbox: { show: false },
-        yAxis: [
-            {
-                type: "value",
-                axisLabel: {
-                    inside: true,
-                    backgroundColor: "#f2f2f2",
-                    padding: 5,
-                    fontFamily: "MarkPro",
-                    fontSize: 12,
-                },
-                axisLine: { show: false },
+        yAxis: {
+            type: "value",
+            axisLabel: {
+                inside: true,
+                backgroundColor: "#f2f2f2",
+                padding: 5,
+                fontFamily: "MarkPro",
+                fontSize: 12,
             },
-        ],
+            logBase: 10,
+            axisLine: { show: false },
+        },
         xAxis: {
             data: xAxis,
             type: "category",
