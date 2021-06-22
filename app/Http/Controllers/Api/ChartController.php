@@ -929,9 +929,13 @@ class ChartController extends Controller
     private function aggregateRsrValues($res)
     {
         $no_dimension_indicators = collect();
-        $res['rsr_indicators'] = $res['rsr_indicators']->transform(function ($ind) use ($no_dimension_indicators) {
+        $res['rsr_indicators'] = $res['rsr_indicators']->transform(function ($ind) use ($res, $no_dimension_indicators) {
             // $ind['target_value'] = $ind['rsr_periods']->sum('target_value');
             $ind['total_actual_value'] = $ind['rsr_periods']->sum('actual_value');
+            // custom max aggregation for UII 1,2,3
+            if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
+                $ind['total_actual_value'] = $ind['rsr_periods']->max('actual_value');
+            }
             if ($ind['has_dimension']) {
                 // collect dimensions value all period
                 $periodDimensionValues = $ind['rsr_periods']->map(function ($per) {
@@ -939,12 +943,16 @@ class ChartController extends Controller
                 })->flatten(1);
                 // aggregate dimension value
                 $ind['rsr_dimensions'] = $ind['rsr_dimensions']->transform(function ($dim)
-                    use ($periodDimensionValues) {
+                    use ($res, $periodDimensionValues) {
                     $dim['rsr_dimension_values'] = $dim['rsr_dimension_values']->transform(function ($dimVal)
-                        use ($periodDimensionValues) {
-                        $dimVal['total_actual_value'] = $periodDimensionValues
-                                                        ->where('rsr_dimension_value_id', $dimVal['id'])
-                                                        ->sum('value');
+                        use ($res, $periodDimensionValues) {
+                        $periodDimVal = $periodDimensionValues->where('rsr_dimension_value_id', $dimVal['id']);
+                        if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
+                            $periodDimVal = $periodDimVal->max('value');
+                        } else {
+                            $periodDimVal = $periodDimVal->sum('value');
+                        }
+                        $dimVal['total_actual_value'] = $periodDimVal;
                         return $dimVal;
                     });
                     return $dim;

@@ -44,7 +44,7 @@ class RsrWordReportController extends Controller
             $end = $request->end;
         }
 
-        return $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
+        $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
         if (count($rsrReport) === 0) {
             return response('no data available', 503);
         }
@@ -72,7 +72,7 @@ class RsrWordReportController extends Controller
 
         // save file
         $writers = ['format' => 'Word2007', 'extension' => 'docx'];
-        $filename = "RSR_Report_".$country;
+        $filename = "RSR_Report_".$partnership->where('id', $pid)->first()['name'];
         $targetFile = "{$filename}.{$writers['extension']}";
         $save = $phpWord->save($targetFile, $writers['format']);
         if (!$save) {
