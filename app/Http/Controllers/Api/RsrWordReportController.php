@@ -39,7 +39,6 @@ class RsrWordReportController extends Controller
 
         $start = false;
         $end = false;
-        $currentYear = date('Y');
         $reportTimeTitle = '';
         if (isset($request->year) && isset($request->selector)) {
             $year = $request->year;
@@ -85,7 +84,7 @@ class RsrWordReportController extends Controller
         $name = $partnership->where('id', $pid)->first()['name'];
         $name = explode(' ', $name);
         $name = implode('_', $name);
-        $filename = "RSR_Report_".$name;
+        $filename = "RSR_Report_".implode('_', explode(' ', $reportTimeTitle))."_".$name;
         $targetFile = "{$filename}.{$writers['extension']}";
         $save = $phpWord->save($targetFile, $writers['format']);
         if (!$save) {
