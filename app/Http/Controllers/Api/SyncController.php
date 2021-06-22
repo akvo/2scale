@@ -319,11 +319,20 @@ class SyncController extends Controller
 		});
         $data_points = $this->collections->map(function($data_point) use ($datapoints) {
 			$data = collect($data_point["answers"])->map(function($answer) {
+                $answer['text'] = is_array($answer['text']) ? json_encode($answer['text']) : $answer['text'];
+                $answer['options'] = is_array($answer['options']) ? json_encode($answer['options']) : strval($answer['options']);
 				return new Answer($answer);
 			});
 			$data_points = collect($data_point)->except('answers')->toArray();
             $id = $datapoints->insertGetId($data_points);
-            $answers = $datapoints->find($id)->answers()->saveMany($data);
+            $answers = [];
+            try {
+                //code...
+                $answers = $datapoints->find($id)->answers()->saveMany($data);
+            } catch (\Throwable $th) {
+                //throw $th;
+                dump($data);
+            }
 			return ["answers" => $answers,"datapoints" => $datapoints];
         });
 
