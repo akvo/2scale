@@ -18,6 +18,7 @@ use App\Partnership;
 use App\Sector;
 use App\Option;
 use App\RsrDetail;
+use Illuminate\Support\Facades\Cache;
 
 class ChartController extends Controller
 {
@@ -684,6 +685,15 @@ class ChartController extends Controller
 
     public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false)
     {
+        $pId = $partnershipId ? $partnershipId : 'all';
+        $year = $period_start ? $period_start : "-0";
+        $selector = $period_end ? $period_end : "-0";
+        $cacheName = 'rsr-reports-'.$pId.$year.$selector;
+        $rsrReportCache = Cache::get($cacheName);
+        if ($rsrReportCache) {
+            return $rsrReportCache;
+        }
+
         $data = \App\RsrProject::where('partnership_id', $partnershipId)
                 ->with(['rsr_results' => function ($query) use ($period_start, $period_end) {
                     // $query->orderBy('order');
@@ -866,7 +876,7 @@ class ChartController extends Controller
             });
         }
 
-        return [
+        $rsrReport = [
             "config" => [
                 "result_ids" => config('akvo-rsr.datatables.uii8_results_ids'),
                 "url" => config('akvo-rsr.endpoints.rsr_page'),
@@ -877,6 +887,9 @@ class ChartController extends Controller
                         })->values()->sortBy('uii')->values(),
             "data" => $results,
         ];
+        Cache::put($cacheName, $rsrReport, 86400);
+
+        return $rsrReport;
     }
 
     private function aggregateRsrChildrenValues($res, $level)
