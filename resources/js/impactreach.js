@@ -1,6 +1,7 @@
 import createElement from "./app";
 import generateCharts, { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
+import { formatNumber } from "./util";
 import _ from "lodash";
 const axios = window.axios;
 
@@ -75,7 +76,7 @@ const uui = (x, idx) => {
             if (t === "number") {
                 return (
                     <span style="font-weight:bold;color:#a43332;">
-                        {c.target_value}
+                        {formatNumber(c.target_value)}
                     </span>
                 );
             }
