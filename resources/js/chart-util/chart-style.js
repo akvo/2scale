@@ -2,7 +2,7 @@ import sortBy from "lodash/sortBy";
 import { formatNumber, translateValue } from "../util.js";
 
 export const backgroundColor = {
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
 };
 
 export const Easing = {

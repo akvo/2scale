@@ -40,6 +40,11 @@ body {
     margin-right: 0px !important;
 }
 
+.row .even-row {
+    background-color: #fbfbfb;
+    padding-bottom: 1rem;
+}
+
 .card,
 .navbar,
 .page-link {
@@ -94,4 +99,7 @@ body {
 .uii-charts {
     margin-top: 1rem;
     text-align: center;
+}
+.uii-charts.no-margin {
+    margin-top: 0;
 }

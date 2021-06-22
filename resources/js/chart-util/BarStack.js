@@ -24,13 +24,13 @@ const BarStack = (data, extra) => {
     let series = _.chain(data)
         .groupBy("name")
         .map((x, i) => {
-            if (i === "target value") {
+            if (i === "pending") {
                 return {
                     name: i,
                     label: {
                         formatter: function (params) {
                             let total = data
-                                .filter((d) => d.name === "actual value")
+                                .filter((d) => d.name === "achived")
                                 .find((d) => d.group === params.name);
                             return total.value + params.value;
                         },
@@ -66,7 +66,7 @@ const BarStack = (data, extra) => {
     let option = {
         ...Color,
         legend: {
-            data: _.sortBy(legends),
+            data: _.sortBy(legends).filter((l) => l !== "pending"),
             icon: "circle",
             top: "0px",
             left: "center",

@@ -17,12 +17,12 @@ const dimensions = (x, idx) => {
                 series.push({
                     group: v.name,
                     value: restTarget < 0 ? 0 : restTarget,
-                    name: "target value",
+                    name: "pending",
                 });
                 series.push({
                     group: v.name,
                     value: v.actual_value,
-                    name: "actual value",
+                    name: "achived",
                 });
                 return v.name;
             });
@@ -37,11 +37,11 @@ const dimensions = (x, idx) => {
                 id: id,
                 data: [
                     {
-                        name: "target value",
+                        name: "pending",
                         value: d.target_value - d.actual_value,
                     },
                     {
-                        name: "actual value",
+                        name: "achived",
                         value: d.actual_value,
                     },
                 ],
@@ -49,9 +49,16 @@ const dimensions = (x, idx) => {
             });
         }
         return (
-            <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
+            <div
+                class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts ${
+                    d.values.length === 0 ? "no-margin" : ""
+                }`}
+            >
                 {d.name}
-                <div id={id} style="height:450px"></div>
+                <div
+                    id={id}
+                    style={`height:${d?.height ? d.height : "450px"}`}
+                ></div>
             </div>
         );
     });
@@ -59,6 +66,10 @@ const dimensions = (x, idx) => {
 
 const uui = (x, idx) => {
     return x.childrens.map((c, i) => {
+        let even = false;
+        if (i % 2 == 0) {
+            even = true;
+        }
         let target = c.target_text || "";
         target = target.split("##").map((t) => {
             if (t === "number") {
@@ -88,29 +99,58 @@ const uui = (x, idx) => {
         });
         const dim = c.dimensions?.length
             ? dimensions(c.dimensions, `${idx}-${i}`)
-            : false;
+            : dimensions(
+                  [
+                      {
+                          name: "",
+                          target_value: c.target_value,
+                          actual_value: c.actual_value,
+                          values: [],
+                          height: "200px",
+                      },
+                  ],
+                  `${idx}-${i}`
+              );
         return (
-            <div class={`card col-md-${c.dimensions?.length ? 12 : 6}`}>
-                <div class="card-body">
-                    <div
-                        class="uii-col uii-percentage"
-                        id={`percentage-${idx}-${i}`}
-                    >
-                        {percentage ? 0 : " - "}
+            <div class="col-md-12">
+                <div class={`row ${even ? "even-row" : ""}`}>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div
+                                    class="uii-col uii-percentage"
+                                    id={`percentage-${idx}-${i}`}
+                                >
+                                    {percentage ? 0 : " - "}
+                                </div>
+                                <div class="uii-col uii-detail">
+                                    <span style="font-weight:bold;">
+                                        ACHIEVED:{" "}
+                                    </span>
+                                    <span
+                                        style="font-weight:bold;color:#a43332;"
+                                        id={`achived-${idx}-${i}`}
+                                    >
+                                        0
+                                    </span>
+                                    <br />
+                                    <span style="font-weight:bold;">
+                                        TARGET:{" "}
+                                    </span>
+                                    {target.length > 1 ? target : " - "}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="uii-col uii-detail">
-                        <span style="font-weight:bold;">ACHIEVED: </span>
-                        <span
-                            style="font-weight:bold;color:#a43332;"
-                            id={`achived-${idx}-${i}`}
-                        >
-                            0
-                        </span>
-                        <br />
-                        <span style="font-weight:bold;">TARGET: </span>
-                        {target.length > 1 ? target : " - "}
+                    <div class="col-md-8">
+                        {c.dimensions?.length ? (
+                            <div class="row">{dim}</div>
+                        ) : (
+                            <div class="row">
+                                <div class="col-md-6">{dim}</div>
+                            </div>
+                        )}
                     </div>
-                    {dim ? <div class="row">{dim}</div> : ""}
                 </div>
             </div>
         );
@@ -206,7 +246,7 @@ $("main").append(
                 </h2>
             </div>
         </div>
-        <hr/>
+        <hr />
     </div>
 );
 

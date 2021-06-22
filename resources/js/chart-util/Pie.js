@@ -15,12 +15,22 @@ const Pie = (data, extra, Doughnut = false) => {
     if (data.length > 0) {
         data = data.map((x) => {
             let n = x.name.split("(")[0];
+            if (x.name === "pending") {
+                return {
+                    ...x,
+                    name: n,
+                    itemStyle: {
+                        color: "transparent",
+                        borderType: "dashed",
+                        borderColor: "#000",
+                    },
+                };
+            }
             return {
                 ...x,
                 name: n,
             };
         });
-        data = data;
         labels = data.map((x) => x.name);
         total = {
             ...total,
@@ -47,10 +57,12 @@ const Pie = (data, extra, Doughnut = false) => {
                 type: "pie",
                 right: "center",
                 radius: Doughnut ? ["0%", "100%"] : ["50%", "100%"],
-                top: '30px',
+                top: "30px",
                 label: {
                     normal: {
-                        formatter: "{d}%",
+                        formatter: function (params) {
+                            return Math.round(params.percent) + "%";
+                        },
                         show: true,
                         position: Doughnut ? "inner" : "outside",
                         padding: 5,
@@ -64,7 +76,6 @@ const Pie = (data, extra, Doughnut = false) => {
                         },
                     },
                     emphasis: {
-                        formatter: "{c} ({d} %)",
                         position: "center",
                         show: true,
                         padding: 5,
@@ -87,7 +98,7 @@ const Pie = (data, extra, Doughnut = false) => {
                 right: "center",
                 radius: Doughnut ? ["0%", "0%"] : ["0%", "40%"],
                 color: ["#f1f1f5"],
-                top: '30px',
+                top: "30px",
                 label: {
                     normal: {
                         formatter: function (params) {
@@ -110,11 +121,11 @@ const Pie = (data, extra, Doughnut = false) => {
             },
         ],
         legend: {
-            data: labels,
+            data: labels.filter((l) => l !== "pending"),
             ...Legend,
-            orient: 'vertical',
-            x: 'right',
-            y: 'top',
+            orient: "vertical",
+            x: "right",
+            y: "top",
         },
         ...Color,
         ...backgroundColor,
