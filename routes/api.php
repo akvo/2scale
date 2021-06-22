@@ -110,6 +110,6 @@ Route::get('/flow/rnr-gender', 'Api\ApiController@getRnrGender');
 Route::get('/rsr/impact-reach', 'Api\ApiController@getRsrImpactReach');
 Route::get('/rsr/impact-reach/uii', 'Api\ApiController@getRsrUiiReport');
 Route::get('/rsr/impact-reach/uii-after', 'Api\ApiController@getRsrUiiReportAfter');
-Route::get('/rsr/word-report/{country_id}/{partnership_id}/{start}/{end}', 'Api\RsrWordReportController@getRsrWordReport');
+Route::get('/rsr/word-report/{country_id}/{partnership_id}/{year}/{selector}', 'Api\RsrWordReportController@getRsrWordReport');
 
 Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/{end}', 'Api\ApiController@getPartnershipCommodities');

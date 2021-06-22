@@ -39,14 +39,27 @@ class RsrWordReportController extends Controller
 
         $start = false;
         $end = false;
-        if (isset($request->start) && isset($request->end)) {
-            $start = $request->start;
-            $end = $request->end;
+        $currentYear = date('Y');
+        $reportTimeTitle = '';
+        if (isset($request->year) && isset($request->selector)) {
+            $year = $request->year;
+            if ($request->selector === "1") {
+                // get the value from last year
+                $year = (int) $year - 1;
+                $start = $year."-07-01";
+                $end = $year."-12-31";
+                $reportTimeTitle = 'July - December '.$year;
+            }
+            if ($request->selector === "2" || $request->selector === "3") {
+                $start = $year."-01-01";
+                $end = $year."-06-30";
+                $reportTimeTitle = 'January - June '.$year;
+            }
         }
 
         $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
         if (count($rsrReport) === 0) {
-            return response('no data available', 503);
+            return response('No Data Available', 503);
         }
 
         // get content from flow
@@ -58,30 +71,33 @@ class RsrWordReportController extends Controller
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $country, $reportConfig, $projects, $datapoints);
+        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $reportTimeTitle, $country, $reportConfig, $projects, $datapoints);
 
         // Not included the children or PPPs
         /*
         if (count($rsrReport['data']['childrens']) > 0) {
             // render document for the childrens
             foreach ($rsrReport['data']['childrens'] as $key => $child) {
-                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $country, $reportConfig, $projects, $datapoints);
+                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints);
             }
         }
         */
 
         // save file
         $writers = ['format' => 'Word2007', 'extension' => 'docx'];
-        $filename = "RSR_Report_".$partnership->where('id', $pid)->first()['name'];
+        $name = $partnership->where('id', $pid)->first()['name'];
+        $name = explode(' ', $name);
+        $name = implode('_', $name);
+        $filename = "RSR_Report_".$name;
         $targetFile = "{$filename}.{$writers['extension']}";
         $save = $phpWord->save($targetFile, $writers['format']);
         if (!$save) {
-            return response('failed', 204);
+            return response('Failed to generate report, please try again later.', 204);
         }
         return ["link" => env('APP_URL')."/".$filename.".".$writers['extension']];
     }
 
-    private function renderWordDoc($phpWord, $columns, $data, $country, $reportConfig, $projects, $datapoints)
+    private function renderWordDoc($phpWord, $columns, $data, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints)
     {
         $reportBody = $reportConfig['questions'];
         $n = microtime(true);
@@ -112,8 +128,8 @@ class RsrWordReportController extends Controller
         $sectionStyle->setMarginRight(\PhpOffice\PhpWord\Shared\Converter::cmToTwip(1.5));
         $sectionStyle->setMarginLeft(\PhpOffice\PhpWord\Shared\Converter::cmToTwip(1.5));
 
-        $section->addText(htmlspecialchars('Quarterly report month-month 2020'), $titleStyle, $this->alignHCentered);
-        $section->addText($country, $titleStyle, $this->alignHCentered);
+        $section->addText(htmlspecialchars('Quarterly Report '.$reportTimeTitle), $titleStyle, $this->alignHCentered);
+        $section->addText(htmlspecialchars($country), $titleStyle, $this->alignHCentered);
         $section->addTextBreak(2);
 
         $section->addText(htmlspecialchars('Partnership Name: '.$data['project']), $titleStyle);

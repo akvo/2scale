@@ -719,6 +719,10 @@ class ChartController extends Controller
                     }]);
                 }])->first();
 
+        if (!$data) {
+            return [];
+        };
+
         $this->collections = collect();
         $data = $data['rsr_results']->transform(function ($res) {
             $res['parent_project'] = null;
@@ -931,11 +935,12 @@ class ChartController extends Controller
         $no_dimension_indicators = collect();
         $res['rsr_indicators'] = $res['rsr_indicators']->transform(function ($ind) use ($res, $no_dimension_indicators) {
             // $ind['target_value'] = $ind['rsr_periods']->sum('target_value');
-            $ind['total_actual_value'] = $ind['rsr_periods']->sum('actual_value');
+            $indActValue = $ind['rsr_periods']->sum('actual_value');
             // custom max aggregation for UII 1,2,3
             if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
-                $ind['total_actual_value'] = $ind['rsr_periods']->max('actual_value');
+                $indActValue = $ind['rsr_periods']->max('actual_value');
             }
+            $ind['total_actual_value'] = $indActValue ? $indActValue : 0;
             if ($ind['has_dimension']) {
                 // collect dimensions value all period
                 $periodDimensionValues = $ind['rsr_periods']->map(function ($per) {
@@ -952,7 +957,7 @@ class ChartController extends Controller
                         } else {
                             $periodDimVal = $periodDimVal->sum('value');
                         }
-                        $dimVal['total_actual_value'] = $periodDimVal;
+                        $dimVal['total_actual_value'] = $periodDimVal ? $periodDimVal : 0;
                         return $dimVal;
                     });
                     return $dim;

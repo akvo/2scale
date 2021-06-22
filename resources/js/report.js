@@ -4,6 +4,24 @@ import { renderRsrTableTemplate, renderRsrTable } from "./rsrDatatables.js";
 
 const baseurl = $("meta[name=path]").attr("content");
 
+const renderReportForm = () => {
+    axios
+        .get(baseurl + "/api/flow/partnerships")
+        .then(res => {
+            res.data.forEach(c => {
+                $("#country-level").append('<option value="'+c.id+'">'+c.name+' (CTL)</option>');
+                if (c.childrens.length > 0) {
+                    c.childrens.forEach(p => {
+                        $("#partnership-level").append('<option class="partnerships ppp-'+c.id+'" value="'+p.id+'">'+p.name+' (PF)</option>');
+                    });
+                };
+            });
+            return res.data;
+        }).then(res => {
+            $(".partnerships").hide('fast');
+        });
+}
+
 $("main").append(
     '\
     <div class="row" id="first-row"> \
@@ -15,25 +33,28 @@ $("main").append(
                       <form class="row">\
                         <div class="col-auto">\
                           <select id="country-level" class="form-control">\
+                            <option value="0" selected>Select Country</option>\
+                          </select>\
+                        </div>\
+                        <div  class="col-4">\
+                          <select id="partnership-level" class="form-control">\
                             <option value="0" selected>Select Partnership</option>\
-                            <option value="1">Burkina Faso</option>\
-                            <option value="2">Cote d\'Ivoire</option>\
-                            <option value="3">Egypt</option>\
-                            <option value="4">Ethiopia</option>\
-                            <option value="5">Ghana</option>\
-                            <option value="6">Kenya</option>\
-                            <option value="7">Mali</option>\
-                            <option value="8">Niger</option>\
-                            <option value="9">Nigeria</option>\
-                            <option value="10">South Sudan</option>\
                           </select>\
                         </div>\
                         <div  class="col-auto">\
-                          <select id="quarter" class="form-control">\
-                            <option value="0" selected>Quarter</option>\
-                            <option value="1">One</option>\
-                            <option value="2">Two</option>\
-                            <option value="3">Three</option>\
+                          <select id="year" class="form-control">\
+                            <option value="0" selected>Year</option>\
+                            <option value="2021">2021</option>\
+                            <option value="2022">2022</option>\
+                            <option value="2023">2023</option>\
+                          </select>\
+                        </div>\
+                        <div  class="col-auto">\
+                          <select id="selector" class="form-control">\
+                            <option value="0" selected>Report Selector</option>\
+                            <option value="1">Report 1</option>\
+                            <option value="2">Report 2</option>\
+                            <option value="3">Report 3</option>\
                           </select>\
                         </div>\
                         <div class="col-auto">\
@@ -47,24 +68,38 @@ $("main").append(
     </div>\
     <hr/>'
 );
+renderReportForm();
 
 $("main").append("<div class='row' id='second-row'></div>");
 /* second Row */
 getCharts("report/total-activities", "second-row", "12");
 
 // Rsr Datatables
-renderRsrTableTemplate("datatables", "75%");
-// renderRsrTableTemplate('datatables', '20%');
+renderRsrTableTemplate("datatables", "90%");
 renderRsrTable(["0", "0"].join("/"), baseurl, "datatables");
+
+
+$("#country-level").on("change", () => {
+    let country_id = $("#country-level").val();
+    $(".partnerships").hide('fast');
+    $(".ppp-"+country_id).show('fast');
+});
+
+const showModalError = (response) => {
+    $("#myModalAuthTitle").html("Error");
+    $("#myModalAuthBody").html(
+        '<div class="alert alert-warning" role="alert">'+response+'</div>'
+    );
+    $("#myModalAuth").modal({ backdrop: "static", keyboard: false });
+}
 
 $("#generate-word-report").on("click", () => {
     let country_id = $("#country-level").val();
-    if (Number(country_id) === 0) {
-        $("#myModalAuthTitle").html("Error");
-        $("#myModalAuthBody").html(
-            '<div class="alert alert-warning" role="alert">Please select Partnership</div>'
-        );
-        $("#myModalAuth").modal({ backdrop: "static", keyboard: false });
+    let partnership_id = $("#partnership-level").val();
+    let year = $("#year").val();
+    let selector = $("#selector").val();
+    if (Number(country_id) === 0 || Number(year) === 0 || Number(selector) === 0) {
+        showModalError("Country, Year, and Report Selector are required.");
         return;
     }
     // Loading
@@ -81,7 +116,7 @@ $("#generate-word-report").on("click", () => {
     $("#myModalAuth").modal({ backdrop: "static", keyboard: false });
 
     axios
-        .get(baseurl + "/api/rsr/word-report/" + country_id + "/0/0/0")
+        .get(baseurl + "/api/rsr/word-report/" + country_id + "/" + partnership_id + "/" + year + "/" + selector)
         .then(res => {
             $("#loader-spinner").remove();
             $("#myModalAuthTitle").html("Report ready to download");
@@ -95,11 +130,11 @@ $("#generate-word-report").on("click", () => {
             $("#myModalBtnClose").show();
         })
         .catch(err => {
-            console.log("internal server error", err);
+            console.error(err);
             $("#loader-spinner").remove();
             $("#myModalAuthTitle").html("Error");
             $("#myModalAuthBody").html(
-                '<div class="alert alert-danger" role="alert">Please try again later!</div>'
+                '<div class="alert alert-danger" role="alert">'+err.response.data+'</div>'
             );
             $("#myModalBtnClose").show();
         });
