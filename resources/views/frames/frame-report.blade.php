@@ -36,6 +36,12 @@ body{
     border-radius: 3px;
     margin: 5px;
 }
+
+.form-group.required .control-label:after {
+    content:"*";
+    color:red;
+    margin-right: 5px;
+}
 </style>
 <body>
     <!-- Jumbotron -->

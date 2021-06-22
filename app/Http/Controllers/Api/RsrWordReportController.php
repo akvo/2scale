@@ -43,17 +43,14 @@ class RsrWordReportController extends Controller
         $reportTimeTitle = '';
         if (isset($request->year) && isset($request->selector)) {
             $year = $request->year;
+            $reportTimeTitle = $request->selector.' '.$year;
             if ($request->selector === "1") {
                 // get the value from last year
                 $year = (int) $year - 1;
-                $start = $year."-07-01";
                 $end = $year."-12-31";
-                $reportTimeTitle = 'July - December '.$year;
             }
             if ($request->selector === "2" || $request->selector === "3") {
-                $start = $year."-01-01";
                 $end = $year."-06-30";
-                $reportTimeTitle = 'January - June '.$year;
             }
         }
 
@@ -128,7 +125,7 @@ class RsrWordReportController extends Controller
         $sectionStyle->setMarginRight(\PhpOffice\PhpWord\Shared\Converter::cmToTwip(1.5));
         $sectionStyle->setMarginLeft(\PhpOffice\PhpWord\Shared\Converter::cmToTwip(1.5));
 
-        $section->addText(htmlspecialchars('Quarterly Report '.$reportTimeTitle), $titleStyle, $this->alignHCentered);
+        $section->addText(htmlspecialchars('Report '.$reportTimeTitle), $titleStyle, $this->alignHCentered);
         $section->addText(htmlspecialchars($country), $titleStyle, $this->alignHCentered);
         $section->addTextBreak(2);
 

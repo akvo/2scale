@@ -699,9 +699,11 @@ class ChartController extends Controller
                     // $query->orderBy('order');
                     $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
                     $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
-                        if ($period_start && $period_end) {
-                            $query->where('period_start', date($period_start));
-                            $query->where('period_end', date($period_end));
+                        if ($period_start) {
+                            $query->where('period_start', '>=', date($period_start));
+                        }
+                        if ($period_end) {
+                            $query->where('period_end', '<=', date($period_end));
                         }
                         $query->with('rsr_period_dimension_values');
                     }]);
@@ -709,9 +711,11 @@ class ChartController extends Controller
                         // $query->orderBy('order');
                         $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
                         $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
-                            if ($period_start && $period_end) {
-                                $query->where('period_start', date($period_start));
-                                $query->where('period_end', date($period_end));
+                            if ($period_start) {
+                                $query->where('period_start', '>=', date($period_start));
+                            }
+                            if ($period_end) {
+                                $query->where('period_end', '<=', date($period_end));
                             }
                             $query->with('rsr_period_dimension_values');
                         }]);
@@ -719,9 +723,11 @@ class ChartController extends Controller
                             // $query->orderBy('order');
                             $query->with('rsr_indicators.rsr_dimensions.rsr_dimension_values');
                             $query->with(['rsr_indicators.rsr_periods' => function ($query) use ($period_start, $period_end) {
-                                if ($period_start && $period_end) {
-                                    $query->where('period_start', date($period_start));
-                                    $query->where('period_end', date($period_end));
+                                if ($period_start) {
+                                    $query->where('period_start', '>=', date($period_start));
+                                }
+                                if ($period_end) {
+                                    $query->where('period_end', '<=', date($period_end));
                                 }
                                 $query->with('rsr_period_dimension_values');
                             }]);

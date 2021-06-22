@@ -9,10 +9,10 @@ const renderReportForm = () => {
         .get(baseurl + "/api/flow/partnerships")
         .then(res => {
             res.data.forEach(c => {
-                $("#country-level").append('<option value="'+c.id+'">'+c.name+' (CTL)</option>');
+                $("#country-level").append('<option value="'+c.id+'">'+c.name+'</option>');
                 if (c.childrens.length > 0) {
                     c.childrens.forEach(p => {
-                        $("#partnership-level").append('<option class="partnerships ppp-'+c.id+'" value="'+p.id+'">'+p.name+' (PF)</option>');
+                        $("#partnership-level").append('<option class="partnerships ppp-'+c.id+'" value="'+p.id+'">'+p.name+'</option>');
                     });
                 };
             });
@@ -27,21 +27,24 @@ $("main").append(
     <div class="row" id="first-row"> \
         <div class="col-md-12"> \
             <div class="card"> \
-                <div class="card-header">Generate Word Report</div> \
+                <div class="card-header"><h3>Generate Word Report</h3></div> \
                 <div class="card-body"> \
                     <div class="d-flex justify-content-center align-items-center" id="loader-test"> \
-                      <form class="row">\
-                        <div class="col-auto">\
+                      <form class="row form-inline">\
+                        <div class="col-auto form-group required">\
+                          <label class="control-label"></label>\
                           <select id="country-level" class="form-control">\
-                            <option value="0" selected>Select Country</option>\
+                            <option value="0" selected>Select Country (CTL)</option>\
                           </select>\
                         </div>\
-                        <div  class="col-4">\
+                        <div  class="col-auto form-group">\
+                          <label class="control-label"></label>\
                           <select id="partnership-level" class="form-control">\
-                            <option value="0" selected>Select Partnership</option>\
+                            <option value="0" selected>Select Partnership (PF)</option>\
                           </select>\
                         </div>\
-                        <div  class="col-auto">\
+                        <div class="col-auto form-group required">\
+                          <label class="control-label"></label>\
                           <select id="year" class="form-control">\
                             <option value="0" selected>Year</option>\
                             <option value="2021">2021</option>\
@@ -49,7 +52,8 @@ $("main").append(
                             <option value="2023">2023</option>\
                           </select>\
                         </div>\
-                        <div  class="col-auto">\
+                        <div class="col-auto form-group required">\
+                          <label class="control-label"></label>\
                           <select id="selector" class="form-control">\
                             <option value="0" selected>Report Selector</option>\
                             <option value="1">Report 1</option>\
@@ -58,7 +62,7 @@ $("main").append(
                           </select>\
                         </div>\
                         <div class="col-auto">\
-                          <button id="generate-word-report" type="button" class="btn btn-sm btn-primary" style="margin-top: -0.0px; height:35px;">Download</button>\
+                          <button id="generate-word-report" type="button" class="btn btn-sm btn-primary" style="height:35px;">Download</button>\
                         </div>\
                       </form>\
                     </div> \
