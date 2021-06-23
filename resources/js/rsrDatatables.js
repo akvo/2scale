@@ -956,13 +956,12 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
 export const renderRsrTableTemplate = (datatableId, position, title = null) => {
     title = title ? title : tableTitle;
     return $("main").append(
-        '<hr>\
-        <div class="row">\
+        '<div class="row">\
             <div class="col-md-12">\
                 <div class="card">\
-                    <div class="card-header" style="color:black;">' +
+                    <div class="card-header" style="color:black;"><h4>' +
             title +
-            '</div>\
+            '</h4></div>\
                 </div>\
             </div>\
         </div>\

@@ -27,6 +27,7 @@
 html,
 body{
 	margin:auto;
+    height: 100%;
 }
 .loader-spinner {
     position:absolute;

@@ -79,8 +79,8 @@ $("main").append("<div class='row' id='second-row'></div>");
 getCharts("report/total-activities", "second-row", "12");
 
 // Rsr Datatables
-renderRsrTableTemplate("datatables", "90%");
-renderRsrTable(["0", "0"].join("/"), baseurl, "datatables");
+// renderRsrTableTemplate("datatables", "90%");
+// renderRsrTable(["0", "0"].join("/"), baseurl, "datatables");
 
 
 $("#country-level").on("change", () => {
