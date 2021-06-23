@@ -311,7 +311,8 @@ class ApiController extends Controller
                                             $match = $agg['dimensions']->where('name', $d['name'])->first();
                                             $d['actual_value'] = $match['actual_value'];
                                             $d['values'] = $d['values']->map(function ($v) use ($match) {
-                                                $v['actual_value'] = $match['values']->where('name', $v['name'])->first()['actual_value'];
+                                                $v['actual_value'] = $match['values']
+                                                    ->where('name', $v['name'])->first()['actual_value'];
                                                 return $v;
                                             });
                                             return $d;
@@ -319,15 +320,23 @@ class ApiController extends Controller
                 ];
             }
 
+            $dimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1);
+            if (Str::contains($uii, "UII-8")) {
+                $dimensions = $dimensions->map(function($d){
+                    $d['name'] = $this->transformDimensionName($d['name']);
+                    return $d;
+                });
+            }
+
+
             return [
                 "group" => $chart['group'],
                 "uii" => $uii,
                 "target_text" => $chart['target_text'],
                 "target_value" => $rs['rsr_indicators']->sum('target_value'),
                 "actual_value" => $rs['rsr_indicators']->sum('actual_value'),
-                "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1)
-            ];
-        })->groupBy('group')->map(function ($res, $key) {
+                "dimensions" => $dimensions
+            ];})->groupBy('group')->map(function ($res, $key) {
             return [
                 "group" => $key,
                 "childrens" => $res
@@ -336,6 +345,23 @@ class ApiController extends Controller
 
         Cache::put('rsr-uii-report', $results, 86400);
         return $results;
+    }
+
+    private function transformDimensionName($name)
+    {
+        if (Str::contains($name, "Newly registered SHFs")){
+            return "250,000 smallholder farmers (50% women and 40% youth) have access to additional financial services.";
+        }
+        if (Str::contains($name, "Newly registered micro-entrepreneurs")){
+            return "2,000 MSMEs (50% female-led; 20% young entrepreneurs) have access to additional financial services.";
+        }
+        if (Str::contains($name, "Newly registered SMEs")){
+            return "125 SMEs (50% female-led) have access to additional financial services.";
+        }
+        if (Str::contains($name, "Total value(Euros) of financial services accessed by the SHFs, micro-entrepreneurs and SMEs")){
+            return "50,000,000 Euros as value of additional financial services.";
+        }
+        return $name;
     }
 
     private function transformDimensionValueName($name)
