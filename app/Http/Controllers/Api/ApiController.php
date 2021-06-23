@@ -300,7 +300,9 @@ class ApiController extends Controller
                 $ind['actual_value'] = $ind['rsr_periods']->sum('actual_value');
                 return $ind;
             });
+
             $uii = Str::before($rs['title'],":");
+
             if ($chart['max']) {
                 $agg = $customAgg->where('uii', $uii)->first();
                 return [
@@ -336,12 +338,21 @@ class ApiController extends Controller
                 });
             }
 
+            $target_value = $rs['rsr_indicators']->sum('target_value');
+            $actual_value = $rs['rsr_indicators']->sum('actual_value');
+
+            if ($chart['replace_value_with']) {
+                $replace_value = $dimensions->where('order', $chart['replace_value_with'])->first();
+                $target_value = $replace_value['target_value'];
+                $actual_value = $replace_value['actual_value'];
+            }
+
             return [
                 "group" => $chart['group'],
                 "uii" => $uii,
                 "target_text" => $chart['target_text'],
-                "target_value" => $rs['rsr_indicators']->sum('target_value'),
-                "actual_value" => $rs['rsr_indicators']->sum('actual_value'),
+                "target_value" => $target_value,
+                "actual_value" => $actual_value,
                 "dimensions" => $dimensions
             ];})->groupBy('group')->map(function ($res, $key) {
             return [

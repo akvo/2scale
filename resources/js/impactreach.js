@@ -50,11 +50,7 @@ const dimensions = (x, idx) => {
             });
         }
         return (
-            <div
-                class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts ${
-                    d.values.length === 0 ? "no-margin" : ""
-                }`}
-            >
+            <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
                 {d.name}
                 <div
                     id={id}

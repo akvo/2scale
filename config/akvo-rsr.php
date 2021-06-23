@@ -32,6 +32,7 @@ return [
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## BoP consumers with improved access to food products.',
             'max' => true,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -40,6 +41,7 @@ return [
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved productivity and access to markets.',
             'max' => true,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -48,6 +50,7 @@ return [
             'group' => 'Food and Nutrition Security',
             'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.',
             'max' => true,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -56,6 +59,7 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## SMEs driving inclusive business in target industries (125 women-led/women-owned).',
             'max' => false,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -64,6 +68,7 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000youth).',
             'max' => false,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -72,6 +77,7 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
             'max' => false,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -80,14 +86,16 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming innovations adopted.',
             'max' => false,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
             'id' => 42855,
             'name' => 'UII8 - FSERV',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => null,
+            'target_text' => '##number##',
             'max' => false,
+            'replace_value_with' => 1,
             'orders' => true,
             'dimensions' => [
                 [
@@ -118,6 +126,7 @@ return [
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as private sector contribution.',
             'max' => false,
+            'replace_value_with' => false,
             'orders' => false,
         ],
         [
@@ -126,6 +135,7 @@ return [
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as 2SCALE contribution.',
             'max' => false,
+            'replace_value_with' => false,
             'orders' => false,
         ],
     ],

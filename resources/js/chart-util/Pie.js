@@ -57,7 +57,8 @@ const Pie = (data, extra, Doughnut = false) => {
                 type: "pie",
                 right: "center",
                 radius: Doughnut ? ["0%", "100%"] : ["50%", "100%"],
-                top: "30px",
+                top: "50px",
+                bottom: "30px",
                 label: {
                     normal: {
                         formatter: function (params) {
@@ -98,7 +99,8 @@ const Pie = (data, extra, Doughnut = false) => {
                 right: "center",
                 radius: Doughnut ? ["0%", "0%"] : ["0%", "40%"],
                 color: ["#f1f1f5"],
-                top: "30px",
+                top: "50px",
+                bottom: "30px",
                 label: {
                     normal: {
                         formatter: function (params) {
@@ -124,8 +126,9 @@ const Pie = (data, extra, Doughnut = false) => {
             data: labels.filter((l) => l.toLowerCase() !== "pending"),
             ...Legend,
             orient: "vertical",
-            x: "right",
-            y: "top",
+            icon: "circle",
+            top: "0px",
+            left: "center",
         },
         ...Color,
         ...backgroundColor,
