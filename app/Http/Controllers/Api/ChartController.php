@@ -26,6 +26,7 @@ class ChartController extends Controller
         $this->echarts = new Echarts();
         $this->collections = collect();
         $this->rsrMaxAggCustomValues = collect();
+        $this->rsrResultFilter = collect(['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
 	}
 
     public function workStream(Request $request, Question $questions)
@@ -684,7 +685,7 @@ class ChartController extends Controller
         return $this->getAndTransformRsrData($partnershipId);
     }
 
-    public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false)
+    public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false, $withContribution=false)
     {
         $pId = $partnershipId ? $partnershipId : 'all';
         $year = $period_start ? $period_start : "-0";
@@ -696,6 +697,12 @@ class ChartController extends Controller
         }
 
         $this->rsrMaxAggCustomValue = \App\RsrMaxCustomValues::all();
+        $rsrFilter = $this->rsrResultFilter;
+        if ($withContribution) {
+            $rsrFilter->push("Private sector contribution");
+            $rsrFilter->push("2SCALE's Contribution");
+        }
+        $this->rsrResultFilter = $rsrFilter->toArray();
 
         $data = \App\RsrProject::where('partnership_id', $partnershipId)
                 ->with(['rsr_results' => function ($query) use ($period_start, $period_end) {
@@ -845,7 +852,7 @@ class ChartController extends Controller
         // $parents = $this->collections->where('level', 1)->values();
         // filter not to show contribution value
         $parents = $this->collections->where('level', 1)->values()->reject(function ($item) {
-            return !Str::contains($item['title'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
+            return !Str::contains($item['title'], $this->rsrResultFilter);
         })->values();
         $results = $parents->first()->only('rsr_project_id', 'project');
         $results['columns'] = $parents->sortBy('uii')->values();
@@ -858,7 +865,7 @@ class ChartController extends Controller
                 // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
                 // filter not to show contribution value
                 $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
-                    return !Str::contains($item['title'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
+                    return !Str::contains($item['title'], $this->rsrResultFilter);
                 })->values()->map(function ($col) {
                     $col['uii'] = Str::before($col['title'], ': ');
                     return $col;
@@ -872,7 +879,7 @@ class ChartController extends Controller
                         // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
                         // filter not to show contribution value
                         $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
-                            return !Str::contains($item['title'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
+                            return !Str::contains($item['title'], $this->rsrResultFilter);
                         })->values()->map(function ($col) {
                             $col['uii'] = Str::before($col['title'], ': ');
                             return $col;
@@ -893,7 +900,7 @@ class ChartController extends Controller
             ],
             // filter not to show contribution value
             "columns" => $data->pluck('columns')->reject(function ($item) {
-                            return !Str::contains($item['uii'], ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
+                            return !Str::contains($item['uii'], $this->rsrResultFilter);
                         })->values()->sortBy('uii')->values(),
             "data" => $results,
         ];

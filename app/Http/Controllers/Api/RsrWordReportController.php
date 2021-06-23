@@ -53,7 +53,8 @@ class RsrWordReportController extends Controller
             }
         }
 
-        $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end);
+        $withContribution = true;
+        $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end, $withContribution);
         if (count($rsrReport) === 0) {
             return response('No Data Available', 503);
         }
@@ -84,7 +85,7 @@ class RsrWordReportController extends Controller
         $name = $partnership->where('id', $pid)->first()['name'];
         $name = explode(' ', $name);
         $name = implode('_', $name);
-        $filename = "RSR_Report_".implode('_', explode(' ', $reportTimeTitle))."_".$name;
+        $filename = "Internal_Report_".implode('_', explode(' ', $reportTimeTitle))."_".$name;
         $targetFile = "{$filename}.{$writers['extension']}";
         $save = $phpWord->save($targetFile, $writers['format']);
         if (!$save) {
@@ -152,13 +153,18 @@ class RsrWordReportController extends Controller
                     ['UII-1 BoP', 'UII-2 SHF', 'UII-3 EEP'],
                     ['UII-4 SME', 'UII-5 NonFE', 'UII-6 MSME', 'UII-7 INNO'],
                     ['UII-8 FSERV'],
+                    ["2SCALE's Contribution (€)", "Private sector contribution (in kind/in cash) (€)"],
                 ];
                 foreach ($split as $key => $sp) {
                     $section->addTextBreak(2);
                     $filteredColumns = $columns->whereIn('uii', $sp)->values();
                     $filteredData = $data;
                     $filteredData['columns'] = $data['columns']->whereIn('uii', $sp)->values();
-                    $phpWord = $this->renderTable($phpWord, $section, $filteredData, $filteredColumns, true);
+                    $customWidth = false;
+                    if ($key === 3) {
+                        $customWidth = 3500;
+                    }
+                    $phpWord = $this->renderTable($phpWord, $section, $filteredData, $filteredColumns, true, $customWidth);
                 }
             }
             // EOL of Table
@@ -189,10 +195,10 @@ class RsrWordReportController extends Controller
         return $phpWord;
     }
 
-    private function renderTable($phpWord, $section, $data, $columns, $split=false)
+    private function renderTable($phpWord, $section, $data, $columns, $split=false, $customWidth=false)
     {
-        $width = $split ? 850 : 350;
-        $firstColumnWidth = $width + 10;
+        $width = $customWidth ? $customWidth : ($split ? 850 : 350);
+        $firstColumnWidth = ($split ? 850 : 350) + 10;
         $fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999', 'layout' => Table::LAYOUT_AUTO);
         $spanTableStyleName = 'Rsr Table';
         $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
@@ -202,14 +208,14 @@ class RsrWordReportController extends Controller
         $table->addRow();
         $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center');
         $table->addCell($firstColumnWidth, $cellRowSpan)->addText(htmlspecialchars('Value'), 'tableFont', $this->alignHCentered);
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'first', $split);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'first', $split, $customWidth);
         $table->addRow();
         $cellRowContinue = array('vMerge' => 'continue');
         $table->addCell($firstColumnWidth, $cellRowContinue);
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'second', $split);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'second', $split, $customWidth);
         $table->addRow();
         $table->addCell($firstColumnWidth, $cellRowContinue);
-        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'third', $split);
+        $phpWord = $this->renderTableHeader($phpWord, $table, $columns, 'third', $split, $customWidth);
         // end of header row
 
         // Body
@@ -253,9 +259,9 @@ class RsrWordReportController extends Controller
         return $phpWord;
     }
 
-    private function renderTableHeader($phpWord, $table, $columns, $row, $split)
+    private function renderTableHeader($phpWord, $table, $columns, $row, $split, $customWidth)
     {
-        $width = $split ? 850 : 350;
+        $width = $customWidth ? $customWidth : ($split ? 850 : 350);
         $columns->each(function ($col) use ($table, $row, $width) {
             // for first row
             if (count($col['subtitle']) === 0 && $row === "first") {

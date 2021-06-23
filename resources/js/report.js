@@ -27,7 +27,7 @@ $("main").append(
     <div class="row" id="first-row"> \
         <div class="col-md-12"> \
             <div class="card"> \
-                <div class="card-header"><h3>Generate Word Report</h3></div> \
+                <div class="card-header"><h3>Generate Internal Report</h3></div> \
                 <div class="card-body"> \
                     <div class="d-flex justify-content-center align-items-center" id="loader-test"> \
                       <form class="row form-inline">\
