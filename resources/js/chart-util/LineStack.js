@@ -55,18 +55,19 @@ const LineStack = (data, extra) => {
         },
         label: {
             show: true,
+            align: "left",
             formatter: function (params) {
                 if (params.dataIndex === xAxis.length - 1) {
-                    return params.value + "\n" + params.seriesName;
+                    return params.seriesName + ": " + params.value;
                 }
                 return "";
             },
-            offset: [50, -5],
+            offset: [10, 0],
         },
         grid: {
             top: "50px",
             left: "auto",
-            right: "70px",
+            right: "100px",
             bottom: "25px",
             borderColor: "#ddd",
             borderWidth: 0.5,
