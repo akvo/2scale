@@ -15,7 +15,7 @@ const Pie = (data, extra, Doughnut = false) => {
     if (data.length > 0) {
         data = data.map((x) => {
             let n = x.name.split("(")[0];
-            if (x.name === "pending") {
+            if (x.name.toLowerCase() === "pending") {
                 return {
                     ...x,
                     name: n,
@@ -121,7 +121,7 @@ const Pie = (data, extra, Doughnut = false) => {
             },
         ],
         legend: {
-            data: labels.filter((l) => l !== "pending"),
+            data: labels.filter((l) => l.toLowerCase() !== "pending"),
             ...Legend,
             orient: "vertical",
             x: "right",

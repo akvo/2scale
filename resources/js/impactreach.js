@@ -18,12 +18,12 @@ const dimensions = (x, idx) => {
                 series.push({
                     group: v.name,
                     value: restTarget < 0 ? 0 : restTarget,
-                    name: "pending",
+                    name: "Pending",
                 });
                 series.push({
                     group: v.name,
                     value: v.actual_value,
-                    name: "achived",
+                    name: "Achieved",
                 });
                 return v.name;
             });
@@ -38,11 +38,11 @@ const dimensions = (x, idx) => {
                 id: id,
                 data: [
                     {
-                        name: "pending",
+                        name: "Pending",
                         value: d.target_value - d.actual_value,
                     },
                     {
-                        name: "achived",
+                        name: "Achieved",
                         value: d.actual_value,
                     },
                 ],
@@ -94,7 +94,7 @@ const uui = (x, idx) => {
             });
         }
         counts.push({
-            id: `achived-${idx}-${i}`,
+            id: `achieved-${idx}-${i}`,
             val: c.actual_value,
             suf: "",
         });
@@ -130,7 +130,7 @@ const uui = (x, idx) => {
                                     </span>
                                     <span
                                         style="font-weight:bold;color:#a43332;"
-                                        id={`achived-${idx}-${i}`}
+                                        id={`achieved-${idx}-${i}`}
                                     >
                                         0
                                     </span>
