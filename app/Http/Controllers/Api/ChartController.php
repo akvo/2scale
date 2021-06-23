@@ -25,6 +25,7 @@ class ChartController extends Controller
 	public function __construct() {
         $this->echarts = new Echarts();
         $this->collections = collect();
+        $this->rsrMaxAggCustomValues = collect();
 	}
 
     public function workStream(Request $request, Question $questions)
@@ -694,6 +695,8 @@ class ChartController extends Controller
             return $rsrReportCache;
         }
 
+        $this->rsrMaxAggCustomValue = \App\RsrMaxCustomValues::all();
+
         $data = \App\RsrProject::where('partnership_id', $partnershipId)
                 ->with(['rsr_results' => function ($query) use ($period_start, $period_end) {
                     // $query->orderBy('order');
@@ -741,9 +744,10 @@ class ChartController extends Controller
 
         $this->collections = collect();
         $data = $data['rsr_results']->transform(function ($res) {
+            $hasChildrens = count($res['childrens']) > 0;
             $res['parent_project'] = null;
             $res['level'] = 1;
-            $res = $this->aggregateRsrValues($res);
+            $res = $this->aggregateRsrValues($res, $hasChildrens);
             $res = $this->aggregateRsrChildrenValues($res, 2);
             $res = Arr::except($res, ['childrens']);
             $res['columns'] = [
@@ -895,6 +899,7 @@ class ChartController extends Controller
         ];
         Cache::put($cacheName, $rsrReport, 86400);
 
+        $this->rsrMaxAggCustomValue = collect();
         return $rsrReport;
     }
 
@@ -905,9 +910,10 @@ class ChartController extends Controller
         }
         $collections = collect();
         $res['childrens'] = $res['childrens']->transform(function ($child) use ($collections, $res, $level) {
+            $hasChildrens = count($child['childrens']) > 0;
             $child['parent_project'] = $res['rsr_project_id'];
             $child['level'] = $level;
-            $child = $this->aggregateRsrValues($child);
+            $child = $this->aggregateRsrValues($child, $hasChildrens);
             // collect all childs dimensions value
             if (count($child['rsr_dimensions']) > 0) {
                 foreach ($child['rsr_dimensions'] as $dim) {
@@ -921,6 +927,7 @@ class ChartController extends Controller
             return $child;
         });
         // aggregate all value from children ( if the parent value 0, take it from children aggregate )
+        //
         if ($res['total_target_value'] == 0) {
             $res['total_target_value'] = $res['childrens']->sum('total_target_value');
         }
@@ -945,59 +952,127 @@ class ChartController extends Controller
                 return $dim;
             });
         }
+        //
         // eol aggregate all value from children
         return $res;
     }
 
-    private function aggregateRsrValues($res)
+    private function aggregateRsrValues($res, $hasChildrens)
     {
+        // I think we need to do the max aggregate only if doesn't have childs
         $no_dimension_indicators = collect();
-        $res['rsr_indicators'] = $res['rsr_indicators']->transform(function ($ind) use ($res, $no_dimension_indicators) {
-            // $ind['target_value'] = $ind['rsr_periods']->sum('target_value');
-            $indActValue = $ind['rsr_periods']->sum('actual_value');
-            // custom max aggregation for UII 1,2,3
+        $res['rsr_indicators'] = $res['rsr_indicators']->transform(function ($ind) use ($res, $no_dimension_indicators, $hasChildrens) {
+            $customAgg = [];
             if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
-                $indActValue = $ind['rsr_periods']->max('actual_value');
+                $customAgg = $this->rsrMaxAggCustomValue->where('project_id', $res['rsr_project_id'])
+                        ->where('indicator_title', $ind['title'])
+                        ->where('result_title', $res['title']);
             }
-            $ind['total_actual_value'] = $indActValue ? $indActValue : 0;
+
             if ($ind['has_dimension']) {
                 // collect dimensions value all period
                 $periodDimensionValues = $ind['rsr_periods'];
+                // custom Agg
                 if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
-                    $periodDimensionValues = $ind['rsr_periods']->sortByDesc('actual_value')->values()->first();
-                    $periodDimensionValues = [$periodDimensionValues];
+                    if(count($customAgg) > 0) {
+                        $transformCustomAgg = $customAgg->groupBy('dimension_title')
+                            ->map(function($d, $k) {
+                                $dimension_values = $d->groupBy('dimension_value_title')
+                                    ->map(function($dv, $dvk){
+                                        return [
+                                            'name' => $dvk,
+                                            'total_actual_value' => $dv->sum('max_actual_value'),
+                                            'value' => $dv->sum('dimension_target_value')
+                                        ];
+                                    })->values();
+                                return [
+                                    'name' => $k,
+                                    'total_actual_value' => $dimension_values->sum('total_actual_value'),
+                                    'total_target_value' => $dimension_values->sum('value'),
+                                    'rsr_dimension_values' => $dimension_values
+                                ];
+                            })->values();
+                        $ind['rsr_dimensions'] = $transformCustomAgg;
+                    }
+
+                    if(count($customAgg) === 0) {
+                        $periodDimensionValues = $ind['rsr_periods']->sortByDesc('actual_value')->values()->first();
+                        $periodDimensionValues = [$periodDimensionValues];
+                        $periodDimensionValues = collect($periodDimensionValues)->pluck('rsr_period_dimension_values')->flatten(1);
+                        // aggregate dimension value
+                        $ind['rsr_dimensions'] = $ind['rsr_dimensions'] = $this->aggregateDimensionValue($ind, $res, $periodDimensionValues, $hasChildrens);
+                    }
+                } else {
+                    $periodDimensionValues = collect($periodDimensionValues)->pluck('rsr_period_dimension_values')->flatten(1);
+                    // aggregate dimension value
+                    $ind['rsr_dimensions'] = $this->aggregateDimensionValue($ind, $res, $periodDimensionValues, $hasChildrens);
                 }
-                $periodDimensionValues = collect($periodDimensionValues)->pluck('rsr_period_dimension_values')->flatten(1);
-                // aggregate dimension value
-                $ind['rsr_dimensions'] = $ind['rsr_dimensions']->transform(function ($dim)
-                    use ($res, $periodDimensionValues) {
-                    $dim['rsr_dimension_values'] = $dim['rsr_dimension_values']->transform(function ($dimVal)
-                        use ($res, $periodDimensionValues) {
-                        $periodDimVal = $periodDimensionValues->where('rsr_dimension_value_id', $dimVal['id']);
-                        if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
-                            $periodDimVal = $periodDimVal->max('value');
-                        } else {
-                            $periodDimVal = $periodDimVal->sum('value');
-                        }
-                        $dimVal['total_actual_value'] = $periodDimVal ? $periodDimVal : 0;
-                        return $dimVal;
-                    });
-                    return $dim;
-                });
             }
+
+            // $ind['target_value'] = $ind['rsr_periods']->sum('target_value');
+            // custom max aggregation for UII 1,2,3
+            if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
+                if ($hasChildrens) {
+                    $periodIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('rsr_periods')->flatten(1)->pluck('id');
+                    $indActValue = $this->rsrMaxAggCustomValue->whereIn('period_id', $periodIds)->pluck('max_period_value')->sum();
+                    // $indActValue = $res['childrens']->sum('actual_value');
+                } else {
+                    $indActValue = $ind['rsr_periods']->max('actual_value');
+                    if(count($customAgg) > 0) {
+                        $indActValue = $customAgg->first()['max_period_value'];
+                    }
+                }
+            } else {
+                $indActValue = $ind['rsr_periods']->sum('actual_value');
+            }
+            $ind['total_actual_value'] = $indActValue ? $indActValue : 0;
+
             if (!$ind['has_dimension']) {
                 $no_dimension_indicators->push($ind);
             }
             $ind = Arr::except($ind, ['rsr_periods']);
             return $ind;
         });
+
         $res['rsr_dimensions'] = $res['rsr_indicators']->pluck('rsr_dimensions')->flatten(1);
         $res['total_target_value'] = $res['rsr_indicators']->sum('target_value');
         $res['total_actual_value'] = $res['rsr_indicators']->sum('total_actual_value');
         $res['rsr_indicators_count'] = count($res['rsr_indicators']);
         $res = Arr::except($res, ['rsr_indicators']);
         $res['rsr_indicators'] = $no_dimension_indicators; // separate indicator with no dimension
+
         return $res;
+    }
+
+    private function aggregateDimensionValue($ind, $res, $periodDimensionValues, $hasChildrens)
+    {
+        $dimensions = $ind['rsr_dimensions']->transform(function ($dim)
+            use ($res, $periodDimensionValues, $hasChildrens) {
+            $dim['rsr_dimension_values'] = $dim['rsr_dimension_values']->transform(function ($dimVal)
+                use ($res, $periodDimensionValues, $hasChildrens, $dim) {
+                $periodDimVal = $periodDimensionValues->where('rsr_dimension_value_id', $dimVal['id']);
+                if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
+                    if ($hasChildrens) {
+                        $periodIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('rsr_periods')->flatten(1)->pluck('id');
+                        $periodDimVal = $this->rsrMaxAggCustomValue->whereIn('period_id', $periodIds)
+                            ->where('result_title', $res['title'])
+                            ->where('dimension_title', $dim['name'])
+                            ->where('dimension_value_title', $dimVal['name'])
+                            ->pluck('max_actual_value')->sum();
+                        // $periodDimVal = $periodDimVal->sum('value');
+                    } else {
+                        $periodDimVal = $periodDimVal->max('value');
+                    }
+                } else {
+                    $periodDimVal = $periodDimVal->sum('value');
+                }
+                $dimVal['total_actual_value'] = $periodDimVal ? $periodDimVal : 0;
+                return $dimVal;
+            });
+            return $dim;
+        });
+
+        return $dimensions;
     }
 
     public function reportReactReactCard(Request $request)
