@@ -14,7 +14,7 @@ use App\Partnership;
 use App\RsrResult;
 use App\RsrDetail;
 use App\RsrPeriodDetail;
-use App\RsrMaxAggValues;
+use App\RsrMaxCustomValues;
 
 class ApiController extends Controller
 {
@@ -197,14 +197,15 @@ class ApiController extends Controller
 
     public function getRsrUiiReport(Request $request, RsrDetail $rsrDetail)
     {
+        /*
         $rsrUiiReport = Cache::get('rsr-uii-report');
         if ($rsrUiiReport) {
             return $rsrUiiReport;
         }
+         */
 
         $config = config('akvo-rsr');
         $charts = collect($config['impact_react_charts']);
-        $maxId = $charts->where('max', true)->pluck('id');
         $programId = $config['projects']['parent'];
 
         $rsrResults = RsrResult::where('rsr_project_id', $programId)
@@ -213,44 +214,36 @@ class ApiController extends Controller
             ->get();
 
         // UII-1, UII-2, UII-3
-        $childPartnershipIds = $this->getPartnershipCache()->where('level','partnership')->values()->pluck('id');
-        $resultTitles = RsrResult::whereIn('id',$maxId)->get()->pluck('title');
-        $customAgg = RsrMaxAggValues::whereIn('partnership_id', $childPartnershipIds)
-            ->whereIn('result_title',$resultTitles)
-            ->get();
-
-        /*
-        return $customAgg->map(function($r){
-            $r['uii'] = Str::beforeLast($r['result_title'],':');
-            return $r;
-        })->where('uii', 'UII-2 SHF')
-          ->whereNotNull('max_dimension_value')->values();
-         */
-
-        $customAgg = $customAgg->groupBy(['result_title'])->map(function($result, $resultTitle){
-            $hasDimension = $result
-                ->whereNotNull('dimension_value_title')
-                ->whereNotNull('dimension_id')
-                                   ->groupBy('dimension_title')->map(function($values, $dimensionTitle){
-                $values = $values->groupBy('dimension_value_title')->map(function($actual, $dimensionValue){
-                    return [
-                        'name' => $this->transformDimensionValueName($dimensionValue),
-                        'actual_value' => $actual->sum('max_dimension_value')
-                    ];
-                })->values();
+        $customAgg = RsrMaxCustomValues::get()
+            ->groupBy('result_title')
+            ->map(function($data, $key) {
+                $dimensions = $data->whereNotNull('dimension_value_title')
+                                     ->groupBy('dimension_title')
+                                     ->map(function($d, $k) {
+                                         $dimension_values = $d
+                                             ->groupBy('dimension_value_title')
+                                             ->map(function($dv, $dvk){
+                                                 return [
+                                                     'name' => $this->transformDimensionValueName($dvk),
+                                                     'actual_value' => $dv->sum('max_actual_value')
+                                                 ];
+                                             })->values();
+                                         return [
+                                             'name' => $k,
+                                             'actual_value' => $dimension_values->sum('actual_value'),
+                                             'values' => $dimension_values
+                                         ];
+                                     })->values();
+                $actual_value = $dimensions->sum('actual_value');
+                if (!count($dimensions)){
+                    $actual_value = $data->sum('max_period_value');
+                };
                 return [
-                    'name' => $dimensionTitle,
-                    'actual_value' => $values->sum('actual_value'),
-                    'values' => $values
+                    'uii' => Str::beforeLast($key, ':'),
+                    'dimensions' => $dimensions,
+                    'actual_value' => $actual_value
                 ];
             })->values();
-            $ndActualValue = $result->whereNull('dimension_id')->sum('max_actual_value');
-            return [
-                'uii' => Str::beforeLast($resultTitle,':'),
-                'dimensions' => $hasDimension,
-                'actual_value' => $ndActualValue + $hasDimension->sum('actual_value')
-            ];
-        })->values();
 
         $results = $rsrResults->map(function ($rs) use ($charts, $customAgg) {
             $chart = $charts->where('id', $rs['id'])->first();
