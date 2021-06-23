@@ -103,3 +103,6 @@ body {
 .uii-charts.no-margin {
     margin-top: 0;
 }
+.uii-charts .uii-title {
+    min-height: 72px;
+}

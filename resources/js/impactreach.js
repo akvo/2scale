@@ -51,7 +51,7 @@ const dimensions = (x, idx) => {
         }
         return (
             <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
-                {d.name}
+                {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
                 <div
                     id={id}
                     style={`height:${d?.height ? d.height : "450px"}`}
