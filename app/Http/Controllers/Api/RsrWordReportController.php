@@ -53,7 +53,7 @@ class RsrWordReportController extends Controller
             }
         }
 
-        $withContribution = true;
+        $withContribution = false;
         $rsrReport = $chart->getAndTransformRsrData($pid, $start, $end, $withContribution);
         if (count($rsrReport) === 0) {
             return response('No Data Available', 503);
@@ -153,7 +153,7 @@ class RsrWordReportController extends Controller
                     ['UII-1 BoP', 'UII-2 SHF', 'UII-3 EEP'],
                     ['UII-4 SME', 'UII-5 NonFE', 'UII-6 MSME', 'UII-7 INNO'],
                     ['UII-8 FSERV'],
-                    ["2SCALE's Contribution (€)", "Private sector contribution (in kind/in cash) (€)"],
+                    // ["2SCALE's Contribution (€)", "Private sector contribution (in kind/in cash) (€)"],
                 ];
                 foreach ($split as $key => $sp) {
                     $section->addTextBreak(2);
