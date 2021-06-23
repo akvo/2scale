@@ -32,6 +32,7 @@ return [
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## BoP consumers with improved access to food products.',
             'max' => true,
+            'orders' => false,
         ],
         [
             'id' => 42865,
@@ -39,6 +40,7 @@ return [
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved productivity and access to markets.',
             'max' => true,
+            'orders' => false,
         ],
         [
             'id' => 42698,
@@ -46,6 +48,7 @@ return [
             'group' => 'Food and Nutrition Security',
             'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.',
             'max' => true,
+            'orders' => false,
         ],
         [
             'id' => 42804,
@@ -53,6 +56,7 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## SMEs driving inclusive business in target industries (125 women-led/women-owned).',
             'max' => false,
+            'orders' => false,
         ],
         [
             'id' => 42825,
@@ -60,6 +64,7 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000youth).',
             'max' => false,
+            'orders' => false,
         ],
         [
             'id' => 42835,
@@ -67,6 +72,7 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
             'max' => false,
+            'orders' => false,
         ],
         [
             'id' => 42845,
@@ -74,29 +80,35 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming innovations adopted.',
             'max' => false,
+            'orders' => false,
         ],
         [
             'id' => 42855,
             'name' => 'UII8 - FSERV',
-            'group' => "Input Additionality",
+            'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => null,
             'max' => false,
+            'orders' => true,
             'dimensions' => [
                 [
+                    "order" => 1,
+                    "dimension" => "financial services",
+                    "target_text" => "##number## Euros as value of additional financial services.",
+                ],
+                [
+                    "order" => 2,
                     "dimension" => "SHF",
                     "target_text" => "##number## smallholder farmers (50% women and 40% youth) have access to additional financial services.",
                 ],
                 [
+                    "order" => 3,
                     "dimension" => "micro-entrepreneurs",
                     "target_text" => "##number## MSMEs (50% female-led; 20% young entrepreneurs) have access to additional financial services.",
                 ],
                 [
+                    "order" => 4,
                     "dimension" => "SMEs",
                     "target_text" => "##number## SMEs (50% female-led) have access to additional financial services.",
-                ],
-                [
-                    "dimension" => "financial services",
-                    "target_text" => "##number## Euros as value of additional financial services.",
                 ],
             ],
         ],
@@ -106,6 +118,7 @@ return [
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as private sector contribution.',
             'max' => false,
+            'orders' => false,
         ],
         [
             'id' => 48259,
@@ -113,6 +126,7 @@ return [
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as 2SCALE contribution.',
             'max' => false,
+            'orders' => false,
         ],
     ],
     'charts' => [

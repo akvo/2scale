@@ -261,10 +261,12 @@ class ApiController extends Controller
                         });
 
                         $text = null;
+                        $order = null;
                         if (isset($chart['dimensions'])) {
                             foreach ($chart['dimensions'] as $key => $item) {
                                 if (Str::contains($dim['name'], $item['dimension'])) {
                                     $text = $item['target_text'];
+                                    $order = $item['order'];
                                 }
                             }
                         }
@@ -272,6 +274,7 @@ class ApiController extends Controller
                         return [
                             'name' => $dim['name'],
                             'target_text' => $text,
+                            'order' => $order,
                             'values' => $dimVal
                         ];
                     });
@@ -287,6 +290,7 @@ class ApiController extends Controller
                         [
                             'name' => $ind['title'],
                             'target_text' => '##number## Euros as value of additional financial services.',
+                            'order' => 1,
                             'values' => [],
                             'target_value' => $ind['target_value'],
                             'actual_value' => $ind['rsr_periods']->sum('actual_value')
@@ -296,7 +300,6 @@ class ApiController extends Controller
                 $ind['actual_value'] = $ind['rsr_periods']->sum('actual_value');
                 return $ind;
             });
-
             $uii = Str::before($rs['title'],":");
             if ($chart['max']) {
                 $agg = $customAgg->where('uii', $uii)->first();
@@ -321,13 +324,17 @@ class ApiController extends Controller
             }
 
             $dimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1);
+
+            if ($chart['orders']) {
+                $dimensions = $dimensions->sortBy('order')->values();
+            }
+
             if (Str::contains($uii, "UII-8")) {
                 $dimensions = $dimensions->map(function($d){
                     $d['name'] = $this->transformDimensionName($d['name']);
                     return $d;
                 });
             }
-
 
             return [
                 "group" => $chart['group'],
