@@ -37,12 +37,12 @@ class RsrSeedController extends Controller
         Request $request
     )
     {
-        $this->seedRsrProjects($partnership, $project);
+        $this->seedRsrProjects($partnership, $project, $request);
         $this->seedRsrResults($project, $result, $indicator, $period,  $dimension,  $dimensionValue, $periodDimensionValue, $periodData, $request);
         return "Done";
     }
 
-    public function seedRsrProjects(Partnership $partnership, RsrProject $project)
+    public function seedRsrProjects(Partnership $partnership, RsrProject $project, Request $request)
     {
         $this->collections = collect();
         $parentId = config('akvo-rsr.projects.parent');
@@ -50,7 +50,26 @@ class RsrSeedController extends Controller
         $parent['partnership_id'] = null;
         $this->collections->push($parent);
 
-        $partnership->with('parents')->get()->each(function ($val) {
+        $partnerships = $partnership->with('parents')->get();
+        if (isset($request->total_batch) && isset($request->batch)) {
+            $batch = (int) $request->batch;
+            $totalBatch = (int) $request->total_batch;
+
+            // start batch
+            $count = count(\App\Partnership::all());
+            $start = 1;
+            $end =  intdiv($count, $totalBatch);
+
+            // query project per batch
+            if ($batch > 1) {
+                $start = ($end * ($batch - 1)) + 1;
+                $end = ($end * $batch);
+                $end = ($totalBatch === $batch) ? $end + ($count % $totalBatch) : $end;
+            }
+            $partnerships = $partnerships->whereBetween('id', [$start, $end]);
+        }
+
+        $partnerships->each(function ($val) {
             $config = $val['code'].'.parent';
             if ($val['parent_id'] !== null) {
                 $config = $val['parents']['code'].'.childs.'.$val['code'];

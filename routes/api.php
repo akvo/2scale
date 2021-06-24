@@ -86,7 +86,8 @@ Route::post('/send_email', 'Api\SupportController@send');
 
 // RSR
 Route::post('/rsr-report', 'Api\RsrReportController@generateReport');
-Route::get('/seed-rsr/{total-batch}/{batch}', 'Api\RsrSeedController@seedRsr');
+Route::get('/seed-rsr', 'Api\RsrSeedController@seedRsr');
+Route::get('/seed-rsr/{total_batch}/{batch}', 'Api\RsrSeedController@seedRsr');
 Route::get('/seed-rsr-projects', 'Api\RsrSeedController@seedRsrProjects');
 Route::get('/seed-rsr-results/{total_batch}/{batch}', 'Api\RsrSeedController@seedRsrResults');
 
