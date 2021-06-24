@@ -33,11 +33,12 @@ class RsrSeedController extends Controller
     public function seedRsr(
         Partnership $partnership, RsrProject $project, RsrResult $result, RsrIndicator $indicator,
         RsrPeriod $period, RsrDimension $dimension, RsrDimensionValue $dimensionValue,
-        RsrPeriodDimensionValue $periodDimensionValue, RsrPeriodData $periodData
+        RsrPeriodDimensionValue $periodDimensionValue, RsrPeriodData $periodData,
+        Request $request
     )
     {
         $this->seedRsrProjects($partnership, $project);
-        $this->seedRsrResults($project, $result, $indicator, $period,  $dimension,  $dimensionValue, $periodDimensionValue, $periodData);
+        $this->seedRsrResults($project, $result, $indicator, $period,  $dimension,  $dimensionValue, $periodDimensionValue, $periodData, $request);
         return "Done";
     }
 
@@ -107,7 +108,8 @@ class RsrSeedController extends Controller
     public function seedRsrResults(
         RsrProject $project, RsrResult $result, RsrIndicator $indicator,
         RsrPeriod $period, RsrDimension $dimension, RsrDimensionValue $dimensionValue,
-        RsrPeriodDimensionValue $periodDimensionValue, RsrPeriodData $periodData
+        RsrPeriodDimensionValue $periodDimensionValue, RsrPeriodData $periodData,
+        Request $request
     )
     {
         $this->collections = collect();
@@ -115,7 +117,31 @@ class RsrSeedController extends Controller
         $this->dimensions = collect();
         $this->periodData = collect();
 
-        $results = $project->all()->map(function ($val) {
+        $results = $project->all();
+        if (isset($request->total_batch) && isset($request->batch)) {
+            $batch = (int) $request->batch;
+            $totalBatch = (int) $request->total_batch;
+
+            // start batch
+            $count = count(\App\Partnership::all());
+            $start = 1;
+            $end =  intdiv($count, $totalBatch);
+
+            // query project per batch
+            if ($batch === 1) {
+                $program = $results->whereNull('partnership_id')->first();
+                $results = $results->whereBetween('partnership_id', [$start, $end]);
+                $results->push($program);
+            } else {
+                $start = ($end * ($batch - 1)) + 1;
+                $end = ($end * $batch);
+                $end = ($totalBatch === $batch) ? $end + ($count % $totalBatch) : $end;
+                $results = $results->whereBetween('partnership_id', [$start, $end]);
+            }
+            $results = $results->sortBy('partnership_id')->values();
+        }
+
+        $results = $results->map(function ($val) {
             return $this->getResults($val['id']);
         })->flatten(2)->reject(function ($val) {
             return count($val) === 0;
