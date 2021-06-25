@@ -130,7 +130,7 @@ class RsrWordReportController extends Controller
         $section->addTextBreak(2);
 
         $section->addText(htmlspecialchars('Partnership Name: '.$data['project']), $titleStyle);
-        $section->addLine($lineStyle);
+        // $section->addLine($lineStyle);
 
         foreach ($reportBody as $key => $body) {
             // check if section have answers
@@ -141,9 +141,11 @@ class RsrWordReportController extends Controller
             // }
 
             // start rendering the section
+            /* Do not render the section
             $numberingLevelStart = ($body['section']) === 1 ? 1 : 0;
             $section->addTextBreak(1);
             $section->addListItem($body['heading'], $numberingLevelStart, $listItemStyle, 'multilevel-'.$n);
+            */
 
             // Start table rendering
             if (isset($body['table']) && $body['table']) {
@@ -170,6 +172,7 @@ class RsrWordReportController extends Controller
             // EOL of Table
             $section->addTextBreak(1);
 
+            /* Do not render the section
             foreach ($body['question'] as $key => $question) {
                 // find answer
                 // $answer = $answers->where('question_id', $question['qid']);
@@ -187,6 +190,7 @@ class RsrWordReportController extends Controller
                 $section->addTextBreak(1);
             }
             $section->addTextBreak(1);
+            */
         }
 
         $footer = $section->addFooter();
