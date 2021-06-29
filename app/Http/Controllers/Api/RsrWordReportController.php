@@ -33,9 +33,9 @@ class RsrWordReportController extends Controller
             $country = $partnership->where('id', $request->country_id)->first()->name;
         }
         if (isset($request->partnership_id) && $request->partnership_id !== "0") {
-            // $pid = $request->country_id;
             $pid = $request->partnership_id;
         }
+        $level = $partnership->where('id', $pid)->first()->level;
 
         $start = false;
         $end = false;
@@ -68,14 +68,14 @@ class RsrWordReportController extends Controller
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $reportTimeTitle, $country, $reportConfig, $projects, $datapoints);
+        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level);
 
-        // Not included the children or PPPs
+        // Not included the children/PPPs
         /*
         if (count($rsrReport['data']['childrens']) > 0) {
             // render document for the childrens
             foreach ($rsrReport['data']['childrens'] as $key => $child) {
-                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints);
+                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level);
             }
         }
         */
@@ -94,7 +94,7 @@ class RsrWordReportController extends Controller
         return ["link" => env('APP_URL')."/".$filename.".".$writers['extension']];
     }
 
-    private function renderWordDoc($phpWord, $columns, $data, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints)
+    private function renderWordDoc($phpWord, $columns, $data, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level)
     {
         $reportBody = $reportConfig['questions'];
         $n = microtime(true);
@@ -141,11 +141,12 @@ class RsrWordReportController extends Controller
             // }
 
             // start rendering the section
-            /* Do not render the section
-            $numberingLevelStart = ($body['section']) === 1 ? 1 : 0;
-            $section->addTextBreak(1);
-            $section->addListItem($body['heading'], $numberingLevelStart, $listItemStyle, 'multilevel-'.$n);
-            */
+            // Render section for PPP level
+            if ($level === "partnership") {
+                $numberingLevelStart = ($body['section']) === 1 ? 1 : 0;
+                $section->addTextBreak(1);
+                $section->addListItem($body['heading'], $numberingLevelStart, $listItemStyle, 'multilevel-'.$n);
+            }
 
             // Start table rendering
             if (isset($body['table']) && $body['table']) {
@@ -172,25 +173,26 @@ class RsrWordReportController extends Controller
             // EOL of Table
             $section->addTextBreak(1);
 
-            /* Do not render the section
-            foreach ($body['question'] as $key => $question) {
-                // find answer
-                // $answer = $answers->where('question_id', $question['qid']);
-                // if(count($answer) === 0) {
-                //     continue;
-                // }
-                if ($question['numbering']) {
-                    $section->addListItem($question['text'], $numberingLevelStart+1, $listItemStyle, 'multilevel-'.$n);
+            // Render section for PPP level
+            if ($level === "partnership") {
+                foreach ($body['question'] as $key => $question) {
+                    // find answer
+                    // $answer = $answers->where('question_id', $question['qid']);
+                    // if(count($answer) === 0) {
+                    //     continue;
+                    // }
+                    if ($question['numbering']) {
+                        $section->addListItem($question['text'], $numberingLevelStart+1, $listItemStyle, 'multilevel-'.$n);
+                    }
+                    // render value
+                    // foreach ($answer as $key => $item) {
+                    //     $val = $item['text'] ? $item['text'] : $item['value'];
+                    //     $section->addText(htmlspecialchars($val), null, $this->alignJustify);
+                    // }
+                    $section->addTextBreak(1);
                 }
-                // render value
-                // foreach ($answer as $key => $item) {
-                //     $val = $item['text'] ? $item['text'] : $item['value'];
-                //     $section->addText(htmlspecialchars($val), null, $this->alignJustify);
-                // }
                 $section->addTextBreak(1);
             }
-            $section->addTextBreak(1);
-            */
         }
 
         $footer = $section->addFooter();
