@@ -297,33 +297,33 @@ class SyncController extends Controller
     {
         $forms = $forms->load('surveygroup')->all();
         $this->collections = collect();
-		$forms = collect($forms)->each(function($form) use ($flow, $partnerships) {
+        $forms = collect($forms)->each(function($form) use ($flow, $partnerships) {
             $results = $flow->get('forminstances', $form->survey_id, $form->form_id);
             if($results === null){
                 return "No data";
             }
-			$this->groupDataPoint($results, $form, $partnerships);
-			$next_page = false;
-			if (isset($results['nextPageUrl'])) {
-				$next_page = true;
-			}
-			do{
-				$next_page = false;
-				if (isset($results['nextPageUrl'])) {
-					$next_page = true;
-					$results = $flow->fetch($results['nextPageUrl']);
-					$this->groupDataPoint($results, $form, $partnerships);
-				}
-			}
+            $this->groupDataPoint($results, $form, $partnerships);
+            $next_page = false;
+            if (isset($results['nextPageUrl'])) {
+                $next_page = true;
+            }
+            do{
+                $next_page = false;
+                if (isset($results['nextPageUrl'])) {
+                    $next_page = true;
+                    $results = $flow->fetch($results['nextPageUrl']);
+                    $this->groupDataPoint($results, $form, $partnerships);
+                }
+            }
             while($next_page);
-		});
+        });
         $data_points = $this->collections->map(function($data_point) use ($datapoints) {
-			$data = collect($data_point["answers"])->map(function($answer) {
+            $data = collect($data_point["answers"])->map(function($answer) {
                 $answer['text'] = is_array($answer['text']) ? json_encode($answer['text']) : $answer['text'];
                 $answer['options'] = is_array($answer['options']) ? json_encode($answer['options']) : strval($answer['options']);
-				return new Answer($answer);
-			});
-			$data_points = collect($data_point)->except('answers')->toArray();
+                return new Answer($answer);
+            });
+            $data_points = collect($data_point)->except('answers')->toArray();
             $id = $datapoints->insertGetId($data_points);
             $answers = [];
             try {
@@ -333,7 +333,7 @@ class SyncController extends Controller
                 //throw $th;
                 dump($data);
             }
-			return ["answers" => $answers,"datapoints" => $datapoints];
+            return ["answers" => $answers,"datapoints" => $datapoints];
         });
 
         // delete datapoints where not found on flow data

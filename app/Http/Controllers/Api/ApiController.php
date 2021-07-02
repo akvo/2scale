@@ -13,7 +13,6 @@ use App\RnrGender;
 use App\Partnership;
 use App\RsrResult;
 use App\RsrDetail;
-use App\RsrPeriodDetail;
 use App\RsrMaxCustomValues;
 
 class ApiController extends Controller
