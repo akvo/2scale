@@ -305,10 +305,10 @@ class RsrSeedController extends Controller
         });
 
         $periodDimValTable = $this->collections->flatten(1)->map(function ($val) use ($dimensionValue, $periodDimensionValue) {
-            $find = $dimensionValue->find($val['dimension_value']['id']);
-            if ($find === null) {
-                return [];
-            }
+            // $find = $dimensionValue->find($val['dimension_value']['id']);
+            // if ($find === null) {
+            //     return [];
+            // }
             return $periodDimensionValue->updateOrCreate(
                 ['id' => $val['id']],
                 [
