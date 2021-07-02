@@ -222,24 +222,24 @@ class RsrSeedController extends Controller
         $dimensionTransform = $this->dimensions->transform(function ($val) {
             return collect($val['dimension_names'])->transform(function ($d) use ($val) {
                 $dimensions = [
-                    'id' => $d['id'],
+                    'rsr_dimension_id' => $d['id'],
                     'rsr_indicator_id' => $val['indicator_id'],
                     'rsr_project_id' => $d['project'],
                     'parent_dimension_name' => $d['parent_dimension_name'],
                     'name' => $d['name']
                 ];
                 $dimension_values = collect($d['values'])->transform(function ($v) use ($val) {
-                    $value = null;
+                    $find = null;
                     if (count($val['disaggregation_targets']) > 0) {
                         $find = collect($val['disaggregation_targets'])->firstWhere('dimension_value', $v['id']);
-                        $value = $find['value'];
                     }
                     return [
-                        'id' => $v['id'],
                         'rsr_dimension_id' => $v['name'],
+                        'rsr_dimension_value_id' => $v['id'],
+                        'rsr_dimension_value_target_id' => $find['id'],
                         'parent_dimension_value' => $v['parent_dimension_value'],
                         'name' => $v['value'],
-                        'value' => floatval($value),
+                        'value' => floatval($find['value']),
                     ];
                 });
                 return [
@@ -250,10 +250,27 @@ class RsrSeedController extends Controller
         });
 
         $dimensionTable = $dimensionTransform->flatten(1)->map(function ($val) use ($dimension, $dimensionValue) {
-            $dimension_values = $dimension->updateOrCreate(['id' => $val['dimensions']['id']], Arr::except($val['dimensions'], 'name'));
+            $dimension_values = $dimension->updateOrCreate(
+                [
+                    'rsr_dimension_id' => $val['dimensions']['rsr_dimension_id'],
+                    'rsr_indicator_id' => $val['dimensions']['rsr_indicator_id'],
+                    'rsr_project_id' => $val['dimensions']['rsr_project_id'],
+                ],
+                Arr::except($val['dimensions'], 'name')
+            );
+            $val['dimensions']['id'] = $val['dimensions']['rsr_dimension_id'];
             $this->seedRsrTitleable($val['dimensions'], 'App\RsrDimension');
-            $values = collect($val['dimension_values'])->map(function ($v) use ($dimensionValue) {
-                $dimensionValues = $dimensionValue->updateOrCreate(['id' => $v['id']], Arr::except($v, 'name'));
+            $values = collect($val['dimension_values'])->map(function ($v) use ($dimensionValue, $dimension_values) {
+                $v['rsr_dimension_id'] = $dimension_values->id;
+                $dimensionValues = $dimensionValue->updateOrCreate(
+                    [
+                        'rsr_dimension_id' => $v['rsr_dimension_id'],
+                        'rsr_dimension_value_id' => $v['rsr_dimension_value_id'],
+                        'rsr_dimension_value_target_id' => $v['rsr_dimension_value_target_id'],
+                    ],
+                    Arr::except($v, 'name')
+                );
+                $v['id'] = $v['rsr_dimension_value_id'];
                 $this->seedRsrTitleable($v, 'App\RsrDimensionValue');
                 return $dimensionValues;
             });
@@ -288,7 +305,8 @@ class RsrSeedController extends Controller
         });
 
         $periodDimValTable = $this->collections->flatten(1)->map(function ($val) use ($dimensionValue, $periodDimensionValue) {
-            if ($dimensionValue->find($val['dimension_value']['id']) === null) {
+            $find = $dimensionValue->find($val['dimension_value']['id']);
+            if ($find === null) {
                 return [];
             }
             return $periodDimensionValue->updateOrCreate(

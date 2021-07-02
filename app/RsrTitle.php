@@ -21,11 +21,11 @@ class RsrTitle extends Model
 
     public function rsr_dimensions()
     {
-        return $this->morphedByMany('App\RsrDimension', 'rsr_titleable');
+        return $this->morphedByMany('App\RsrDimension', 'rsr_titleable', 'rsr_titleables', 'rsr_titleable_id', 'rsr_title_id', 'rsr_dimension_id', 'id');
     }
 
     public function rsr_dimension_values()
     {
-        return $this->morphedByMany('App\RsrDimensionValue', 'rsr_titleable');
+        return $this->morphedByMany('App\RsrDimensionValue', 'rsr_titleable', 'rsr_titleables', 'rsr_titleable_id', 'rsr_title_id', 'rsr_dimension_value_id', 'id');
     }
 }

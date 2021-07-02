@@ -691,10 +691,10 @@ class ChartController extends Controller
         $year = $period_start ? $period_start : "-0";
         $selector = $period_end ? $period_end : "-0";
         $cacheName = 'rsr-reports-'.$pId.$year.$selector;
-        $rsrReportCache = Cache::get($cacheName);
-        if ($rsrReportCache) {
-            return $rsrReportCache;
-        }
+        // $rsrReportCache = Cache::get($cacheName);
+        // if ($rsrReportCache) {
+        //     return $rsrReportCache;
+        // }
 
         $this->rsrMaxAggCustomValue = \App\RsrMaxCustomValues::all();
         $rsrFilter = $this->rsrResultFilter;
