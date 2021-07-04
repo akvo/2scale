@@ -691,6 +691,8 @@ class ChartController extends Controller
         $year = $period_start ? $period_start : "-0";
         $selector = $period_end ? $period_end : "-0";
         $cacheName = 'rsr-reports-'.$pId.$year.$selector;
+
+        /** Get Cache */
         // $rsrReportCache = Cache::get($cacheName);
         // if ($rsrReportCache) {
         //     return $rsrReportCache;
@@ -904,6 +906,8 @@ class ChartController extends Controller
                         })->values()->sortBy('uii')->values(),
             "data" => $results,
         ];
+
+        /** Put Cache */
         Cache::put($cacheName, $rsrReport, 86400);
 
         $this->rsrMaxAggCustomValue = collect();
@@ -947,7 +951,7 @@ class ChartController extends Controller
                 use ($collections) {
                 $dim['rsr_dimension_values'] = $dim['rsr_dimension_values']->transform(function ($dimVal)
                     use ($collections) {
-                    $values = $collections->flatten(1)->where('parent_dimension_value', $dimVal['id']);
+                    $values = $collections->flatten(1)->where('parent_dimension_value', $dimVal['rsr_dimension_value_id']);
                     if ($dimVal['value'] == 0) {
                         $dimVal['value'] = $values->sum('value');
                     }
@@ -1057,7 +1061,7 @@ class ChartController extends Controller
             use ($res, $periodDimensionValues, $hasChildrens) {
             $dim['rsr_dimension_values'] = $dim['rsr_dimension_values']->transform(function ($dimVal)
                 use ($res, $periodDimensionValues, $hasChildrens, $dim) {
-                $periodDimVal = $periodDimensionValues->where('rsr_dimension_value_id', $dimVal['id']);
+                $periodDimVal = $periodDimensionValues->where('rsr_dimension_value_id', $dimVal['rsr_dimension_value_id']);
                 if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
                     if ($hasChildrens) {
                         $periodIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('rsr_periods')->flatten(1)->pluck('id');
