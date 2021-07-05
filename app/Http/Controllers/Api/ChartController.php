@@ -25,7 +25,7 @@ class ChartController extends Controller
 	public function __construct() {
         $this->echarts = new Echarts();
         $this->collections = collect();
-        $this->rsrMaxAggCustomValues = collect();
+        $this->rsrOverview = collect();
         $this->rsrResultFilter = collect(['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
 	}
 
@@ -693,12 +693,12 @@ class ChartController extends Controller
         $cacheName = 'rsr-reports-'.$pId.$year.$selector;
 
         /** Get Cache */
-        // $rsrReportCache = Cache::get($cacheName);
-        // if ($rsrReportCache) {
-        //     return $rsrReportCache;
-        // }
+        $rsrReportCache = Cache::get($cacheName);
+        if ($rsrReportCache) {
+            return $rsrReportCache;
+        }
 
-        $this->rsrMaxAggCustomValue = \App\RsrMaxCustomValues::all();
+        $this->rsrOverview = \App\ViewRsrOverview::where('agg_type', 'max')->get();
         $rsrFilter = $this->rsrResultFilter;
         if ($withContribution) {
             $rsrFilter->push("Private sector contribution");
@@ -910,7 +910,7 @@ class ChartController extends Controller
         /** Put Cache */
         Cache::put($cacheName, $rsrReport, 86400);
 
-        $this->rsrMaxAggCustomValue = collect();
+        $this->rsrOverview = collect();
         return $rsrReport;
     }
 
@@ -975,7 +975,7 @@ class ChartController extends Controller
         $res['rsr_indicators'] = $res['rsr_indicators']->transform(function ($ind) use ($res, $no_dimension_indicators, $hasChildrens) {
             $customAgg = [];
             if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
-                $customAgg = $this->rsrMaxAggCustomValue->where('project_id', $res['rsr_project_id'])
+                $customAgg = $this->rsrOverview->where('project_id', $res['rsr_project_id'])
                         ->where('indicator_title', $ind['title'])
                         ->where('result_title', $res['title']);
             }
@@ -1024,13 +1024,13 @@ class ChartController extends Controller
             // custom max aggregation for UII 1,2,3
             if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
                 if ($hasChildrens) {
-                    $periodIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('rsr_periods')->flatten(1)->pluck('id');
-                    $indActValue = $this->rsrMaxAggCustomValue->whereIn('period_id', $periodIds)->pluck('max_period_value')->sum();
+                    $indicatorIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('id');
+                    $indActValue = $this->rsrOverview->whereIn('indicator_id', $indicatorIds)->pluck('period_value')->sum();
                     // $indActValue = $res['childrens']->sum('actual_value');
                 } else {
                     $indActValue = $ind['rsr_periods']->max('actual_value');
                     if(count($customAgg) > 0) {
-                        $indActValue = $customAgg->first()['max_period_value'];
+                        $indActValue = $customAgg->first()['period_value'];
                     }
                 }
             } else {
@@ -1064,12 +1064,12 @@ class ChartController extends Controller
                 $periodDimVal = $periodDimensionValues->where('rsr_dimension_value_id', $dimVal['rsr_dimension_value_id']);
                 if (Str::contains($res['title'], ['UII-1', 'UII-2', 'UII-3'])) {
                     if ($hasChildrens) {
-                        $periodIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('rsr_periods')->flatten(1)->pluck('id');
-                        $periodDimVal = $this->rsrMaxAggCustomValue->whereIn('period_id', $periodIds)
+                        $indicatorIds = $res['childrens']->pluck('rsr_indicators')->flatten(1)->pluck('id');
+                        $periodDimVal = $this->rsrOverview->whereIn('indicator_id', $indicatorIds)
                             ->where('result_title', $res['title'])
                             ->where('dimension_title', $dim['name'])
                             ->where('dimension_value_title', $dimVal['name'])
-                            ->pluck('max_actual_value')->sum();
+                            ->pluck('period_dimension_actual_value')->sum();
                         // $periodDimVal = $periodDimVal->sum('value');
                     } else {
                         $periodDimVal = $periodDimVal->max('value');
