@@ -10,6 +10,7 @@ use App\RsrDimension;
 use App\RsrDimensionValue;
 use App\RsrPeriodDimensionValue;
 use App\RsrPeriodData;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Api\RsrSeedController;
 
 class RsrTableSeeder extends Seeder
@@ -23,19 +24,20 @@ class RsrTableSeeder extends Seeder
     {
         $rsr = new RsrSeedController();
         $partnership = new Partnership();
-        $project = new RsrProject(); 
-        $result = new RsrResult();  
-        $indicator = new RsrIndicator(); 
-        $period = new RsrPeriod(); 
-        $dimension = new RsrDimension(); 
-        $dimensionValue = new RsrDimensionValue(); 
-        $periodDimensionValue = new RsrPeriodDimensionValue(); 
+        $project = new RsrProject();
+        $result = new RsrResult();
+        $indicator = new RsrIndicator();
+        $period = new RsrPeriod();
+        $dimension = new RsrDimension();
+        $dimensionValue = new RsrDimensionValue();
+        $periodDimensionValue = new RsrPeriodDimensionValue();
         $periodData = new RsrPeriodData();
+        $request = new Request();
 
         $rsr->seedRsr(
-            $partnership, $project, $result, $indicator, 
-            $period, $dimension, $dimensionValue, 
-            $periodDimensionValue, $periodData
+            $partnership, $project, $result, $indicator,
+            $period, $dimension, $dimensionValue,
+            $periodDimensionValue, $periodData, $request
         );
     }
 }
