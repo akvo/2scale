@@ -13,6 +13,7 @@ class DropRsrDimensionValueIdConstraintOnRsrPeriodDimensionValues extends Migrat
      */
     public function up()
     {
+        \DB::Statement('TRUNCATE TABLE rsr_period_dimension_values;');
         Schema::table('rsr_period_dimension_values', function (Blueprint $table) {
             $table->dropForeign('rsr_period_dimension_values_rsr_dimension_value_id_foreign');
         });

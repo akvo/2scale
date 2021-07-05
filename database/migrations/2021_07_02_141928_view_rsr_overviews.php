@@ -19,6 +19,9 @@ class ViewRsrOverviews extends Migration
                     data.*
                 FROM
                     (SELECT
+                        dm.*, rpdv.value AS period_dimension_actual_value
+                    FROM
+                        (SELECT
                         rp.id project_id,
                             rp.title project_title,
                             p.level,
@@ -37,16 +40,14 @@ class ViewRsrOverviews extends Migration
                             'max' agg_type,
                             MAX(rpr.actual_value) period_value,
                             dtv.title dimension_value_title,
-                            COALESCE(rdv.value, 0) dimension_target_value,
-                            COALESCE(SUM(rpdv.value), 0) period_dimension_actual_value
+                            COALESCE(rdv.value, 0) dimension_target_value
                     FROM
                         (SELECT
-                        *
+                        id, rsr_indicator_id, actual_value
                     FROM
                         rsr_periods
                     WHERE
                         actual_value > 0) rpr
-                    LEFT JOIN rsr_period_dimension_values rpdv ON rpdv.rsr_period_id = rpr.id
                     LEFT JOIN rsr_indicators ri ON rpr.rsr_indicator_id = ri.id
                     LEFT JOIN rsr_dimensions rd ON ri.id = rd.rsr_indicator_id
                     LEFT JOIN rsr_dimension_values rdv ON rd.id = rdv.rsr_dimension_id
@@ -76,7 +77,14 @@ class ViewRsrOverviews extends Migration
                         rt.title LIKE 'UII-1%'
                             OR rt.title LIKE 'UII-2%'
                             OR rt.title LIKE 'UII-3%'
-                    GROUP BY p.code , ri.has_dimension , rpr.rsr_indicator_id , rt.title , rd.id , rdv.id , dt.title , dtv.title , rpdv.value UNION ALL SELECT
+                    GROUP BY p.code , ri.has_dimension , rpr.rsr_indicator_id , rt.title , rd.id , rdv.id , dt.title , dtv.title) dm
+                    LEFT JOIN rsr_periods rp ON rp.rsr_indicator_id = dm.indicator_id
+                        AND rp.actual_value = dm.period_value
+                    LEFT JOIN rsr_period_dimension_values rpdv ON rpdv.rsr_period_id = rp.id
+                        AND rpdv.rsr_dimension_value_id = dm.rsr_dimension_value_id UNION ALL SELECT
+                        ds.*, SUM(rpdv.value)
+                    FROM
+                        (SELECT
                         rp.id project_id,
                             rp.title project_title,
                             p.level,
@@ -95,16 +103,14 @@ class ViewRsrOverviews extends Migration
                             'sum' agg_type,
                             SUM(rpr.actual_value) period_value,
                             COALESCE(dtv.title, NULL) dimension_value_title,
-                            COALESCE(rdv.value, 0) dimension_target_value,
-                            COALESCE(SUM(rpdv.value), 0) period_dimension_actual_value
+                            COALESCE(rdv.value, 0) dimension_target_value
                     FROM
                         (SELECT
-                        *
+                        id, rsr_indicator_id, actual_value
                     FROM
                         rsr_periods
                     WHERE
                         actual_value > 0) rpr
-                    LEFT JOIN rsr_period_dimension_values rpdv ON rpdv.rsr_period_id = rpr.id
                     LEFT JOIN rsr_indicators ri ON rpr.rsr_indicator_id = ri.id
                     LEFT JOIN rsr_results rr ON ri.rsr_result_id = rr.id
                     LEFT JOIN rsr_projects rp ON rr.rsr_project_id = rp.id
@@ -134,7 +140,31 @@ class ViewRsrOverviews extends Migration
                         rt.title NOT LIKE 'UII-1%'
                             AND rt.title NOT LIKE 'UII-2%'
                             AND rt.title NOT LIKE 'UII-3%'
-                    GROUP BY p.code , ri.has_dimension , rpr.rsr_indicator_id , rd.id , rt.title , dt.title , rdv.id , dtv.title) data
+                    GROUP BY p.code , ri.has_dimension , rpr.rsr_indicator_id , rd.id , rt.title , dt.title , rdv.id , dtv.title) ds
+                    LEFT JOIN rsr_periods rp ON rp.rsr_indicator_id = ds.indicator_id
+                        AND rp.actual_value = ds.period_value
+                    LEFT JOIN rsr_period_dimension_values rpdv ON rpdv.rsr_period_id = rp.id
+                        AND rpdv.rsr_dimension_value_id = ds.rsr_dimension_value_id
+                    GROUP BY
+                            ds.project_title,
+                            ds.level,
+                            ds.partnership_code,
+                            ds.country,
+                            ds.result_id,
+                            ds.indicator_id,
+                            ds.result_title,
+                            ds.indicator_target,
+                            ds.has_dimension,
+                            ds.dimension_id,
+                            ds.rsr_dimension_id,
+                            ds.dimension_value_id,
+                            ds.rsr_dimension_value_id,
+                            ds.dimension_title,
+                            ds.agg_type,
+                            ds.period_value,
+                            ds.dimension_value_title,
+                            ds.dimension_target_value)
+                data
                 WHERE
                     data.level = 'partnership'
                 ORDER BY data.country , data.partnership_code , data.result_title , data.dimension_title;
