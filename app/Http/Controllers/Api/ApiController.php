@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use App\SectorIndustry;
 use App\Datapoint;
-use App\RnrGender;
+use App\ViewRnrGender;
 use App\Partnership;
 use App\RsrResult;
 use App\RsrDetail;
 use App\RsrMaxCustomValues;
+use App\ViewRsrOverview;
 
 class ApiController extends Controller
 {
@@ -104,7 +105,7 @@ class ApiController extends Controller
         return $si;
     }
 
-    public function getRnrGender(Request $request, RnrGender $rnr)
+    public function getRnrGender(Request $request, ViewRnrGender $rnr)
     {
         $partnership = $this->getPartnershipCache();
         [$sum, $params, $customParams] = $this->getRequestAttributes($request);
@@ -213,7 +214,7 @@ class ApiController extends Controller
             ->get();
 
         // UII-1, UII-2, UII-3
-        $customAgg = RsrMaxCustomValues::get()
+        $customAgg = ViewRsrOverview::where('agg_type', 'max')->get()
             ->groupBy('result_title')
             ->map(function($data, $key) {
                 $dimensions = $data->whereNotNull('dimension_value_title')
@@ -224,7 +225,7 @@ class ApiController extends Controller
                                              ->map(function($dv, $dvk){
                                                  return [
                                                      'name' => $this->transformDimensionValueName($dvk),
-                                                     'actual_value' => $dv->sum('max_actual_value')
+                                                     'actual_value' => $dv->sum('period_dimension_actual_value')
                                                  ];
                                              })->values();
                                          return [
@@ -235,7 +236,7 @@ class ApiController extends Controller
                                      })->values();
                 $actual_value = $dimensions->sum('actual_value');
                 if (!count($dimensions)){
-                    $actual_value = $data->sum('max_period_value');
+                    $actual_value = $data->sum('period_value');
                 };
                 return [
                     'uii' => Str::beforeLast($key, ':'),
@@ -251,7 +252,7 @@ class ApiController extends Controller
                     $ind['rsr_dimensions'] = $ind->rsr_dimensions->transform(function ($dim) use ($ind, $chart) {
                         $dimVal = $dim->rsr_dimension_values->map(function ($dv) use ($ind) {
                             $actualDimValues = $ind['rsr_periods']->pluck('rsr_period_dimension_values')
-                                ->flatten(1)->where('rsr_dimension_value_id', $dv['id']);
+                                ->flatten(1)->where('rsr_dimension_value_id', $dv['rsr_dimension_value_id']);
                             return [
                                 'name' => $this->transformDimensionValueName($dv['name']),
                                 'target_value' => $dv['value'],

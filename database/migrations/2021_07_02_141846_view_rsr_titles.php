@@ -17,7 +17,7 @@ class ViewRsrTitles extends Migration
             CREATE OR REPLACE VIEW rsr_view_titles AS
                 SELECT
                     rt.rsr_titleable_id as type_id,
-                    LOWER(REPLACE(rt.rsr_titleable_type, "App\\Rsr", "")) as type,
+                    LOWER(REPLACE(rt.rsr_titleable_type, "App\\\\Rsr", "")) as type,
                     t.title
                 FROM rsr_titleables rt
                 LEFT JOIN rsr_titles t ON rt.rsr_title_id = t.id;

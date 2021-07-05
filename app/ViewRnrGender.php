@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class RnrGender extends Model
+class ViewRnrGender extends Model
 {
     protected $table = 'rnr_gender';
     protected $appends = ['year', 'month','year_month'];
