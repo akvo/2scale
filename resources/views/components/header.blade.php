@@ -22,6 +22,9 @@
         <li class="nav-item {{Route::is('partners') ? 'active' : '' }}">
           <a class="nav-link" href="/partners">Partners</a>
         </li>
+        <li class="nav-item {{Route::is('countries') ? 'active' : '' }}">
+          <a class="nav-link" href="/countries">Countries</a>
+        </li>
         <li class="nav-item {{Route::is('database') ? 'active' : '' }}">
             <a class="nav-link" href="/database">Database</a>
         </li>

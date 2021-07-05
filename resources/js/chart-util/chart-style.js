@@ -1,5 +1,13 @@
-import sortBy from "lodash/sortBy";
-import { formatNumber, translateValue } from "../util.js";
+import { formatNumber } from "../util.js";
+
+export const popupFormatter = (params) => {
+    var value = (params.value + "").split(".");
+    value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
+    if (Number.isNaN(params.value)) {
+        return;
+    }
+    return params.name + ": " + value;
+};
 
 export const backgroundColor = {
     backgroundColor: "transparent",
@@ -36,6 +44,15 @@ export const Color = {
         "#CCD3B6",
         "#FFE800",
     ],
+};
+
+export const visualMap = {
+    left: "right",
+    inRange: {
+        color: ["#a43332", "#3D588A"],
+    },
+    text: ["High", "Low"],
+    calculable: true,
 };
 
 export const oldColor = {

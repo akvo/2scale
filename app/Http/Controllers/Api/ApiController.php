@@ -195,15 +195,12 @@ class ApiController extends Controller
 
     }
 
-    public function getRsrUiiReport(Request $request, RsrDetail $rsrDetail)
+    public function getRsrUiiReport(Request $request, ViewRsrOverview $overview)
     {
-        /*
         $rsrUiiReport = Cache::get('rsr-uii-report');
         if ($rsrUiiReport) {
             return $rsrUiiReport;
         }
-         */
-
         $config = config('akvo-rsr');
         $charts = collect($config['impact_react_charts']);
         $programId = $config['projects']['parent'];
@@ -214,7 +211,7 @@ class ApiController extends Controller
             ->get();
 
         // UII-1, UII-2, UII-3
-        $customAgg = ViewRsrOverview::where('agg_type', 'max')->get()
+        $customAgg = $overview::where('agg_type', 'max')->get()
             ->groupBy('result_title')
             ->map(function($data, $key) {
                 $dimensions = $data->whereNotNull('dimension_value_title')
@@ -365,6 +362,16 @@ class ApiController extends Controller
 
         Cache::put('rsr-uii-report', $results, 86400);
         return $results;
+    }
+
+    public function getRsrCountryData(Request $request, ViewRsrOverview $overview)
+    {
+        $config = collect(config('akvo-rsr.impact_react_charts'))->groupBy('group');
+        return $overview->get()->groupBy(['country','result_title','dimension_title'])->map(function($country, $countryName){
+            return [
+                'country' => $countryName,
+            ];
+        });
     }
 
     private function transformDimensionName($name)

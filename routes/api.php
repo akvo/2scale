@@ -92,6 +92,7 @@ Route::get('/seed-rsr-projects', 'Api\RsrSeedController@seedRsrProjects');
 Route::get('/seed-rsr-results/{total_batch}/{batch}', 'Api\RsrSeedController@seedRsrResults');
 
 
+
 /** TESTING */
 Route::get('/test', function (Request $request) {
     $config = config('akvo-rsr');
@@ -108,6 +109,7 @@ Route::get('/test', function (Request $request) {
 Route::get('/flow/partnerships', 'Api\ApiController@getPartnership');
 Route::get('/flow/sectors', 'Api\ApiController@getSector');
 Route::get('/flow/rnr-gender', 'Api\ApiController@getRnrGender');
+Route::get('/rsr/country-data', 'Api\ApiController@getRsrCountryData');
 Route::get('/rsr/impact-reach', 'Api\ApiController@getRsrImpactReach');
 Route::get('/rsr/impact-reach/uii', 'Api\ApiController@getRsrUiiReport');
 Route::get('/rsr/impact-reach/uii-after', 'Api\ApiController@getRsrUiiReportAfter');

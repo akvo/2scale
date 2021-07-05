@@ -15,6 +15,7 @@ Route::middleware(['auth'])->group(function() {
 Route::get('/dashboard', 'PageController@dashboard')->name('dashboard');
 Route::get('/impactreach', 'PageController@impactreach')->name('impactreach');
 Route::get('/partners', 'PageController@partners')->name('partners');
+Route::get('/countries', 'PageController@countries')->name('countries');
 Route::get('/partnership', 'PageController@partnership')->name('partnership');
 
 Route::get('/', 'PageController@home')->name('home');
