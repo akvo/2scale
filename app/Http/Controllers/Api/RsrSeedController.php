@@ -236,10 +236,10 @@ class RsrSeedController extends Controller
                     return [
                         'rsr_dimension_id' => $v['name'],
                         'rsr_dimension_value_id' => $v['id'],
-                        'rsr_dimension_value_target_id' => $find['id'],
+                        'rsr_dimension_value_target_id' => $find ? $find['id'] : null,
                         'parent_dimension_value' => $v['parent_dimension_value'],
                         'name' => $v['value'],
-                        'value' => floatval($find['value']),
+                        'value' => $find ? (floatval($find['value'])) : 0,
                     ];
                 });
                 return [
@@ -336,7 +336,7 @@ class RsrSeedController extends Controller
                 ]
             );
         });
-        return;
+        return "done";
     }
 
     private function seedRsrTitleable($titleData, $type)
