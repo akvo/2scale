@@ -6,7 +6,7 @@ return [
   'parnetship_name' => [
     'code' => 'name',
   ],
-  'impact_react_charts' => [
+  'impact_charts' => [
     # MAX is aggregation type, if false aggregation is SUM (default)
     [
       'id' => 'UII-1',
@@ -82,7 +82,7 @@ return [
       'dimensions' => [
         [
           "order" => 1,
-          "dimension" => "financial services",
+          "dimension" => "Total value",
           "target_text" => "##number## Euros as value of additional financial services.",
         ],
         [
