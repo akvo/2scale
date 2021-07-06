@@ -5,19 +5,13 @@ import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
 import { formatNumber } from "./util";
 import _ from "lodash";
-import dataStore from "./store";
+import countryStore from "./store/country-store.js";
 
 const mapName = "africa";
 
-const testArray = ["Kenya", "Uganda", "Niger", "Nigeria"];
-const testRandom = () => {
-    const rand = Math.floor(Math.random() * testArray.length);
-    return testArray[rand];
-};
-
 const dimensions = (x, idx) => {
     return x.map((d, i) => {
-        const { currentState } = dataStore;
+        const { currentState } = countryStore;
         let currentCharts = currentState.charts;
         const id = `uii-chart-${i}-${idx}`;
         if (d.values.length > 0) {
@@ -67,7 +61,7 @@ const dimensions = (x, idx) => {
                 },
             ];
         }
-        dataStore.update((s) => {
+        countryStore.update((s) => {
             s.charts = currentCharts;
         });
         return (
@@ -82,10 +76,10 @@ const dimensions = (x, idx) => {
     });
 };
 
-const uui = (x, idx) => {
+const uii = (x, idx) => {
     return x.childrens.map((c, i) => {
-        const { currentState } = dataStore;
-        let currentCounts = dataStore.currentState.counts;
+        const { currentState } = countryStore;
+        let currentCounts = countryStore.currentState.counts;
         let even = false;
         if (i % 2 == 0) {
             even = true;
@@ -129,7 +123,7 @@ const uui = (x, idx) => {
                 suf: "",
             },
         ];
-        dataStore.update((s) => {
+        countryStore.update((s) => {
             s.counts = currentCounts;
         });
         const dim = c.dimensions?.length
@@ -194,12 +188,12 @@ const uui = (x, idx) => {
 
 const groups = (x, i) => {
     return (
-        <div class="row">
+        <div class="row uii-row">
             <div class="col-md-12">
                 <h3 class="responsive font-weight-bold text-center my-4">
                     {x.group}
                 </h3>
-                <div class="row">{uui(x, i)}</div>
+                <div class="row">{uii(x, i)}</div>
                 <hr />
             </div>
         </div>
@@ -207,7 +201,7 @@ const groups = (x, i) => {
 };
 
 const updateStates = () => {
-    const { currentState } = dataStore;
+    const { currentState } = countryStore;
     setTimeout(() => {
         currentState.counts.forEach((x, i) => {
             const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
@@ -219,40 +213,49 @@ const updateStates = () => {
     currentState.charts.forEach((x, i) => {
         const options = generateOptions(x.type, x.data);
         const html = document.getElementById(x.id);
-        let myChart = echarts.getInstanceByDom(html);
-        if (!myChart) {
-            myChart = echarts.init(html);
-        }
+        const myChart = echarts.init(html);
         myChart.setOption(options);
+        const newCharts = [
+            ...countryStore.currentState.chartList,
+            { id: x.id, chart: myChart },
+        ];
+        countryStore.update((s) => {
+            s.chartList = newCharts;
+        });
     });
 };
 
 const handleCountryClick = (country) => {
-    echarts.util.each((x, i) => {
-        console.log(x, i);
-    });
-    const { currentState } = dataStore;
-    const data = currentState.data.find((x) => x.country === country);
-    if (data) {
-        dataStore.update((s) => {
+    const { currentState } = countryStore;
+    const { maps, mapData, chartList, data } = currentState;
+    const selected = data.find((x) => x.country === country);
+    if (selected) {
+        $(".uii-row").remove();
+        if (chartList.length) {
+            chartList.forEach((x) => {
+                x.chart.dispose();
+            });
+            countryStore.update((s) => {
+                s.chartList = [];
+            });
+        }
+        countryStore.update((s) => {
             s.country = country;
             s.charts = [];
             s.counts = [];
         });
-        $("#display").html("");
         $("#display").append(
-            data.data.map((x, i) => {
+            selected.data.map((x, i) => {
                 return groups(x, i);
             })
         );
         updateStates();
     }
-    updateMapOptions();
     return;
 };
 
 const updateMapOptions = () => {
-    const { currentState } = dataStore;
+    const { currentState } = countryStore;
     const { maps, mapData } = currentState;
     const options = {
         tooltip: {
@@ -282,7 +285,7 @@ const updateMapOptions = () => {
 const createMaps = () => {
     const html = document.getElementById("maps");
     const myMap = echarts.init(html);
-    dataStore.update((s) => {
+    countryStore.update((s) => {
         s.maps = myMap;
     });
     if (localStorage.getItem("africa-map")) {
@@ -293,10 +296,11 @@ const createMaps = () => {
         axios.get("/json/africa.geojson").then((res) => {
             localStorage.setItem("africa-map", JSON.stringify(res.data));
             echarts.registerMap(mapName, res.data);
+            updateMapOptions();
         });
     }
     axios.get("/api/rsr/country-data").then((res) => {
-        dataStore.update((s) => {
+        countryStore.update((s) => {
             s.data = res.data;
         });
     });

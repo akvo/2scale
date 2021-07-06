@@ -1,10 +1,13 @@
 import { Store } from "pullstate";
 
-const dataStore = new Store({
+const countryStore = new Store({
     data: [],
     maps: false,
     mapData: [],
-    selected: false,
+    country: false,
     counts: [],
     charts: [],
+    chartList: [],
 });
+
+export default countryStore;
