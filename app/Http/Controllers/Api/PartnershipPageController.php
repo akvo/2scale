@@ -32,20 +32,14 @@ class PartnershipPageController extends Controller
         })->unique()->values();
         $sector_text = implode(', ', $sector_text->toArray());
 
-        $text = "
-            ##partnership_name## project belongs to the ##sector## sector.
-            It currently works with ##producer_count## of producer organisations,
-            ##abc_count## agri business clusters and ##enterprise_count## enterprises.
-            For more details please visit <a target='_blank' href='##rsr_link##'>##rsr_link##</a>
-        ";
-
-        $text = str_replace("##partnership_name##", $project['title'], $text);
-        $text = str_replace("##sector##", $sector_text, $text);
-        $text = str_replace("##producer_count##", count($producer_organizations), $text);
-        $text = str_replace("##abc_count##", count($abc_clusters), $text);
-        $text = str_replace("##enterprise_count##", count($other_main_partners), $text);
-        $text = str_replace("##rsr_link##", $link, $text);
-        return $text;
+        return [
+            'title' => $project['title'],
+            'sector' => $sector_text,
+            'producer' => count($producer_organizations),
+            'abc' => count($abc_clusters),
+            'enterprise' => count($other_main_partners),
+            'link' => $link,
+        ];
     }
 
     public function getImplementingPartner(Request $request)
@@ -60,6 +54,8 @@ class PartnershipPageController extends Controller
         $charts = config('partnership-page.impact_charts');
         $project = $this->getRsrProject($request);
         $results = $this->fetchRsrData('results', $project['id'])->flatten(1);
+
+        // * Transform results value
         $results = $results->filter(function ($res) {
             // * Filter result to show only UII 1 - 8
             return Str::contains($res['title'], $this->uiiFilter);
@@ -197,6 +193,8 @@ class PartnershipPageController extends Controller
                 'actual_value' => $chart['actual_value'],
                 'dimensions' => $chart['dimensions'],
             ];
+        })->reject(function ($c) {
+            return $c['actual_value'] <= floatVal(0);
         })->groupBy('group')->transform(function ($g, $k) {
             return [
                 'group' => $k,

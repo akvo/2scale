@@ -1,67 +1,316 @@
+import createElement from "./app";
 import { db, storeDB } from "./dexie";
+import { generateOptions } from "./chart-util";
+import { CountUp } from "countup.js";
+import { formatNumber } from "./util";
+import _ from "lodash";
 const axios = window.axios;
-import { getCharts, getCards, getSingleCards } from "./charts.js";
-import { renderRsrTableTemplate, renderRsrTable } from "./rsrDatatables.js";
-import { rsrRenderUiiTable } from "./test.js";
 
 /* Static */
 const baseurl = $("meta[name=path]").attr("content");
 const country_id = $("meta[name='country']").attr("content");
 const partnership_id = $("meta[name='partnership']").attr("content");
-const start_date = $("meta[name='start-date']").attr("content");
-const end_date = $("meta[name='end-date']").attr("content");
-const endpoints = [country_id, partnership_id, start_date, end_date].join("/");
+const endpoints = [country_id, partnership_id].join("/");
 
-// getCards("partnership/top-three/" + endpoints);
+// Page Title
+// $("main").append(
+//     <div>
+//         <div class="row" id="zero-row">
+//             <div class="col-md-12">
+//                 <h2 class="responsive font-weight-bold text-center my-4">
+//                     Partnership Page
+//                 </h2>
+//             </div>
+//         </div>
+//         <hr />
+//     </div>
+// );
 
-/* First Row */
-// $("main").append("<div class='row' id='first-row'></div>");
-// getCharts("partnership/commodities/" + endpoints, "first-row", "12");
+const renderTextVisual = async () => {
+    await axios
+        .get("/api/flow/partnership/text/" + endpoints)
+        .then(res => {
+            $("main").append(
+                <div class="d-flex justify-content-center" id="loader-spinner">
+                    <div class="spinner-border text-primary loader-spinner" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            );
+            return res;
+        })
+        .then(res => {
+            const { title, sector, producer, abc, enterprise, link } = res.data;
+            $("main").append(
+                <div class="row visual" style="visibility: hidden;">
+                    <div class="col-md-12">
+                        <h3 class="responsive font-weight-bold text-center my-4">
+                            { title }
+                        </h3>
+                        <h5 class="text-center">
+                            { title } project belongs to the { sector } sector. <br/>
+                            It currently works with { producer } of producer organisations, { abc } agri business clusters and { enterprise } enterprises. <br/>
+                            For more details please visit <a target='_blank' href={`${res.data.link}`}>{res.data.link}</a>
+                        </h5>
+                        <hr />
+                    </div>
+                </div>
+            );
+            return true;
+        }).then(async res => {
+            await renderImplementingPartner();
+            return true;
+        }).then(async res => {
+            await renderCharts();
+            return true;
+        }).then(res => {
+            let visuals = $(".visual");
+            $("#loader-spinner").remove();
+            for (let index = 0; index < visuals.length; index++) {
+                const element = visuals[index];
+                element.style.visibility = "visible";
+            }
+        });
+};
 
-/* Second Row */
-// $("main").append("<hr><div class='row' id='second-row'></div>");
-// getCharts("partnership/countries-total/" + endpoints, "second-row", "6");
-// getCharts("partnership/project-total/" + endpoints, "second-row", "6");
+const renderImplementingPartner = async () => {
+    await axios
+        .get("/api/rsr/partnership/implementing-partner/" + endpoints)
+        .then(res => {
+            const data = res.data;
+            $("main").append(
+                <div class="row visual" style="visibility: hidden;">
+                    <div class="col-md-12">
+                        <h3 class="responsive font-weight-bold text-center my-4">
+                            Implementing Partner
+                        </h3>
+                        <div class="row even-row">
+                            <div class="col-md-12">
+                                <div class="list-group">
+                                    {
+                                        data.map((x,i) => {
+                                            return (
+                                                <div key={`${x.organisation_name}-${i}`} class="list-group-item list-group-item-action">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h5 class="mb-1">{x.organisation_name}</h5>
+                                                    </div>
+                                                    <p class="mb-1">{x.organisation_role_label}</p>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+            return true;
+        });
+}
 
-// Table container
-renderRsrTableTemplate("datatables", "15%");
+let counts = [];
+let charts = [];
 
-// put a div (hidden) to store the charts for pdf report
-$("main").append(
-    "<div id='chart-report-container' class='invisible' style='margin-top:-999rem'></div>"
-);
+const dimensions = (x, idx) => {
+    return x.map((d, i) => {
+        const id = `uii-chart-${i}-${idx}`;
+        if (d.values.length > 0) {
+            let series = [];
+            d.values.map((v) => {
+                let restTarget = v.target_value - v.actual_value;
+                series.push({
+                    group: v.name,
+                    value: restTarget < 0 ? 0 : restTarget,
+                    name: "Pending",
+                });
+                series.push({
+                    group: v.name,
+                    value: v.actual_value,
+                    name: "Achieved",
+                });
+                return v.name;
+            });
+            charts.push({
+                id: id,
+                data: series,
+                type: "BARSTACK",
+            });
+        }
+        if (d.values.length === 0 && d?.target_value && d?.actual_value) {
+            charts.push({
+                id: id,
+                data: [
+                    {
+                        name: "Pending",
+                        value: d.target_value - d.actual_value,
+                    },
+                    {
+                        name: "Achieved",
+                        value: d.actual_value,
+                    },
+                ],
+                type: "DOUGHNUT",
+            });
+        }
+        return (
+            <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
+                {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
+                <div
+                    id={id}
+                    style={`height:${d?.height ? d.height : "450px"}`}
+                ></div>
+            </div>
+        );
+    });
+};
 
-$("#chart-report-container").append(
-    "<hr><div class='row' id='third-row'></div>"
-);
-getSingleCards("report/reachreact/card/" + endpoints, "third-row");
+const uui = (x, idx) => {
+    return x.childrens.map((c, i) => {
+        let even = false;
+        if (i % 2 != 0) {
+            even = true;
+        }
+        let target = c.target_text || "";
+        target = target.split("##").map((t) => {
+            if (t === "number") {
+                return (
+                    <span style="font-weight:bold;color:#a43332;">
+                        {formatNumber(c.target_value)}
+                    </span>
+                );
+            }
+            return t;
+        });
+        const percentage =
+            target.length > 1
+                ? ((c.actual_value / c.target_value) * 100).toFixed(3)
+                : null;
+        if (target.length > 1) {
+            counts.push({
+                id: `percentage-${idx}-${i}`,
+                val: percentage,
+                suf: "%",
+            });
+        }
+        counts.push({
+            id: `achieved-${idx}-${i}`,
+            val: c.actual_value,
+            suf: "",
+        });
+        const dim = c.dimensions?.length
+            ? dimensions(c.dimensions, `${idx}-${i}`)
+            : dimensions(
+                  [
+                      {
+                          name: "",
+                          target_value: c.target_value,
+                          actual_value: c.actual_value,
+                          values: [],
+                          height: "200px",
+                      },
+                  ],
+                  `${idx}-${i}`
+              );
+        return (
+            <div class="col-md-12">
+                <div class={`row ${even ? "even-row" : ""}`}>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div
+                                    class="uii-col uii-percentage"
+                                    id={`percentage-${idx}-${i}`}
+                                >
+                                    {percentage ? 0 : " - "}
+                                </div>
+                                <div class="uii-col uii-detail">
+                                    <span style="font-weight:bold;">
+                                        ACHIEVED:{" "}
+                                    </span>
+                                    <span
+                                        style="font-weight:bold;color:#a43332;"
+                                        id={`achieved-${idx}-${i}`}
+                                    >
+                                        0
+                                    </span>
+                                    <br />
+                                    <span style="font-weight:bold;">
+                                        TARGET:{" "}
+                                    </span>
+                                    {target.length > 1 ? target : " - "}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        {c.dimensions?.length ? (
+                            <div class="row">{dim}</div>
+                        ) : (
+                            <div class="row">
+                                <div class="col-md-6">{dim}</div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    });
+};
 
-$("#chart-report-container").append(
-    "<hr><div class='row' id='fourth-row'></div>"
-);
-getCharts("report/workstream/" + endpoints, "fourth-row", "12");
+const groups = (x, i) => {
+    return (
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="responsive font-weight-bold text-center my-4">
+                    {x.group}
+                </h3>
+                <div class="row">{uui(x, i)}</div>
+                <hr />
+            </div>
+        </div>
+    );
+};
 
-$("#chart-report-container").append(
-    "<hr><div class='row' id='fifth-row'></div>"
-);
-getCharts("report/program-theme/" + endpoints, "fifth-row", "12");
+const renderCharts = async () => {
+    await axios
+    .get("/api/rsr/partnership/charts/" + endpoints)
+    .then((res) => {
+        const data = res.data;
+        $("main").append(
+            <div class="visual" style="visibility: hidden;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="responsive font-weight-bold text-center my-4">
+                            Impact Charts
+                        </h3>
+                    </div>
+                </div>
+                {data.map((x, i) => {
+                    return groups(x, i);
+                })}
+            </div>
+        );
+        return { counts: counts, charts: charts };
+    })
+    .then((res) => {
+        //generate countup
+        setTimeout(() => {
+            res.counts.forEach((x, i) => {
+                const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
+                if (!countUp.error) {
+                    countUp.start();
+                }
+            });
+        }, 300);
+        //generate chart option
+        res.charts.forEach((x, i) => {
+            const options = generateOptions(x.type, x.data);
+            const myChart = echarts.init(document.getElementById(x.id));
+            myChart.setOption(options);
+        });
+        return true;
+    });
+};
 
-$("#chart-report-container").append(
-    "<hr><div class='row' id='sixth-row'></div>"
-);
-getCharts("report/target-audience/" + endpoints, "sixth-row", "12");
-
-$("#chart-report-container").append(
-    "<hr><div class='row' id='seventh-row'></div>"
-);
-getCharts(
-    "reachreact/gender/" + endpoints,
-    "seventh-row",
-    "12",
-    "age-category"
-);
-
-renderRsrTable([country_id, partnership_id].join("/"), baseurl, "datatables");
-
-// table by UII
-// rsrRenderUiiTable("", baseurl, "datatables");
+renderTextVisual();
