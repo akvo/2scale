@@ -21,6 +21,10 @@ class PartnershipPageController extends Controller
     public function getTextVisual(Request $request)
     {
         $project = $this->getRsrProject($request);
+        if (!$project) {
+            return response('no data available', 503);
+        }
+
         $sector_focus = $this->getTextDataFromFlow($request->partnership_id, 'sector_focus');
         $abc_clusters = $this->getTextDataFromFlow($request->partnership_id, 'abc_names');
         $other_main_partners = $this->getTextDataFromFlow($request->partnership_id, 'other_main_partners');
@@ -45,14 +49,21 @@ class PartnershipPageController extends Controller
     public function getImplementingPartner(Request $request)
     {
         $project = $this->getRsrProject($request);
+        if (!$project) {
+            return response('no data available', 503);
+        }
         $results = $this->fetchRsrData('partnership', $project['id'])->flatten(1);
         return $results;
     }
 
     public function getResultFramework(Request $request)
     {
-        $charts = config('partnership-page.impact_charts');
         $project = $this->getRsrProject($request);
+        if (!$project) {
+            return response('no data available', 503);
+        }
+
+        $charts = config('partnership-page.impact_charts');
         $results = $this->fetchRsrData('results', $project['id'])->flatten(1);
 
         // * Transform results value

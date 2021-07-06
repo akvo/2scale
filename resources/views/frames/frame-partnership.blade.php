@@ -26,7 +26,7 @@
 <style>
 html,
 body{
-    width:95%;
+    min-height: 100%;
 	margin:auto;
 }
 .loader-spinner {
@@ -56,6 +56,9 @@ body{
     <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
       <main role="main" class="inner cover">
       </main>
+    </div>
+    <div class="tmp-footer" style="position: absolute; bottom: 0; width: 100%;">
+        @include('components.footer')
     </div>
 
     <!-- Modal -->

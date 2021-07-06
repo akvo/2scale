@@ -26,6 +26,19 @@ const endpoints = [country_id, partnership_id].join("/");
 //     </div>
 // );
 
+const handleNotFound = () => {
+    $("#loader-spinner").remove();
+    $("main").append(
+        <div class="row" style="margin-top: 325px;">
+            <div class="col-md-12">
+                <h5 class="text-center">
+                    Partnership data not found.
+                </h5>
+            </div>
+        </div>
+    );
+};
+
 const renderTextVisual = async () => {
     await axios
         .get("/api/flow/partnership/text/" + endpoints)
@@ -66,10 +79,13 @@ const renderTextVisual = async () => {
         }).then(res => {
             let visuals = $(".visual");
             $("#loader-spinner").remove();
+            $(".tmp-footer")[0].style.position = "relative";
             for (let index = 0; index < visuals.length; index++) {
                 const element = visuals[index];
                 element.style.visibility = "visible";
             }
+        }).catch(err => {
+            handleNotFound();
         });
 };
 
@@ -84,11 +100,11 @@ const renderImplementingPartner = async () => {
                         <h3 class="responsive font-weight-bold text-center my-4">
                             Implementing Partner
                         </h3>
-                        <div class="row even-row">
-                            <div class="col-md-12">
+                        <div class="row even-row justify-content-center">
+                            <div class="col-md-6">
                                 <div class="list-group">
                                     {
-                                        data.map((x,i) => {
+                                        data.length > 0 ? data.map((x,i) => {
                                             return (
                                                 <div key={`${x.organisation_name}-${i}`} class="list-group-item list-group-item-action">
                                                     <div class="d-flex w-100 justify-content-between">
@@ -97,16 +113,19 @@ const renderImplementingPartner = async () => {
                                                     <p class="mb-1">{x.organisation_role_label}</p>
                                                 </div>
                                             )
-                                        })
+                                        }) : <div style="height: 350px;"><center>No Implementing Partner data.</center></div>
                                     }
                                 </div>
                             </div>
                         </div>
+                        <hr/>
                     </div>
                 </div>
             );
             return true;
-        });
+        }).catch(err => {
+            handleNotFound();
+        });;
 }
 
 let counts = [];
@@ -286,30 +305,38 @@ const renderCharts = async () => {
                         </h3>
                     </div>
                 </div>
-                {data.map((x, i) => {
-                    return groups(x, i);
-                })}
+                {
+                    data.length > 0 ? data.map((x, i) => {
+                        return groups(x, i);
+                    }) : <div style="height: 350px;"><center>No charts data.</center></div>
+                }
             </div>
         );
         return { counts: counts, charts: charts };
     })
     .then((res) => {
         //generate countup
-        setTimeout(() => {
-            res.counts.forEach((x, i) => {
-                const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
-                if (!countUp.error) {
-                    countUp.start();
-                }
-            });
-        }, 300);
+        if (res.counts.length > 0) {
+            setTimeout(() => {
+                res.counts.forEach((x, i) => {
+                    const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
+                    if (!countUp.error) {
+                        countUp.start();
+                    }
+                });
+            }, 300);
+        }
         //generate chart option
-        res.charts.forEach((x, i) => {
-            const options = generateOptions(x.type, x.data);
-            const myChart = echarts.init(document.getElementById(x.id));
-            myChart.setOption(options);
-        });
+        if (res.charts.length > 0) {
+            res.charts.forEach((x, i) => {
+                const options = generateOptions(x.type, x.data);
+                const myChart = echarts.init(document.getElementById(x.id));
+                myChart.setOption(options);
+            });
+        }
         return true;
+    }).catch(err => {
+        handleNotFound();
     });
 };
 

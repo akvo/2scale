@@ -151,15 +151,6 @@ $("#partnership-country").on("change", (data) => {
     return;
 });
 
-$("#partnership-code").on("change", (data) => {
-    let country_id = $("#partnership-country").val();
-    if (data.target.value !== "") {
-        $("#data-frame").attr("src", "/frame/partnership/" + country_id + "/" + data.target.value);
-        return;
-    }
-    return;
-});
-
 const loadDefaultPartnership = async () => {
     let country_id = $("#partnership-country").val();
     await axios.get("/api/partnership/" + country_id).then((res) => {
@@ -171,6 +162,14 @@ const loadDefaultPartnership = async () => {
 };
 
 if (window.location.pathname === "/partnership") {
+    $("#partnership-code").on("change", (data) => {
+        let country_id = $("#partnership-country").val();
+        if (data.target.value !== "") {
+            $("#data-frame").attr("src", "/frame/partnership/" + country_id + "/" + data.target.value);
+            return;
+        }
+        return;
+    });
     loadDefaultPartnership();
 };
 
