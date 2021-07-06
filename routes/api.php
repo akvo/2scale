@@ -116,3 +116,8 @@ Route::get('/rsr/impact-reach/uii-after', 'Api\ApiController@getRsrUiiReportAfte
 Route::get('/rsr/word-report/{country_id}/{partnership_id}/{year}/{selector}', 'Api\RsrWordReportController@getRsrWordReport');
 
 Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/{end}', 'Api\ApiController@getPartnershipCommodities');
+
+// * Partnership page endpoint
+Route::get('/flow/partnership/text/{country_id}/{partnership_id}', 'Api\PartnershipPageController@getTextVisual');
+Route::get('/rsr/partnership/implementing-partner/{country_id}/{partnership_id}', 'Api\PartnershipPageController@getImplementingPartner');
+Route::get('/rsr/partnership/charts/{country_id}/{partnership_id}', 'Api\PartnershipPageController@getResultFramework');

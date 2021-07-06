@@ -112,28 +112,68 @@ $("#btn-data-download").on("click", () => {
     }, 1000);
 });
 
-/* Partnership API */
+$("#generate-reachreact-page").on("click", () => {
+    let params = selectPicker();
+    let date = $('input[name="daterange"]')[0].value.split(" - ");
+    date = date.map((x) => {
+        params = [...params, moment(x).format("YYYY-MM-DD")];
+        return moment(x).format("YYYY-MM-DD");
+    });
+    params = params.join("/");
+    $("#data-frame").attr("src", "/frame/reachreact/" + params);
+});
 
-const changePartnershipCode = (data) => {
+/* Partnership Page */
+const changePartnershipCode = (data, selectedId=false) => {
     $("#partnership-code option").remove();
     let html = `<option data-tokens="all" value="0" data-id="0">Select Partnership</options>`;
     data.forEach((d, i) => {
+        let selected = (d.id === selectedId) ? "selected" : "";
         html +=
-            `<option data-tokens="` +
-            d.name +
-            `" data-id="` +
-            d.id +
-            `" value="` +
-            d.id +
-            `">` +
-            titleCase(d.name) +
+            `<option `+selected+` data-tokens="`+d.name+`" data-id="`+d.id+`" value="`+d.id+`">`
+                + titleCase(d.name) +
             `</option>`;
     });
-    html += `<option data-tokens="all" value="0" data-id="0">All Partnerships</options>`;
+    // html += `<option data-tokens="all" value="0" data-id="0">All Partnerships</options>`;
     $("#partnership-code").append(html);
     $("#partnership-code").selectpicker("refresh");
 };
 
+$("#partnership-country").on("change", (data) => {
+    if (data.target.value !== "") {
+        axios.get("/api/partnership/" + data.target.value).then((res) => {
+            changePartnershipCode(res.data);
+        });
+        return;
+    }
+    $("#partnership-code option").remove();
+    $("#partnership-code").selectpicker("refresh");
+    return;
+});
+
+const loadDefaultPartnership = async () => {
+    let country_id = $("#partnership-country").val();
+    await axios.get("/api/partnership/" + country_id).then((res) => {
+        changePartnershipCode(res.data, 11);
+    });
+
+    let partnership_id = $("#partnership-code").val();
+    $("#data-frame").attr("src", "/frame/partnership/" + country_id + "/" + partnership_id);
+};
+
+if (window.location.pathname === "/partnership") {
+    $("#partnership-code").on("change", (data) => {
+        let country_id = $("#partnership-country").val();
+        if (data.target.value !== "") {
+            $("#data-frame").attr("src", "/frame/partnership/" + country_id + "/" + data.target.value);
+            return;
+        }
+        return;
+    });
+    loadDefaultPartnership();
+};
+
+// * Old partnership page for generate pdf report
 $("#generate-partnership-page").on("click", () => {
     generatePartnershipChart();
 });
@@ -272,29 +312,7 @@ $("#generate-report-link").on("click", () => {
         }, 10000);
     });
 });
-
-$("#generate-reachreact-page").on("click", () => {
-    let params = selectPicker();
-    let date = $('input[name="daterange"]')[0].value.split(" - ");
-    date = date.map((x) => {
-        params = [...params, moment(x).format("YYYY-MM-DD")];
-        return moment(x).format("YYYY-MM-DD");
-    });
-    params = params.join("/");
-    $("#data-frame").attr("src", "/frame/reachreact/" + params);
-});
-
-$("#partnership-country").on("change", (data) => {
-    if (data.target.value !== "") {
-        axios.get("/api/partnership/" + data.target.value).then((res) => {
-            changePartnershipCode(res.data);
-        });
-        return;
-    }
-    $("#partnership-code option").remove();
-    $("#partnership-code").selectpicker("refresh");
-    return;
-});
+/* EOL Partnership Page */
 
 const authMessage = () => {
     let authModal = $("#authError").attr("data");
