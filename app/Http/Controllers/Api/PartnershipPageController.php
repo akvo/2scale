@@ -10,7 +10,7 @@ use App\RsrProject;
 
 class PartnershipPageController extends Controller
 {
-    private $uiiFilter = ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8'];
+    private $uiiFilter = ['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8', 'Private sector contribution', '2SCALE\'s Contribution'];
     private $uiiMaxAgg = ['UII-1', 'UII-2', 'UII-3'];
 
     public function __construct()
