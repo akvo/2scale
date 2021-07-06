@@ -53,6 +53,10 @@ class PartnershipPageController extends Controller
             return response('no data available', 503);
         }
         $results = $this->fetchRsrData('partnership', $project['id'])->flatten(1);
+        $results = $results->reject(function ($res) {
+            return !Str::contains(strtolower($res['organisation_role_label']), 'implementing');
+        });
+
         return $results;
     }
 

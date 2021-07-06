@@ -54,17 +54,41 @@ const renderTextVisual = async () => {
         })
         .then(res => {
             const { title, sector, producer, abc, enterprise, link } = res.data;
+            const workWith = [];
+            let workWithText = "It currently works with";
+            if (producer) {
+                let plural = producer > 1 ? "s" : "";
+                workWith.push(`${producer} producer organisation${plural}`);
+            }
+            if (abc) {
+                let plural = abc > 1 ? "s" : "";
+                workWith.push(`${abc} agri business cluster${plural}`);
+            }
+            if (enterprise) {
+                let plural = enterprise > 1 ? "s" : "";
+                workWith.push(`${enterprise} enterprise${plural}`);
+            }
+            if (workWith.length === 3) {
+                workWithText = `${workWithText} ${workWith[0]}, ${workWith[1]} and ${workWith[2]}`;
+            }
+            if (workWith.length <= 2) {
+                workWithText = `${workWithText} ${workWith.join(' and ')}`;
+            }
             $("main").append(
                 <div class="row visual" style="visibility: hidden;">
                     <div class="col-md-12">
                         <h3 class="responsive font-weight-bold text-center my-4">
                             { title }
                         </h3>
-                        <h5 class="text-center">
-                            { title } project belongs to the { sector } sector. <br/>
-                            It currently works with { producer } of producer organisations, { abc } agri business clusters and { enterprise } enterprises. <br/>
-                            For more details please visit <a target='_blank' href={`${res.data.link}`}>{res.data.link}</a>
-                        </h5>
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <h5 class="text-center">
+                                    { title } project belongs to the <span class="font-weight-bold">{ sector }</span> sector. <br/>
+                                    {workWith.length === 0 ? "" : `${workWithText}. `}
+                                    For more details please visit <a target='_blank' href={`${res.data.link}`}>project page</a>.
+                                </h5>
+                            </div>
+                        </div>
                         <hr />
                     </div>
                 </div>
@@ -98,7 +122,7 @@ const renderImplementingPartner = async () => {
                 <div class="row visual" style="visibility: hidden;">
                     <div class="col-md-12">
                         <h3 class="responsive font-weight-bold text-center my-4">
-                            Implementing Partner
+                            Implementing Partner(s)
                         </h3>
                         <div class="row even-row justify-content-center">
                             <div class="col-md-6">
@@ -110,10 +134,9 @@ const renderImplementingPartner = async () => {
                                                     <div class="d-flex w-100 justify-content-between">
                                                         <h5 class="mb-1">{x.organisation_name}</h5>
                                                     </div>
-                                                    <p class="mb-1">{x.organisation_role_label}</p>
                                                 </div>
                                             )
-                                        }) : <div style="height: 350px;"><center>No Implementing Partner data.</center></div>
+                                        }) : <div><center>No Implementing Partner(s).</center></div>
                                     }
                                 </div>
                             </div>
@@ -308,7 +331,7 @@ const renderCharts = async () => {
                 {
                     data.length > 0 ? data.map((x, i) => {
                         return groups(x, i);
-                    }) : <div style="height: 350px;"><center>No charts data.</center></div>
+                    }) : <div style="height: 450px;"><center>No charts data.</center></div>
                 }
             </div>
         );
