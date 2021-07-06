@@ -366,6 +366,10 @@ class ApiController extends Controller
 
     public function getRsrCountryData(Request $request, ViewRsrOverview $overview)
     {
+        $countryData = Cache::get('rsr-country-data');
+        if ($countryData) {
+            return $countryData;
+        }
         $config = collect(config('akvo-rsr.impact_react_charts'))->groupBy('group');
         $overview = $overview
             ->get()
@@ -383,14 +387,18 @@ class ApiController extends Controller
                             ];
                         })->values();
                         if (count($dimension)) {
-                            $dimension = $dimension->groupBy('dimension_title')->map(function($d, $dimensionName) use ($group) {
-                                $values = $d->groupBy('dimension_value_title')->map(function($dv, $dimensionValueTitle){
-                                    return [
-                                        'name' => $this->transformDimensionValueName($dimensionValueTitle),
-                                        'target_value' => $dv->sum('dimension_target_value'),
-                                        'actual_value' => $dv->sum('period_dimension_actual_value'),
-                                    ];
-                                })->values();
+                            $dimension = $dimension
+                                ->groupBy('dimension_title')
+                                ->map(function($d, $dimensionName) use ($group) {
+                                    $values = $d
+                                        ->groupBy('dimension_value_title')
+                                        ->map(function($dv, $dimensionValueTitle){
+                                            return [
+                                                'name' => $this->transformDimensionValueName($dimensionValueTitle),
+                                                'target_value' => $dv->sum('dimension_target_value'),
+                                                'actual_value' => $dv->sum('period_dimension_actual_value'),
+                                            ];
+                                        })->values();
                                 return [
                                     'name' => $dimensionName,
                                     'target_text' => null,
@@ -401,32 +409,33 @@ class ApiController extends Controller
                             })->values();
                         }
                         if (isset($group['dimensions'])) {
-                            $dimension = collect($group['dimensions'])->map(function($g, $ig) use ($dimension, $group, $values) {
-                                $d = $dimension->filter(function($d) use ($g) {
-                                    return Str::contains($d['name'], $g['dimension']);
-                                })->values()->first();
-                                if ($d) {
-                                    $d['name'] = $this->transformDimensionName($d['name']);
-                                    $d['target_text'] = $g['target_text'];
-                                    return $d;
-                                }
-                                if ($group['replace_value_with'] === $g['order']) {
+                            $dimension = collect($group['dimensions'])
+                                ->map(function($g, $ig) use ($dimension, $group, $values) {
+                                    $d = $dimension->filter(function($d) use ($g) {
+                                        return Str::contains($d['name'], $g['dimension']);
+                                    })->values()->first();
+                                    if ($d) {
+                                        $d['name'] = $this->transformDimensionName($d['name']);
+                                        $d['target_text'] = $g['target_text'];
+                                        return $d;
+                                    }
+                                    if ($group['replace_value_with'] === $g['order']) {
+                                        return [
+                                            'name' => "50,000,000 Euros as value of additional financial services.",
+                                            'target_text' => $g['target_text'],
+                                            'values' => [],
+                                            'target_value' => $values->sum('target'),
+                                            'actual_value' => $values->sum('actual'),
+                                        ];
+                                    }
                                     return [
-                                        'name' => "50,000,000 Euros as value of additional financial services.",
+                                        'name' => $this->transformDimensionName($g['dimension_title']),
                                         'target_text' => $g['target_text'],
                                         'values' => [],
-                                        'target_value' => $values->sum('target'),
-                                        'actual_value' => $values->sum('actual'),
+                                        'target_value' => 0,
+                                        'actual_value' => 0,
                                     ];
-                                }
-                                return [
-                                    'name' => $this->transformDimensionName($g['dimension_title']),
-                                    'target_text' => $g['target_text'],
-                                    'values' => [],
-                                    'target_value' => 0,
-                                    'actual_value' => 0,
-                                ];
-                            })->values();
+                                })->values();
                         }
                         return [
                             'uii' => $group['name'],
@@ -446,6 +455,7 @@ class ApiController extends Controller
                     'data' => $data
                 ];
             })->values();
+        Cache::put('rsr-country-data', $overview, 86400);
         return $overview;
     }
 
