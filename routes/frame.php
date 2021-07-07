@@ -12,6 +12,8 @@ Route::get('/home', 'FrameController@home');
 Route::get('/impactreach', 'FrameController@impactreach');
 Route::get('/partners', 'FrameController@partners');
 
+Route::get('/countries', 'FrameController@countries');
+
 Route::get('/partnership/{country_id}/{partnership_id}', 'FrameController@partnership');
 Route::get('/partnership/{country_id}/{partnership_id}/{start}/{end}', 'FrameController@partnership');
 

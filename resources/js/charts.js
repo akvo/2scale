@@ -1,19 +1,11 @@
 import createElement from "./app";
 import { CountUp } from "countup.js";
+import { popupFormatter } from "./chart-util/chart-style";
 import { staticText, gradients, titleCase } from "./util.js";
 import { db, storeDB } from "./dexie";
 const echarts = window.echarts;
 const axios = window.axios;
 const table = db.charts;
-
-const popupFormatter = (params) => {
-    var value = (params.value + "").split(".");
-    value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
-    if (Number.isNaN(params.value)) {
-        return;
-    }
-    return params.name + ": " + value;
-};
 
 const mapOption = (endpoint) => {
     return new Promise((resolve, reject) => {
@@ -163,7 +155,9 @@ export const getCharts = (chart, row, md, customTitle = null, height = 450) => {
     let html = (
         <div class={`col-md-${md}`}>
             <div class="card">
-                <div class="card-header"><h4>{title}</h4></div>
+                <div class="card-header">
+                    <h4>{title}</h4>
+                </div>
                 <div class="card-body">
                     <div
                         class="d-flex justify-content-center"

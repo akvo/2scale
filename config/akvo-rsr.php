@@ -30,6 +30,7 @@ return [
         [
             'id' => 42401,
             'name' => 'UII1 - BoP',
+            'result_title' => 'UII-1 BoP: BoP consumers have improved access to affordable and nutritious food products',
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## BoP consumers with improved access to food products.',
             'max' => true,
@@ -39,6 +40,7 @@ return [
         [
             'id' => 42865,
             'name' => 'UII2 - SHF',
+            'result_title' => 'UII-2 SHF: Smallholder farmers have improved agricultural productivity levels and have better terms of inclusion (value chains/ markets).',
             'group' => 'Food and Nutrition Security',
             'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved productivity and access to markets.',
             'max' => true,
@@ -48,6 +50,7 @@ return [
         [
             'id' => 42698,
             'name' => 'UII3 - EEP',
+            'result_title' => 'UII-3 EEP: Rural communities are resilient to the implications of climate change.',
             'group' => 'Food and Nutrition Security',
             'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.',
             'max' => true,
@@ -57,6 +60,7 @@ return [
         [
             'id' => 42804,
             'name' => 'UII4 - SME',
+            'result_title' => 'UII-4 SME: SMEs drive inclusive business in target industries and develop leadership in industry platforms/ networks and policy advocacy',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## SMEs driving inclusive business in target industries (125 women-led/women-owned).',
             'max' => false,
@@ -66,6 +70,7 @@ return [
         [
             'id' => 42825,
             'name' => 'UII5 - NONFE',
+            'result_title' => 'UII-5 NonFE: Creation of remunerative additional non-farming employment in targeted agribusiness clusters and value chains.',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000youth).',
             'max' => false,
@@ -75,6 +80,7 @@ return [
         [
             'id' => 42835,
             'name' => 'UII6 - MSME',
+            'result_title' => 'UII-6 MSME: Development of economically attractive and viable opportunities for micro-entrepreneurs and SMEs affiliated with the inclusive agribusiness',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
             'max' => false,
@@ -84,6 +90,7 @@ return [
         [
             'id' => 42845,
             'name' => 'UII7 - INNO',
+            'result_title' => 'UII-7 INNO: Innovative capacity of SMEs, micro-entrepreneurs, farmers strengthened',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming innovations adopted.',
             'max' => false,
@@ -93,8 +100,9 @@ return [
         [
             'id' => 42855,
             'name' => 'UII8 - FSERV',
+            'result_title' => 'UII-8 FSERV: Smallholder farmers, micro-entrepreneurs and SMEs have improved access to financial services.',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number##',
+            "target_text" => "##number## Euros as value of additional financial services.",
             'max' => false,
             'replace_value_with' => 1,
             'orders' => true,
@@ -102,21 +110,25 @@ return [
                 [
                     "order" => 1,
                     "dimension" => "financial services",
+                    "dimension_title" => "Total value(Euros) of financial services accessed by the SHFs, micro-entrepreneurs and SMEs",
                     "target_text" => "##number## Euros as value of additional financial services.",
                 ],
                 [
                     "order" => 2,
                     "dimension" => "SHF",
+                    "dimension_title" => "Newly registered SHFs",
                     "target_text" => "##number## smallholder farmers (50% women and 40% youth) have access to additional financial services.",
                 ],
                 [
                     "order" => 3,
                     "dimension" => "micro-entrepreneurs",
+                    "dimension_title" => "Newly registered micro-entrepreneurs",
                     "target_text" => "##number## MSMEs (50% female-led; 20% young entrepreneurs) have access to additional financial services.",
                 ],
                 [
                     "order" => 4,
                     "dimension" => "SMEs",
+                    "dimension_title" => "Newly registered SMEs",
                     "target_text" => "##number## SMEs (50% female-led) have access to additional financial services.",
                 ],
             ],
@@ -124,6 +136,7 @@ return [
         [
             'id' => 48191,
             'name' => 'Private contribution',
+            'result_title' => "Private sector contribution (in kind/in cash) (€)",
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as private sector contribution.',
             'max' => false,
@@ -133,6 +146,7 @@ return [
         [
             'id' => 48259,
             'name' => '2SCALE contribution',
+            'result_title' => "2SCALE's Contribution (€)",
             'group' => "Input Additionality",
             'target_text' => '##number## Euros as 2SCALE contribution.',
             'max' => false,

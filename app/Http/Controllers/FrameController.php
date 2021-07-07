@@ -31,6 +31,11 @@ class FrameController extends Controller
         return view('frames.frame-partners', ['surveys' => config('surveys')]);
     }
 
+    public function countries(Request $request)
+    {
+        return view('frames.frame-countries');
+    }
+
     public function partnership(Request $request)
     {
         $start = '2018-01-01';

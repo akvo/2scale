@@ -1,11 +1,22 @@
 var currencyFormatter = require("currency-formatter");
 export const gradients = ["purple", "peach", "blue", "morpheus-den"];
-export const titleCase = (str) => {
-    str = str.toLowerCase().split("-");
-    for (var i = 0; i < str.length; i++) {
-        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+
+export const genCharArray = (charA, charZ) => {
+    var a = [],
+        i = charA.charCodeAt(0),
+        j = charZ.charCodeAt(0);
+    for (; i <= j; ++i) {
+        a.push(String.fromCharCode(i));
     }
-    return str.join(" ");
+    return a;
+};
+
+export const genCharPath = (arr, char) => {
+    let str = [];
+    arr.forEach((a) => {
+        str.push(char[a]);
+    });
+    return str.join("-");
 };
 
 export const formatNumber = (x) => {
@@ -71,102 +82,18 @@ export const parentDeep = (id, data) => {
     return parent;
 };
 
-export const digDataPoints = (data, id, active) => {
-    let datapoints = data.map((b) => {
-        let dp = b.find((v) => v.id === id);
-        if (dp) {
-            return dp.datapoints;
-        }
-        return dp;
-    });
-    let collections = [];
-    datapoints = datapoints.filter((d) => d);
-    datapoints.forEach((d) => {
-        collections = [...collections, ...d];
-    });
-    datapoints = uniq(collections);
-    if (active) {
-        return intersection(datapoints, active);
-    }
-    return datapoints;
-};
-
-export const translateValue = (data, locale) => {
-    let name = data.name;
-    if (locale !== "en" && data.locale) {
-        name = data.locale.filter((a) => a.lang === locale);
-        name = name.length > 0 ? name[0].text : data.name;
-    }
-    return name;
-};
-
-export const getChildsData = (data, countries, active, locale) => {
-    data = data.map((x) => {
-        let name = translateValue(x, locale);
-        if (x.childrens.length > 0) {
-            return {
-                ...x,
-                name: name,
-                children: getChildsData(x.childrens, countries, active, locale),
-            };
-        }
-        let datapoints = digDataPoints(countries, x.id, active);
-        return {
-            ...x,
-            name: name,
-            children: x.childrens,
-            value: datapoints.length,
-            datapoints: datapoints,
-        };
-    });
-    return data;
-};
-
-export const getChildPoints = (parent, points) => {
-    if (parent) {
-        parent.forEach((x) => {
-            if (x.children.length > 0) {
-                getChildPoints(x.chidren, points);
-            }
-            if (x.children.length === 0) {
-                points = [...points, ...x.datapoints];
-            }
-        });
-    }
-    return uniq(points);
-};
-
-export const pushToParent = (parent, locale) => {
-    return parent.map((x) => {
-        let name = translateValue(x, locale);
-        if (x.children.length > 0) {
-            return {
-                name: name,
-                value: getChildPoints(x.children, []).length,
-                locale: x.locale,
-            };
-        }
-        return {
-            name: name,
-            value: x.datapoints.length,
-            locale: x.locale,
-        };
-    });
-};
-
-export const getAllChildsId = (parent, childs) => {
-    childs.push(parent.id);
-    if (parent.childrens.length > 0) {
-        parent.childrens.forEach((x) => {
-            getAllChildsId(x, childs);
-        });
-    }
-    return childs;
-};
 export const toTitleCase = (str) => {
     return str.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
+};
+
+export const titleCase = (str) => {
+    str = str.toLowerCase().split("-");
+    for (var i = 0; i < str.length; i++) {
+        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+    }
+    return str.join(" ");
 };
 
 export const scrollWindow = (x) => {
@@ -174,21 +101,4 @@ export const scrollWindow = (x) => {
         top: (window.innerHeight - 100) / x,
         behavior: "smooth",
     });
-};
-
-export const reorderCountry = (data) => {
-    data = sortBy(data, "name");
-    let allother = data.filter((x) => x.name === "All" || x.name === "Other");
-    data = data.filter((x) => {
-        if (x.name === "All" || x.name === "Other") {
-            return false;
-        }
-        return true;
-    });
-    return [...data, ...allother];
-};
-
-export const validateEmail = (email) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
 };

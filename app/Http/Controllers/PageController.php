@@ -80,6 +80,11 @@ class PageController extends Controller
 		return view('pages.partners');
 	}
 
+	public function countries()
+	{
+		return view('pages.countries');
+	}
+
 
 	public function partnership(Partnership $partnerships, Request $request)
 	{

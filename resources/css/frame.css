@@ -106,3 +106,54 @@ body {
 .uii-charts .uii-title {
     min-height: 72px;
 }
+#filters {
+    position: absolute;
+    z-index: 1;
+    margin-top: 20px;
+    width: 300px;
+}
+#filters .card {
+    max-width: 300px;
+    border: 1px solid #ddd;
+}
+#filters .card .list-group .list-group-item {
+    display: flex;
+    padding: 0px;
+    cursor: pointer;
+}
+#filters .card .list-group .list-group-item i {
+    color: green;
+}
+#filters .card .list-group .list-group-item span {
+    padding: 0.75rem 1.25rem;
+}
+#filters .card .list-group .list-group-item .filter-content {
+    width: 240px;
+}
+#filters .card .list-group .list-group-item .filter-content.full {
+    width: 286px;
+}
+#filters .card .list-group .list-group-item .filter-content:hover {
+    background-color: #f2f2f2;
+}
+#filters .card .list-group .list-group-item .filter-content.active,
+#filters .card .list-group .list-group-item .filter-content.active:hover {
+    background-color: #a43332;
+    color: #fff;
+}
+#filters .card .list-group .list-group-item .filter-childs {
+    float: right;
+}
+#filters .card .list-group .list-group-item .filter-childs:hover {
+    background-color: #f2f2f2;
+}
+h3#subtitle {
+    font-size: 16px;
+    text-align: center;
+    margin: auto;
+    max-width: 50%;
+}
+h3#subtitle b {
+    color: #a43332;
+    font-weight: bold;
+}

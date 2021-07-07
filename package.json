@@ -27,6 +27,8 @@
     "currency-formatter": "^1.5.8",
     "dexie": "^3.0.1",
     "echarts": "^4.5.0",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "pullstate": "^1.22.1",
+    "react": "^17.0.2"
   }
 }
