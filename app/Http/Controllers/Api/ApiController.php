@@ -15,6 +15,7 @@ use App\RsrResult;
 use App\RsrDetail;
 use App\RsrMaxCustomValues;
 use App\ViewRsrOverview;
+use App\ViewRsrCountryOverview;
 
 class ApiController extends Controller
 {
@@ -364,7 +365,7 @@ class ApiController extends Controller
         return $results;
     }
 
-    public function getRsrCountryData(Request $request, ViewRsrOverview $overview)
+    public function getRsrCountryData(Request $request, ViewRsrCountryOverview $overview)
     {
         $countryData = Cache::get('rsr-country-data');
         if ($countryData) {
@@ -399,13 +400,11 @@ class ApiController extends Controller
                                                 'actual_value' => $dv->sum('period_dimension_actual_value'),
                                             ];
                                         })->values();
-                                return [
-                                    'name' => $dimensionName,
-                                    'target_text' => null,
-                                    'target_value' => $values->sum('target_value'),
-                                    'actual_value' => $values->sum('actual_value'),
-                                    'values' => $values
-                                ];
+                                    return [
+                                        'name' => $dimensionName,
+                                        'target_text' => null,
+                                        'values' => $values
+                                    ];
                             })->values();
                         }
                         if (isset($group['dimensions'])) {
@@ -432,8 +431,6 @@ class ApiController extends Controller
                                         'name' => $this->transformDimensionName($g['dimension_title']),
                                         'target_text' => $g['target_text'],
                                         'values' => [],
-                                        'target_value' => 0,
-                                        'actual_value' => 0,
                                     ];
                                 })->values();
                         }
