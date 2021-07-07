@@ -299,11 +299,41 @@ const updateMapOptions = () => {
 };
 
 const changeFilter = (path) => {
-    console.log(path);
     countryStore.update((s) => {
         s.selectedPath = path;
     });
     updateFilter();
+};
+
+const createFilterList = ({ name, path, parentPath, childrens }, parent) => {
+    const filterClass = childrens?.length
+        ? "filter-content"
+        : "filter-content full";
+    if (parent) {
+        return (
+            <li
+                class="list-group-item"
+                onClick={() => changeFilter(parentPath)}
+            >
+                <span class="filter-parent">
+                    <i class="fa fa-chevron-left"></i>
+                </span>
+                <span class="filter-content">{name}</span>
+            </li>
+        );
+    }
+    return (
+        <li class="list-group-item">
+            <span class={filterClass}>{name}</span>
+            {childrens.length ? (
+                <span class="filter-childs" onClick={() => changeFilter(path)}>
+                    <i class="fa fa-chevron-right"></i>
+                </span>
+            ) : (
+                ""
+            )}
+        </li>
+    );
 };
 
 const updateFilter = () => {
@@ -323,37 +353,15 @@ const updateFilter = () => {
                 currentFilter.childrens.includes(x.path)
             ),
         };
-        $("#filter-list").append(
-            <li
-                class="list-group-item"
-                onClick={() => changeFilter(currentFilter.parentPath)}
-            >
-                <i class="fa fa-arrow-circle-left"></i>
-                <span class="filter-parent">{currentFilter.name}</span>
-            </li>
-        );
+        $("#filter-list").append(createFilterList(currentFilter, true));
         currentFilter.childrens.forEach((x) => {
-            $("#filter-list").append(
-                <li
-                    class="list-group-item"
-                    onClick={() => changeFilter(x.path)}
-                >
-                    {x.name}
-                </li>
-            );
+            $("#filter-list").append(createFilterList(x, false));
         });
     } else {
         filters
             .filter((x) => x.parent === null)
             .forEach((x) => {
-                $("#filter-list").append(
-                    <li
-                        class="list-group-item"
-                        onClick={() => changeFilter(x.path)}
-                    >
-                        {x.name}
-                    </li>
-                );
+                $("#filter-list").append(createFilterList(x, false));
             });
     }
 };
@@ -379,32 +387,35 @@ const createMaps = () => {
         let filters = [];
         const baseFilter = res.data.find((x) => x.country === "Burkina Faso");
         const characters = genCharArray("a", "z");
-        baseFilter.data.forEach((x) => {
+        baseFilter.data.forEach((x, xi) => {
             x.childrens.forEach((c, ci) => {
                 let cchilds = [];
                 c?.dimensions?.forEach((d, di) => {
                     let dchilds = [];
                     d?.values?.forEach((v, vi) => {
+                        vi = vi + 1;
                         dchilds.push(
-                            `${characters[ci]}-${characters[di]}-${characters[vi]}`
+                            `${characters[xi]}-${characters[ci]}-${characters[di]}-${characters[vi]}`
                         );
                         filters.push({
                             name: v.name,
                             parent: d.name,
                             show: false,
-                            path: `${characters[ci]}-${characters[di]}-${characters[vi]}`,
+                            path: `${characters[xi]}-${characters[ci]}-${characters[di]}-${characters[vi]}`,
                             parentPath: `${characters[ci]}-${characters[di]}`,
                             pathName: `${c.uii} > ${d.name} > ${v.name}`,
                             value: true,
                             childrens: false,
                         });
                     });
-                    cchilds.push(`${characters[ci]}-${characters[di]}`);
+                    cchilds.push(
+                        `${characters[xi]}-${characters[ci]}-${characters[di]}`
+                    );
                     filters.push({
                         name: d.name,
                         parent: c.uii,
                         show: false,
-                        path: `${characters[ci]}-${characters[di]}`,
+                        path: `${characters[xi]}-${characters[ci]}-${characters[di]}`,
                         parentPath: `${characters[ci]}`,
                         pathName: `${c.uii} > ${d.name}`,
                         value: d?.actual_value || d?.values?.length,
@@ -415,7 +426,7 @@ const createMaps = () => {
                     name: c.uii,
                     parent: null,
                     show: false,
-                    path: `${characters[ci]}`,
+                    path: `${characters[xi]}-${characters[ci]}`,
                     parentPath: null,
                     pathName: null,
                     value: c?.actual_value,
@@ -426,8 +437,8 @@ const createMaps = () => {
         countryStore.update((s) => {
             s.data = res.data;
             s.filters = filters;
-            s.valuePath = "b-a";
-            s.selectedPath = "b-a";
+            s.valuePath = "a";
+            s.selectedPath = null;
         });
         updateFilter();
     });

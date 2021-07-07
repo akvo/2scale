@@ -48,8 +48,9 @@ export const Color = {
 
 export const visualMap = {
     left: "right",
+    top: "top",
     inRange: {
-        color: ["#a43332", "#3D588A"],
+        color: ["#f4f7b5", "#a43332"],
     },
     text: ["High", "Low"],
     calculable: true,
