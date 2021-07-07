@@ -33,6 +33,7 @@ class SyncController extends Controller
         $this->dpsDeleted = 0;
         $this->oldData = collect();
         $this->bugs = collect();
+        $this->results = collect();
     }
 
     public function syncPartnerships(FlowApi $flow, Partnership $partnerships, $sync = false, $cascadeResource = null)
@@ -665,6 +666,7 @@ class SyncController extends Controller
         if (!$syncUrl) {
             $sync = $syncs->orderBy('id', 'desc')->first();
             $syncUrl = $sync['url'];
+            $this->results->push($syncUrl);
         }
         $syncData = $flow->fetch($syncUrl);
 
@@ -673,17 +675,19 @@ class SyncController extends Controller
             if ($isNotFirstSyncRun) {
                 $postSync = new Sync(['url' => $syncUrl]);
                 $postSync->save();
+                $this->results->push($syncUrl);
             }
 
             if (count($this->formChanged) === 0 && count($this->dpsChanged) === 0 && $this->dpsDeleted === 0) {
-                return "No data update";
+                return $this->results;
             }
 
-            return [
-                "formChanged" => $this->formChanged,
-                "formInstanceChanged" => $this->dpsChanged,
-                "datapointDeleted" => $this->dpsDeleted,
-            ];
+            return $this->results;
+            // return [
+            //     "formChanged" => $this->formChanged,
+            //     "formInstanceChanged" => $this->dpsChanged,
+            //     "datapointDeleted" => $this->dpsDeleted,
+            // ];
         }
 
         // $formChanged = [];
@@ -836,6 +840,7 @@ class SyncController extends Controller
         if ($isNotFirstSyncRun) {
             $postSync = new Sync(['url' => $syncUrl]);
             $postSync->save();
+            $this->results->push($syncUrl);
         }
 
         // check nextSyncUrl if contains any data
@@ -847,6 +852,6 @@ class SyncController extends Controller
                         );
         }
 
-        return "Done";
+        return $this->results;
     }
 }
