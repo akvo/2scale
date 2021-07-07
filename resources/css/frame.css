@@ -106,3 +106,24 @@ body {
 .uii-charts .uii-title {
     min-height: 72px;
 }
+#filters {
+    position: absolute;
+    z-index: 1;
+    margin-top: 20px;
+}
+#filters .card {
+    max-width: 200px;
+    border: 1px solid #ddd;
+}
+#filters .card .list-group .list-group-item {
+    cursor: pointer;
+}
+#filters .card .list-group .list-group-item:hover {
+    background-color: #f2f2f2;
+}
+#filters .card .list-group .list-group-item i {
+    color: green;
+}
+.filter-parent {
+    margin-left: 10px;
+}
