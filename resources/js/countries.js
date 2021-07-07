@@ -3,7 +3,7 @@ import axios from "axios";
 import { popupFormatter, visualMap } from "./chart-util/chart-style";
 import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
-import { formatNumber } from "./util";
+import { formatNumber, genCharArray } from "./util";
 import _ from "lodash";
 import countryStore from "./store/country-store.js";
 
@@ -43,23 +43,39 @@ const dimensions = (x, idx) => {
             let restTarget =
                 (d?.target_value ? d.target_value : d.actual_value) -
                 d.actual_value;
-            currentCharts = [
-                ...currentCharts,
-                {
-                    id: id,
-                    data: [
-                        {
-                            name: "Pending",
-                            value: restTarget || 1,
-                        },
-                        {
-                            name: "Achieved",
-                            value: d.actual_value,
-                        },
-                    ],
-                    type: "DOUGHNUT",
-                },
-            ];
+            if (restTarget < d.actual_value) {
+                currentCharts = [
+                    ...currentCharts,
+                    {
+                        id: id,
+                        data: [
+                            {
+                                name: "Achieved",
+                                value: d.actual_value,
+                            },
+                        ],
+                        type: "DOUGHNUT",
+                    },
+                ];
+            } else {
+                currentCharts = [
+                    ...currentCharts,
+                    {
+                        id: id,
+                        data: [
+                            {
+                                name: "Pending",
+                                value: restTarget,
+                            },
+                            {
+                                name: "Achieved",
+                                value: d.actual_value,
+                            },
+                        ],
+                        type: "DOUGHNUT",
+                    },
+                ];
+            }
         }
         countryStore.update((s) => {
             s.charts = currentCharts;
@@ -282,6 +298,66 @@ const updateMapOptions = () => {
     });
 };
 
+const changeFilter = (path) => {
+    console.log(path);
+    countryStore.update((s) => {
+        s.selectedPath = path;
+    });
+    updateFilter();
+};
+
+const updateFilter = () => {
+    $("#filters").empty();
+    $("#filters").append(
+        <div class="card" style="width: 18rem;">
+            <ul class="list-group list-group-flush" id="filter-list"></ul>
+        </div>
+    );
+    const { currentState } = countryStore;
+    const { filters, valuePath, selectedPath } = currentState;
+    let currentFilter = filters.find((x) => x.path === selectedPath);
+    if (currentFilter) {
+        currentFilter = {
+            ...currentFilter,
+            childrens: filters.filter((x) =>
+                currentFilter.childrens.includes(x.path)
+            ),
+        };
+        $("#filter-list").append(
+            <li
+                class="list-group-item"
+                onClick={() => changeFilter(currentFilter.parentPath)}
+            >
+                <i class="fa fa-arrow-circle-left"></i>
+                <span class="filter-parent">{currentFilter.name}</span>
+            </li>
+        );
+        currentFilter.childrens.forEach((x) => {
+            $("#filter-list").append(
+                <li
+                    class="list-group-item"
+                    onClick={() => changeFilter(x.path)}
+                >
+                    {x.name}
+                </li>
+            );
+        });
+    } else {
+        filters
+            .filter((x) => x.parent === null)
+            .forEach((x) => {
+                $("#filter-list").append(
+                    <li
+                        class="list-group-item"
+                        onClick={() => changeFilter(x.path)}
+                    >
+                        {x.name}
+                    </li>
+                );
+            });
+    }
+};
+
 const createMaps = () => {
     const html = document.getElementById("maps");
     const myMap = echarts.init(html);
@@ -300,14 +376,66 @@ const createMaps = () => {
         });
     }
     axios.get("/api/rsr/country-data").then((res) => {
+        let filters = [];
+        const baseFilter = res.data.find((x) => x.country === "Burkina Faso");
+        const characters = genCharArray("a", "z");
+        baseFilter.data.forEach((x) => {
+            x.childrens.forEach((c, ci) => {
+                let cchilds = [];
+                c?.dimensions?.forEach((d, di) => {
+                    let dchilds = [];
+                    d?.values?.forEach((v, vi) => {
+                        dchilds.push(
+                            `${characters[ci]}-${characters[di]}-${characters[vi]}`
+                        );
+                        filters.push({
+                            name: v.name,
+                            parent: d.name,
+                            show: false,
+                            path: `${characters[ci]}-${characters[di]}-${characters[vi]}`,
+                            parentPath: `${characters[ci]}-${characters[di]}`,
+                            pathName: `${c.uii} > ${d.name} > ${v.name}`,
+                            value: true,
+                            childrens: false,
+                        });
+                    });
+                    cchilds.push(`${characters[ci]}-${characters[di]}`);
+                    filters.push({
+                        name: d.name,
+                        parent: c.uii,
+                        show: false,
+                        path: `${characters[ci]}-${characters[di]}`,
+                        parentPath: `${characters[ci]}`,
+                        pathName: `${c.uii} > ${d.name}`,
+                        value: d?.actual_value || d?.values?.length,
+                        childrens: dchilds,
+                    });
+                });
+                filters.push({
+                    name: c.uii,
+                    parent: null,
+                    show: false,
+                    path: `${characters[ci]}`,
+                    parentPath: null,
+                    pathName: null,
+                    value: c?.actual_value,
+                    childrens: cchilds,
+                });
+            });
+        });
         countryStore.update((s) => {
             s.data = res.data;
+            s.filters = filters;
+            s.valuePath = "b-a";
+            s.selectedPath = "b-a";
         });
+        updateFilter();
     });
 };
 
 $("main").append(
     <div class="row">
+        <div class="col-md-12" id="filters"></div>
         <div class="col-md-12">
             <h2 class="responsive font-weight-bold text-center my-4">
                 Reaching Targets

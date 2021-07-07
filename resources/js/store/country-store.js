@@ -8,6 +8,9 @@ const countryStore = new Store({
     counts: [],
     charts: [],
     chartList: [],
+    filters: [],
+    valuePath: null,
+    selectedPath: null,
 });
 
 export default countryStore;

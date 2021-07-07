@@ -99,6 +99,7 @@ const Pie = (data, extra, Doughnut = false) => {
                 radius: Doughnut ? ["0%", "0%"] : ["0%", "40%"],
                 color: ["#f1f1f5"],
                 top: "30px",
+                bottom: "30px",
                 label: {
                     normal: {
                         formatter: function (params) {
@@ -123,8 +124,14 @@ const Pie = (data, extra, Doughnut = false) => {
         legend: {
             data: labels.filter((l) => l.toLowerCase() !== "pending"),
             ...Legend,
-            orient: labels.includes("Pending") ? "horizontal" : "vertical",
-            x: labels.includes("Pending") ? "center" : "right",
+            orient:
+                labels.includes("Pending") || labels.includes("Achieved")
+                    ? "horizontal"
+                    : "vertical",
+            x:
+                labels.includes("Pending") || labels.includes("Achieved")
+                    ? "center"
+                    : "right",
             y: "top",
         },
         ...Color,

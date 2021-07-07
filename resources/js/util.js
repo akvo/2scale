@@ -1,6 +1,16 @@
 var currencyFormatter = require("currency-formatter");
 export const gradients = ["purple", "peach", "blue", "morpheus-den"];
 
+export const genCharArray = (charA, charZ) => {
+    var a = [],
+        i = charA.charCodeAt(0),
+        j = charZ.charCodeAt(0);
+    for (; i <= j; ++i) {
+        a.push(String.fromCharCode(i));
+    }
+    return a;
+};
+
 export const formatNumber = (x) => {
     return currencyFormatter.format(x, {
         decimal: ".",
