@@ -658,6 +658,10 @@ class SyncController extends Controller
         $syncUrl=false
     )
     {
+        // $start = microtime(true);
+        // $time_elapsed_secs = microtime(true) - $start;
+
+        $isNotFirstSyncRun = $syncUrl;
         if (!$syncUrl) {
             $sync = $syncs->orderBy('id', 'desc')->first();
             $syncUrl = $sync['url'];
@@ -665,6 +669,12 @@ class SyncController extends Controller
         $syncData = $flow->fetch($syncUrl);
 
         if (!isset($syncData['changes']) || $syncData === 204) {
+            // * save syncUrl after update data
+            if ($isNotFirstSyncRun) {
+                $postSync = new Sync(['url' => $syncUrl]);
+                $postSync->save();
+            }
+
             if (count($this->formChanged) === 0 && count($this->dpsChanged) === 0 && $this->dpsDeleted === 0) {
                 return "No data update";
             }
@@ -822,10 +832,14 @@ class SyncController extends Controller
             $this->dpsDeleted = $this->dpsDeleted + $dpsDeleted;
         }
 
+        // * save syncUrl after update data
+        if ($isNotFirstSyncRun) {
+            $postSync = new Sync(['url' => $syncUrl]);
+            $postSync->save();
+        }
+
         // check nextSyncUrl if contains any data
         if (isset($syncData['nextSyncUrl'])) {
-            $postSync = new Sync(['url' => $syncData['nextSyncUrl']]);
-            $postSync->save();
             $forms = new Form();
             $this->syncData($flowApi, $flow, $syncs, $forms,
                             $partnerships, $datapoints, $answers, $questions,
