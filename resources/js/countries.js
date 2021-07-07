@@ -428,7 +428,7 @@ const createFilterList = (
     );
 };
 
-const updateFilter = () => {
+const updateFilter = (init = false) => {
     $("#filters").empty();
     $("#filters").append(
         <div class="card" style="width: 18rem;">
@@ -458,25 +458,12 @@ const updateFilter = () => {
                 $("#filter-list").append(createFilterList(x, false, valuePath));
             });
     }
+    if (init) {
+        changeFilter("a-a", true);
+    }
 };
 
-const createMaps = () => {
-    const html = document.getElementById("maps");
-    const myMap = echarts.init(html);
-    countryStore.update((s) => {
-        s.maps = myMap;
-    });
-    if (localStorage.getItem("africa-map")) {
-        const mapData = JSON.parse(localStorage.getItem("africa-map"));
-        echarts.registerMap(mapName, mapData);
-        updateMapOptions();
-    } else {
-        axios.get("/json/africa.geojson").then((res) => {
-            localStorage.setItem("africa-map", JSON.stringify(res.data));
-            echarts.registerMap(mapName, res.data);
-            updateMapOptions();
-        });
-    }
+const fetchData = () => {
     axios.get("/api/rsr/country-data").then((res) => {
         let filters = [];
         const baseFilter = res.data.find((x) => x.country === "Burkina Faso");
@@ -537,8 +524,29 @@ const createMaps = () => {
             s.valuePath = "a";
             s.selectedPath = null;
         });
-        updateFilter();
+        updateMapOptions();
+        updateFilter(true);
+        $("#loader-spinner").remove();
     });
+};
+
+const createMaps = () => {
+    const html = document.getElementById("maps");
+    const myMap = echarts.init(html);
+    countryStore.update((s) => {
+        s.maps = myMap;
+    });
+    if (localStorage.getItem("africa-map")) {
+        const mapData = JSON.parse(localStorage.getItem("africa-map"));
+        echarts.registerMap(mapName, mapData);
+        fetchData();
+    } else {
+        axios.get("/json/africa.geojson").then((res) => {
+            localStorage.setItem("africa-map", JSON.stringify(res.data));
+            echarts.registerMap(mapName, res.data);
+            fetchData();
+        });
+    }
 };
 
 $("main").append(
@@ -553,6 +561,14 @@ $("main").append(
         </div>
         <div id="country-container"></div>
         <div class="col-md-12" id="display"></div>
+    </div>
+);
+
+$("main").append(
+    <div class="d-flex justify-content-center" id="loader-spinner">
+        <div class="spinner-border text-primary loader-spinner" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
     </div>
 );
 
