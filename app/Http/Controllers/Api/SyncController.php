@@ -23,6 +23,7 @@ use Mailjet\LaravelMailjet\Facades\Mailjet;
 class SyncController extends Controller
 {
     public function __construct() {
+        set_time_limit(0);
         $this->collections = collect();
         $this->success = collect();
         $this->error = collect();
