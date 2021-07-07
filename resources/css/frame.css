@@ -153,3 +153,7 @@ h3#subtitle {
     margin: auto;
     max-width: 50%;
 }
+h3#subtitle b {
+    color: #a43332;
+    font-weight: bold;
+}

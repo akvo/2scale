@@ -5,6 +5,8 @@ import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
 import { formatNumber, genCharArray, toTitleCase, genCharPath } from "./util";
 import sumBy from "lodash/sumBy";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
 import countryStore from "./store/country-store.js";
 
 const mapName = "africa";
@@ -280,7 +282,6 @@ const updateMapOptions = () => {
             transitionDuration: 0.2,
             formatter: popupFormatter,
         },
-        visualMap: visualMap,
         series: [
             {
                 type: "map",
@@ -344,9 +345,10 @@ const changeFilter = (path, value) => {
     });
     const text = res[0].text.replace(
         "##number##",
-        formatNumber(sumBy(res, "value"))
+        "<b>" + formatNumber(sumBy(res, "value")) + "</b>"
     );
-    $("#subtitle").text(text);
+    $("#subtitle").empty();
+    $("#subtitle").append(text);
     const options = {
         tooltip: {
             trigger: "item",
@@ -354,7 +356,11 @@ const changeFilter = (path, value) => {
             transitionDuration: 0.2,
             formatter: popupFormatter,
         },
-        visualMap: visualMap,
+        visualMap: {
+            ...visualMap,
+            max: maxBy(res, "value").value,
+            min: minBy(res, "value").value,
+        },
         series: [
             {
                 type: "map",
