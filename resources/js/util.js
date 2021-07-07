@@ -11,6 +11,14 @@ export const genCharArray = (charA, charZ) => {
     return a;
 };
 
+export const genCharPath = (arr, char) => {
+    let str = [];
+    arr.forEach((a) => {
+        str.push(char[a]);
+    });
+    return str.join("-");
+};
+
 export const formatNumber = (x) => {
     return currencyFormatter.format(x, {
         decimal: ".",

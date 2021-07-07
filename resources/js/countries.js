@@ -3,7 +3,7 @@ import axios from "axios";
 import { popupFormatter, visualMap } from "./chart-util/chart-style";
 import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
-import { formatNumber, genCharArray } from "./util";
+import { formatNumber, genCharArray, genCharPath } from "./util";
 import _ from "lodash";
 import countryStore from "./store/country-store.js";
 
@@ -390,33 +390,32 @@ const createMaps = () => {
         baseFilter.data.forEach((x, xi) => {
             x.childrens.forEach((c, ci) => {
                 let cchilds = [];
+                let cpath = genCharPath([xi, ci], characters);
                 c?.dimensions?.forEach((d, di) => {
                     let dchilds = [];
+                    let dpath = genCharPath([xi, ci, di], characters);
+                    cchilds.push(dpath);
                     d?.values?.forEach((v, vi) => {
                         vi = vi + 1;
-                        dchilds.push(
-                            `${characters[xi]}-${characters[ci]}-${characters[di]}-${characters[vi]}`
-                        );
+                        let vpath = genCharPath([xi, ci, di, vi], characters);
+                        dchilds.push(vpath);
                         filters.push({
                             name: v.name,
                             parent: d.name,
                             show: false,
-                            path: `${characters[xi]}-${characters[ci]}-${characters[di]}-${characters[vi]}`,
-                            parentPath: `${characters[ci]}-${characters[di]}`,
+                            path: vpath,
+                            parentPath: dpath,
                             pathName: `${c.uii} > ${d.name} > ${v.name}`,
                             value: true,
                             childrens: false,
                         });
                     });
-                    cchilds.push(
-                        `${characters[xi]}-${characters[ci]}-${characters[di]}`
-                    );
                     filters.push({
                         name: d.name,
                         parent: c.uii,
                         show: false,
-                        path: `${characters[xi]}-${characters[ci]}-${characters[di]}`,
-                        parentPath: `${characters[ci]}`,
+                        path: dpath,
+                        parentPath: cpath,
                         pathName: `${c.uii} > ${d.name}`,
                         value: d?.actual_value || d?.values?.length,
                         childrens: dchilds,
@@ -426,7 +425,7 @@ const createMaps = () => {
                     name: c.uii,
                     parent: null,
                     show: false,
-                    path: `${characters[xi]}-${characters[ci]}`,
+                    path: cpath,
                     parentPath: null,
                     pathName: null,
                     value: c?.actual_value,
