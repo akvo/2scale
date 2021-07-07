@@ -3,8 +3,8 @@ import axios from "axios";
 import { popupFormatter, visualMap } from "./chart-util/chart-style";
 import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
-import { formatNumber, genCharArray, genCharPath } from "./util";
-import _ from "lodash";
+import { formatNumber, genCharArray, toTitleCase, genCharPath } from "./util";
+import sumBy from "lodash/sumBy";
 import countryStore from "./store/country-store.js";
 
 const mapName = "africa";
@@ -298,35 +298,117 @@ const updateMapOptions = () => {
     });
 };
 
-const changeFilter = (path) => {
+const changeFilterPath = (path) => {
     countryStore.update((s) => {
         s.selectedPath = path;
     });
     updateFilter();
 };
 
-const createFilterList = ({ name, path, parentPath, childrens }, parent) => {
-    const filterClass = childrens?.length
+const changeFilter = (path, value) => {
+    const { currentState } = countryStore;
+    const { filters, data, valuePath, maps, mapData } = currentState;
+    let fl = filters.find((x) => x.path === path);
+    fl = fl.pathName.split("|");
+    const res = data.map((dt) => {
+        let d = {};
+        let i = 0;
+        let target_text = "";
+        let target_values = 0;
+        do {
+            if (i === 0) {
+                d = dt.data.find((x) => x.group === fl[i]);
+            }
+            if (i === 1) {
+                d = d?.childrens.find((x) => x.uii === fl[i]);
+                target_text = d.target_text;
+            }
+            if (i === 2) {
+                d = d?.dimensions.find((x) => x.name === fl[i]);
+            }
+            if (i === 3) {
+                d = d?.values.find((x) => x.name === fl[i]);
+            }
+            i += 1;
+        } while (i < fl.length);
+        let value = d?.actual_value ? d.actual_value : 0;
+        if (fl.length === 3 && d?.values) {
+            value = sumBy(d.values, "actual_value");
+        }
+        return {
+            name: dt.country,
+            value: value,
+            text: target_text,
+            data: dt,
+        };
+    });
+    const text = res[0].text.replace(
+        "##number##",
+        formatNumber(sumBy(res, "value"))
+    );
+    $("#subtitle").text(text);
+    const options = {
+        tooltip: {
+            trigger: "item",
+            showDelay: 0,
+            transitionDuration: 0.2,
+            formatter: popupFormatter,
+        },
+        visualMap: visualMap,
+        series: [
+            {
+                type: "map",
+                zoom: 1,
+                room: true,
+                aspectScale: 1,
+                map: mapName,
+                data: res,
+            },
+        ],
+    };
+    maps.setOption(options);
+    if (value) {
+        countryStore.update((s) => {
+            s.valuePath = path;
+        });
+        updateFilter();
+    }
+};
+
+const createFilterList = (
+    { name, text, path, parentPath, childrens, value },
+    parent,
+    valuePath
+) => {
+    let filterClass = childrens?.length
         ? "filter-content"
         : "filter-content full";
+    if (valuePath === path) {
+        filterClass = `${filterClass} active`;
+    }
     if (parent) {
         return (
             <li
                 class="list-group-item"
-                onClick={() => changeFilter(parentPath)}
+                onClick={() => changeFilterPath(parentPath)}
             >
                 <span class="filter-parent">
                     <i class="fa fa-chevron-left"></i>
                 </span>
-                <span class="filter-content">{name}</span>
+                <span class="filter-content">{text ? text : name}</span>
             </li>
         );
     }
     return (
         <li class="list-group-item">
-            <span class={filterClass}>{name}</span>
+            <span class={filterClass} onClick={() => changeFilter(path, value)}>
+                {text ? text : name}
+            </span>
             {childrens.length ? (
-                <span class="filter-childs" onClick={() => changeFilter(path)}>
+                <span
+                    class="filter-childs"
+                    onClick={() => changeFilterPath(path)}
+                >
                     <i class="fa fa-chevron-right"></i>
                 </span>
             ) : (
@@ -353,15 +435,17 @@ const updateFilter = () => {
                 currentFilter.childrens.includes(x.path)
             ),
         };
-        $("#filter-list").append(createFilterList(currentFilter, true));
+        $("#filter-list").append(
+            createFilterList(currentFilter, true, valuePath)
+        );
         currentFilter.childrens.forEach((x) => {
-            $("#filter-list").append(createFilterList(x, false));
+            $("#filter-list").append(createFilterList(x, false, valuePath));
         });
     } else {
         filters
             .filter((x) => x.parent === null)
             .forEach((x) => {
-                $("#filter-list").append(createFilterList(x, false));
+                $("#filter-list").append(createFilterList(x, false, valuePath));
             });
     }
 };
@@ -389,8 +473,10 @@ const createMaps = () => {
         const characters = genCharArray("a", "z");
         baseFilter.data.forEach((x, xi) => {
             x.childrens.forEach((c, ci) => {
+                let ctext = c.target_text.replace("##number##", "");
                 let cchilds = [];
                 let cpath = genCharPath([xi, ci], characters);
+                /*
                 c?.dimensions?.forEach((d, di) => {
                     let dchilds = [];
                     let dpath = genCharPath([xi, ci, di], characters);
@@ -405,7 +491,7 @@ const createMaps = () => {
                             show: false,
                             path: vpath,
                             parentPath: dpath,
-                            pathName: `${c.uii} > ${d.name} > ${v.name}`,
+                            pathName: `${x.group}|${c.uii}|${d.name}|${v.name}`,
                             value: true,
                             childrens: false,
                         });
@@ -416,18 +502,20 @@ const createMaps = () => {
                         show: false,
                         path: dpath,
                         parentPath: cpath,
-                        pathName: `${c.uii} > ${d.name}`,
+                        pathName: `${x.group}|${c.uii}|${d.name}`,
                         value: d?.actual_value || d?.values?.length,
                         childrens: dchilds,
                     });
                 });
+                */
                 filters.push({
                     name: c.uii,
+                    text: ctext ? toTitleCase(ctext) : c.uii,
                     parent: null,
                     show: false,
                     path: cpath,
                     parentPath: null,
-                    pathName: null,
+                    pathName: `${x.group}|${c.uii}`,
                     value: c?.actual_value,
                     childrens: cchilds,
                 });
@@ -450,6 +538,7 @@ $("main").append(
             <h2 class="responsive font-weight-bold text-center my-4">
                 Reaching Targets
             </h2>
+            <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>
         </div>
         <div class="col-md-12" id="display"></div>

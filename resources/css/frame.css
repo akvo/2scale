@@ -131,14 +131,25 @@ body {
     width: 240px;
 }
 #filters .card .list-group .list-group-item .filter-content.full {
-    width: 300px;
+    width: 286px;
 }
 #filters .card .list-group .list-group-item .filter-content:hover {
     background-color: #f2f2f2;
+}
+#filters .card .list-group .list-group-item .filter-content.active,
+#filters .card .list-group .list-group-item .filter-content.active:hover {
+    background-color: #a43332;
+    color: #fff;
 }
 #filters .card .list-group .list-group-item .filter-childs {
     float: right;
 }
 #filters .card .list-group .list-group-item .filter-childs:hover {
     background-color: #f2f2f2;
+}
+h3#subtitle {
+    font-size: 16px;
+    text-align: center;
+    margin: auto;
+    max-width: 50%;
 }

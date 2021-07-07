@@ -102,7 +102,7 @@ return [
             'name' => 'UII8 - FSERV',
             'result_title' => 'UII-8 FSERV: Smallholder farmers, micro-entrepreneurs and SMEs have improved access to financial services.',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number##',
+            "target_text" => "##number## Euros as value of additional financial services.",
             'max' => false,
             'replace_value_with' => 1,
             'orders' => true,
