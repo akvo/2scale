@@ -248,6 +248,10 @@ const handleCountryClick = (country) => {
     const { maps, mapData, chartList, data } = currentState;
     const selected = data.find((x) => x.country === country);
     if (selected) {
+        $("#country-container").empty();
+        $("#country-container").append(
+            <div id="country-selected">{country}</div>
+        );
         $(".uii-row").remove();
         if (chartList.length) {
             chartList.forEach((x) => {
@@ -547,6 +551,7 @@ $("main").append(
             <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>
         </div>
+        <div id="country-container"></div>
         <div class="col-md-12" id="display"></div>
     </div>
 );

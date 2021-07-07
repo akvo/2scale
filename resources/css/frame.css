@@ -157,3 +157,16 @@ h3#subtitle b {
     color: #a43332;
     font-weight: bold;
 }
+#country-selected {
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    position: fixed;
+    top: 30px;
+    right: 20px;
+    padding: 5px 15px;
+    background: #a43332;
+    color: #fff;
+    width: auto;
+    z-index: 2;
+}

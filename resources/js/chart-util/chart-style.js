@@ -52,6 +52,7 @@ export const visualMap = {
     inRange: {
         color: ["#f4f7b5", "#a43332"],
     },
+    itemHeight: "520px",
     text: ["High", "Low"],
     calculable: true,
 };
