@@ -15,7 +15,9 @@ use App\RsrPeriodDimensionValue;
 use App\RsrPeriodData;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\RsrSeedController;
-
+use App\Http\Controllers\Api\ApiController;
+use App\ViewRsrOverview;
+use App\ViewRsrCountryOverview;
 class RsrSyncCommand extends Command
 {
     /**
@@ -71,6 +73,18 @@ class RsrSyncCommand extends Command
         );
         $time_elapsed_secs = microtime(true) - $start;
         $this->info($res);
+
+        // * Clearing cache after sync
+        \Artisan::call('cache:clear');
+        $this->info("Cache cleared");
+        // * Create cache
+        $api = new ApiController();
+        $rsrOverview = new ViewRsrOverview();
+        $rsrCountryOverview = new ViewRsrCountryOverview();
+        $api->getRsrUiiReport($request, $rsrOverview);
+        $api->getRsrCountryData($request, $rsrCountryOverview);
+        $this->info("Cache created");
+
         $this->info("Time : ".date("H:i:s",$time_elapsed_secs));
         Log::info('End RSR Sync - '.now());
     }
