@@ -659,9 +659,6 @@ class SyncController extends Controller
         $syncUrl=false
     )
     {
-        // $start = microtime(true);
-        // $time_elapsed_secs = microtime(true) - $start;
-
         $isNotFirstSyncRun = $syncUrl;
         if (!$syncUrl) {
             $sync = $syncs->orderBy('id', 'desc')->first();
