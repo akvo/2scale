@@ -134,16 +134,10 @@ const uii = (x, idx) => {
             return t;
         });
         const percentage =
-            target.length > 1
-                ? (
-                      (c.actual_value /
-                          (c.target_value < c.actual_value
-                              ? c.actual_value
-                              : c.target_value)) *
-                      100
-                  ).toFixed(3)
+            target.length > 1 && c.target_value
+                ? ((c.actual_value / c.target_value) * 100).toFixed(3)
                 : null;
-        if (target.length > 1) {
+        if (target.length > 1 && c.target_value) {
             currentCounts = [
                 ...currentCounts,
                 {
@@ -523,7 +517,16 @@ const fetchData = () => {
         const characters = genCharArray("a", "z");
         baseFilter.data.forEach((x, xi) => {
             x.childrens.forEach((c, ci) => {
-                let ctext = c.target_text.replace("##number##", "");
+                let ctext = c.target_text
+                    .replace("##number##", "")
+                    .replace(".", "")
+                    .replace("Euros as", "");
+                let ntext = [];
+                ctext = ctext.trim().split("");
+                ctext.forEach((ct, cti) => {
+                    ntext.push(cti === 0 ? toTitleCase(ct) : ct);
+                });
+                ctext = ntext.join("");
                 let cchilds = [];
                 let cpath = genCharPath([xi, ci], characters);
                 /*
@@ -560,7 +563,7 @@ const fetchData = () => {
                 */
                 filters.push({
                     name: c.uii,
-                    text: ctext ? toTitleCase(ctext) : c.uii,
+                    text: ctext,
                     parent: null,
                     show: false,
                     path: cpath,
