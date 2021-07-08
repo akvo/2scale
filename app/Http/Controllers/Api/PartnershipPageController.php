@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Libraries\AkvoRsr;
 use App\RsrProject;
+use App\Http\Controllers\Controller\Api\ApiController;
 
 class PartnershipPageController extends Controller
 {
@@ -37,7 +38,7 @@ class PartnershipPageController extends Controller
         $sector_text = implode(', ', $sector_text->toArray());
 
         return [
-            'title' => $project['title'],
+            'title' => $this->getPartnershipName($project['title']),
             'sector' => $sector_text,
             'producer' => count($producer_organizations),
             'abc' => count($abc_clusters),
@@ -218,6 +219,15 @@ class PartnershipPageController extends Controller
         })->values();
 
         return $charts;
+    }
+
+    public function getPartnershipName($pname)
+    {
+        $names = collect(config('partnership-page.partnership_names'));
+        $code = explode("_", $pname)[0];
+        $name = isset($names[$code]) ? $names[$code] : null;
+        $name = $name ? $name : $pname;
+        return $name;
     }
 
     private function getRsrProject($request)
