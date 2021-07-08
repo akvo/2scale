@@ -7,16 +7,21 @@ import { formatNumber, genCharArray, toTitleCase, genCharPath } from "./util";
 import sumBy from "lodash/sumBy";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
+import chunk from "lodash/chunk";
 import countryStore from "./store/country-store.js";
 
 const mapName = "africa";
 
 const popupFormatter = (params) => {
     if (params?.data?.text) {
-        return params.data.text.replace(
+        let text = params.data.text.replace(
             "##number##",
-            formatNumber(params.value)
+            "<b>" + formatNumber(params.value) + "</b>"
         );
+        text = text.replace(".", "").split(" ");
+        text = chunk(text, 3);
+        text = text.map((x) => x.join(" "));
+        return text.join("</br>");
     }
     var value = (params.value + "").split(".");
     value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
@@ -235,7 +240,6 @@ const groups = (x, i) => {
 
 const updateStates = () => {
     const { currentState } = countryStore;
-    const { country, maps } = currentState;
     setTimeout(() => {
         currentState.counts.forEach((x, i) => {
             const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
@@ -257,72 +261,6 @@ const updateStates = () => {
             s.chartList = newCharts;
         });
     });
-    const mapOptions = maps._api.getOption();
-    const data = mapOptions.series[0].data.map((x) => ({
-        value: x.value,
-        name: x.name,
-    }));
-    let selectedData = data.find((x) => x.name === country);
-    const newData = [
-        ...data.filter((x) => x.name !== country),
-        {
-            ...selectedData,
-            selected: true,
-            itemStyle: {
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-                shadowBlur: 10,
-            },
-        },
-    ];
-    const newMapOptions = {
-        ...mapOptions,
-        series: [
-            {
-                ...mapOptions.series[0],
-                data: newData,
-            },
-        ],
-    };
-    maps.setOption(newMapOptions);
-};
-
-const handleCountryClick = (country) => {
-    const { currentState } = countryStore;
-    const { maps, mapData, chartList, data } = currentState;
-    const selected = data.find((x) => x.country === country);
-    countryStore.update((s) => {
-        s.country = country;
-    });
-    if (selected) {
-        $("#country-container").empty();
-        $("#country-container").append(
-            <div>
-                <div id="country-selected">Country: {country}</div>
-                <hr />
-            </div>
-        );
-        $(".uii-row").remove();
-        if (chartList.length) {
-            chartList.forEach((x) => {
-                x.chart.dispose();
-            });
-            countryStore.update((s) => {
-                s.chartList = [];
-            });
-        }
-        countryStore.update((s) => {
-            s.country = country;
-            s.charts = [];
-            s.counts = [];
-        });
-        $("#display").append(
-            selected.data.map((x, i) => {
-                return groups(x, i);
-            })
-        );
-        updateStates();
-    }
-    return;
 };
 
 const updateMapOptions = () => {
@@ -334,6 +272,10 @@ const updateMapOptions = () => {
             showDelay: 0,
             transitionDuration: 0.2,
             formatter: popupFormatter,
+            textStyle: {
+                width: 100,
+                fontFamily: "MarkPro",
+            },
         },
         series: [
             {
@@ -346,6 +288,8 @@ const updateMapOptions = () => {
                 emphasis: {
                     itemStyle: {
                         areaColor: "#609ca8",
+                        shadowColor: "rgba(0, 0, 0, 0.5)",
+                        shadowBlur: 10,
                     },
                     label: {
                         fontFamily: "MarkPro",
@@ -359,9 +303,41 @@ const updateMapOptions = () => {
         ],
     };
     maps.setOption(options);
-    maps.on("click", "series", function (x) {
-        handleCountryClick(x.name);
-    });
+};
+
+const handleCountryClick = (c) => {
+    const { currentState } = countryStore;
+    const { chartList, data, maps } = currentState;
+    const selected = data.find((x) => x.country === c.name);
+    if (selected) {
+        $("#country-container").empty();
+        $("#country-container").append(
+            <div>
+                <div id="country-selected">Country: {c.name}</div>
+                <hr />
+            </div>
+        );
+        $(".uii-row").remove();
+        if (chartList.length) {
+            chartList.forEach((x) => {
+                x.chart.dispose();
+            });
+            countryStore.update((s) => {
+                s.chartList = [];
+            });
+        }
+        countryStore.update((s) => {
+            s.country = c.name;
+            s.charts = [];
+            s.counts = [];
+        });
+        $("#display").append(
+            selected.data.map((x, i) => {
+                return groups(x, i);
+            })
+        );
+        updateStates();
+    }
 };
 
 const changeFilterPath = (path) => {
@@ -420,6 +396,10 @@ const changeFilter = (path, value) => {
             showDelay: 0,
             transitionDuration: 0.2,
             formatter: popupFormatter,
+            textStyle: {
+                width: 100,
+                fontFamily: "MarkPro",
+            },
         },
         visualMap: {
             ...visualMap,
@@ -437,6 +417,8 @@ const changeFilter = (path, value) => {
                 emphasis: {
                     itemStyle: {
                         areaColor: "#609ca8",
+                        shadowColor: "rgba(0, 0, 0, 0.5)",
+                        shadowBlur: 10,
                     },
                     label: {
                         fontFamily: "MarkPro",
@@ -604,6 +586,9 @@ const fetchData = () => {
 const createMaps = () => {
     const html = document.getElementById("maps");
     const myMap = echarts.init(html);
+    myMap.on("click", "series", function (x) {
+        handleCountryClick(x);
+    });
     countryStore.update((s) => {
         s.maps = myMap;
     });
