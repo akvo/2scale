@@ -31,6 +31,8 @@ const Pie = (data, extra, Doughnut = false) => {
                 name: n,
             };
         });
+        // filter value < 0
+        data = data.filter((x) => x.value >= 0);
         labels = data.map((x) => x.name);
         total = {
             ...total,
@@ -61,7 +63,10 @@ const Pie = (data, extra, Doughnut = false) => {
                 label: {
                     normal: {
                         formatter: function (params) {
-                            return Math.round(params.percent) + "%";
+                            if (params.percent >= 0) {
+                                return Math.round(params.percent) + "%";
+                            }
+                            return "";
                         },
                         show: true,
                         position: Doughnut ? "inner" : "outside",
