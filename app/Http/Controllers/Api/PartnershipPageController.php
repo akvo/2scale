@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller\Api\ApiController;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use App\Libraries\AkvoRsr;
 use App\RsrProject;
-use App\Http\Controllers\Controller\Api\ApiController;
 
 class PartnershipPageController extends Controller
 {
@@ -21,6 +22,13 @@ class PartnershipPageController extends Controller
 
     public function getTextVisual(Request $request)
     {
+        // * Cache
+        $cacheName = 'partnership-page-text-'.$request->country_id.'-'.$request->partnership_id;
+        $cache = Cache::get($cacheName);
+        if ($cache) {
+            return $cache;
+        }
+
         $project = $this->getRsrProject($request);
         if (!$project) {
             return response('no data available', 503);
@@ -37,7 +45,7 @@ class PartnershipPageController extends Controller
         })->unique()->values();
         $sector_text = implode(', ', $sector_text->toArray());
 
-        return [
+        $data = [
             'title' => $this->getPartnershipName($project['title']),
             'sector' => $sector_text,
             'producer' => count($producer_organizations),
@@ -45,10 +53,21 @@ class PartnershipPageController extends Controller
             'enterprise' => count($other_main_partners),
             'link' => $link,
         ];
+
+        Cache::put($cacheName, $data, 86400);
+
+        return $data;
     }
 
     public function getImplementingPartner(Request $request)
     {
+        // * Cache
+        $cacheName = 'partnership-page-partners-'.$request->country_id.'-'.$request->partnership_id;
+        $cache = Cache::get($cacheName);
+        if ($cache) {
+            return $cache;
+        }
+
         $project = $this->getRsrProject($request);
         if (!$project) {
             return response('no data available', 503);
@@ -58,11 +77,20 @@ class PartnershipPageController extends Controller
             return !Str::contains(strtolower($res['organisation_role_label']), 'implementing');
         });
 
+        Cache::put($cacheName, $results, 86400);
+
         return $results;
     }
 
     public function getResultFramework(Request $request)
     {
+        // * Cache
+        $cacheName = 'partnership-page-results-'.$request->country_id.'-'.$request->partnership_id;
+        $cache = Cache::get($cacheName);
+        if ($cache) {
+            return $cache;
+        }
+
         $project = $this->getRsrProject($request);
         if (!$project) {
             return response('no data available', 503);
@@ -217,6 +245,8 @@ class PartnershipPageController extends Controller
                 'childrens' => $g
             ];
         })->values();
+
+        Cache::put($cacheName, $charts, 86400);
 
         return $charts;
     }
