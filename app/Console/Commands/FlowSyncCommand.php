@@ -58,17 +58,22 @@ class FlowSyncCommand extends Command
         $answers = new Answer();
         $questions = new Question();
         $api = new SyncController();
+
+        $start = microtime(true);
+        $this->info("Sync...");
+        Log::info('Start Flow Sync - '.now());
         $res = $api->syncData(
             $flowApi, $flow, $syncs, $forms,
             $partnerships, $datapoints, $answers, $questions,
         );
 
-        Log::info('Start Flow Sync - '.now());
         foreach ($res as $key => $value) {
             $key += 1;
             Log::info($key.' | '.$value);
             $this->info($key.' | '.$value);
         }
+        $time_elapsed_secs = microtime(true) - $start;
+        $this->info("Time : ".date("H:i:s",$time_elapsed_secs));
         Log::info('End Flow Sync - '.now());
     }
 }
