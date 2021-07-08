@@ -17,13 +17,13 @@
       <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
           <a class="nav-link" href="/partnership">Partnership</a>
       </li>
+      <li class="nav-item {{Route::is('countries') ? 'active' : '' }}">
+          <a class="nav-link" href="/countries">Countries</a>
+      </li>
 
       @if (Auth::check())
         <li class="nav-item {{Route::is('partners') ? 'active' : '' }}">
           <a class="nav-link" href="/partners">Partners</a>
-        </li>
-        <li class="nav-item {{Route::is('countries') ? 'active' : '' }}">
-          <a class="nav-link" href="/countries">Countries</a>
         </li>
         <li class="nav-item {{Route::is('database') ? 'active' : '' }}">
             <a class="nav-link" href="/database">Database</a>

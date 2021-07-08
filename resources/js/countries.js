@@ -1,6 +1,6 @@
 import createElement from "./app";
 import axios from "axios";
-import { popupFormatter, visualMap } from "./chart-util/chart-style";
+import { visualMap } from "./chart-util/chart-style";
 import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
 import { formatNumber, genCharArray, toTitleCase, genCharPath } from "./util";
@@ -10,6 +10,21 @@ import minBy from "lodash/minBy";
 import countryStore from "./store/country-store.js";
 
 const mapName = "africa";
+
+const popupFormatter = (params) => {
+    if (params?.data?.text) {
+        return params.data.text.replace(
+            "##number##",
+            formatNumber(params.value)
+        );
+    }
+    var value = (params.value + "").split(".");
+    value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
+    if (Number.isNaN(params.value)) {
+        return;
+    }
+    return params.name + ": " + value;
+};
 
 const dimensions = (x, idx) => {
     return x.map((d, i) => {
@@ -220,6 +235,7 @@ const groups = (x, i) => {
 
 const updateStates = () => {
     const { currentState } = countryStore;
+    const { country, maps } = currentState;
     setTimeout(() => {
         currentState.counts.forEach((x, i) => {
             const countUp = new CountUp(x.id, x.val, { suffix: x.suf });
@@ -241,16 +257,49 @@ const updateStates = () => {
             s.chartList = newCharts;
         });
     });
+    const mapOptions = maps._api.getOption();
+    const data = mapOptions.series[0].data.map((x) => ({
+        value: x.value,
+        name: x.name,
+    }));
+    let selectedData = data.find((x) => x.name === country);
+    const newData = [
+        ...data.filter((x) => x.name !== country),
+        {
+            ...selectedData,
+            selected: true,
+            itemStyle: {
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+                shadowBlur: 10,
+            },
+        },
+    ];
+    const newMapOptions = {
+        ...mapOptions,
+        series: [
+            {
+                ...mapOptions.series[0],
+                data: newData,
+            },
+        ],
+    };
+    maps.setOption(newMapOptions);
 };
 
 const handleCountryClick = (country) => {
     const { currentState } = countryStore;
     const { maps, mapData, chartList, data } = currentState;
     const selected = data.find((x) => x.country === country);
+    countryStore.update((s) => {
+        s.country = country;
+    });
     if (selected) {
         $("#country-container").empty();
         $("#country-container").append(
-            <div id="country-selected">{country}</div>
+            <div>
+                <div id="country-selected">Country: {country}</div>
+                <hr />
+            </div>
         );
         $(".uii-row").remove();
         if (chartList.length) {
@@ -294,6 +343,18 @@ const updateMapOptions = () => {
                 aspectScale: 1,
                 map: mapName,
                 data: mapData,
+                emphasis: {
+                    itemStyle: {
+                        areaColor: "#609ca8",
+                    },
+                    label: {
+                        fontFamily: "MarkPro",
+                        fontWeight: "bold",
+                        color: "#fff",
+                        textShadowColor: "rgba(0, 0, 0, 0.5)",
+                        textSthadowBlur: 10,
+                    },
+                },
             },
         ],
     };
@@ -373,6 +434,16 @@ const changeFilter = (path, value) => {
                 aspectScale: 1,
                 map: mapName,
                 data: res,
+                emphasis: {
+                    itemStyle: {
+                        areaColor: "#609ca8",
+                    },
+                    label: {
+                        fontFamily: "MarkPro",
+                        fontWeight: "bold",
+                        color: "#fff",
+                    },
+                },
             },
         ],
     };
@@ -552,12 +623,13 @@ const createMaps = () => {
 $("main").append(
     <div class="row">
         <div class="col-md-12" id="filters"></div>
-        <div class="col-md-12">
+        <div class="col-md-12 main-page">
             <h2 class="responsive font-weight-bold text-center my-4">
                 Reaching Targets
             </h2>
             <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>
+            <div class="map-notation">Click country to show details</div>
         </div>
         <div id="country-container"></div>
         <div class="col-md-12" id="display"></div>
