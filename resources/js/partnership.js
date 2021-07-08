@@ -12,20 +12,6 @@ const country_id = $("meta[name='country']").attr("content");
 const partnership_id = $("meta[name='partnership']").attr("content");
 const endpoints = [country_id, partnership_id].join("/");
 
-// Page Title
-// $("main").append(
-//     <div>
-//         <div class="row" id="zero-row">
-//             <div class="col-md-12">
-//                 <h2 class="responsive font-weight-bold text-center my-4">
-//                     Partnership Page
-//                 </h2>
-//             </div>
-//         </div>
-//         <hr />
-//     </div>
-// );
-
 const handleNotFound = () => {
     $("#loader-spinner").remove();
     $("main").append(
@@ -81,7 +67,7 @@ const renderTextVisual = async () => {
                             { title }
                         </h3>
                         <div class="row justify-content-center">
-                            <div class="col-md-8">
+                            <div class="col-md-12" style="width: 90%">
                                 <h5 class="text-center">
                                     { title } project belongs to the <span class="font-weight-bold">{ sector }</span> sector. <br/>
                                     {workWith.length === 0 ? "" : `${workWithText}. `}

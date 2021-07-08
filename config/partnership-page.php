@@ -3,8 +3,97 @@
 $ROOT_API = env('RSR_API_ROOT', '');
 
 return [
-  'parnetship_name' => [
-    'code' => 'name',
+  'partnership_names' => [
+    // * Burkina Faso
+    'BF21' => 'Cassava partnership with Nanalim',
+    'BF22' => 'Soybean partnership with SIATOL',
+    'BF23' => 'Maize partnership with FAGRI (Faso Agriculture et Intrants)',
+    'BF24' => 'Groundnuts partnership with INNOFASO',
+    'BF25' => 'Rice partnership with NEBNOOMA',
+    'BF26' => 'Vegetables partnership with BioProtect ',
+    'BF27' => 'Maize partnership with AgroServ Industrie',
+    'BF28' => 'Poultry partnership with Société Burkinabé de Productions Animales (SOBUPRA)',
+    // * eol Burkina Faso
+
+    // * Côte D'ivoire
+    'CI21' => 'Groundnuts partnership with K\'CHIBO SARL',
+    'CI22' => 'Multi-champion rice partnership',
+    'CI23' => 'Vegetable partnership with Canaan Land',
+    'CI24' => null,
+    'CI25' => null,
+    // * eol Côte D'ivoire
+
+    // * Ethiopia
+    'ET06' => null,
+    'ET10' => null,
+    'ET21' => null,
+    'ET22' => null,
+    'ET23' => null,
+    'ET24' => null,
+    'ET25' => null,
+    'ET26' => null,
+    'ET27' => null,
+    'ET28' => null,
+    // * eol Ethiopia
+
+    // * Ghana
+    'GH09' => null,
+    'GH21' => null,
+    'GH22' => null,
+    'GH23' => null,
+    'GH24' => null,
+    // * eol Ghana
+
+    // * Kenya
+    'KE11' => 'Dairy partnership with Kieni Dairy Products Limited (KDPL)',
+    'KE21' => 'African indigenous vegetables partnership with Sweet n\' Dried',
+    'KE22' => 'Groundnuts partnership with Batian Nuts Limited',
+    'KE23' => 'Vegetable partnership with Neighbourhood Freshmart Limited',
+    'KE24' => null,
+    'KE25' => 'Poultry partnership with Homerange Poultry Kenya',
+    'KE26' => null,
+    'KE27' => null,
+    'KE28' => null,
+    'KE29' => null,
+    'KE30' => null,
+    // * eol Kenya
+
+    // * Mali
+    'ML05' => null,
+    'ML06' => null,
+    'ML21' => null,
+    'ML22' => null,
+    'ML23' => null,
+    'ML24' => null,
+    'ML25' => null,
+    'ML26' => null,
+    'ML27' => null,
+    // * eol Mali
+
+    // * Niger
+    'NE21' => null,
+    'NE22' => null,
+    'NE23' => null,
+    'NE24' => null,
+    'NE25' => null,
+    'NE26' => null,
+    'NE27' => null,
+    'NE28' => null,
+    // * eol Niger
+
+    // * Nigeria
+    'NG01' => null,
+    'NG09' => null,
+    'NG11' => null,
+    'NG12' => null,
+    'NG21' => null,
+    'NG22' => null,
+    'NG23' => null,
+    'NG24' => null,
+    'NG25' => null,
+    'NG26' => null,
+    'NG27' => null,
+    // * eol Nigeria
   ],
   'impact_charts' => [
     # MAX is aggregation type, if false aggregation is SUM (default)
@@ -75,7 +164,7 @@ return [
       'id' => 'UII-8',
       'name' => 'UII8 - FSERV',
       'group' => 'Inclusive Agribusiness and Innovation',
-      'target_text' => '##number##',
+      'target_text' => '##number## Euros as value of additional financial services.',
       'max' => false,
       'replace_value_with' => 1,
       'orders' => true,

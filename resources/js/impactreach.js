@@ -235,20 +235,32 @@ const increments = (data) => {
 
 // Page Title
 $("main").append(
-    <div>
-        <div class="row" id="zero-row">
-            <div class="col-md-12">
-                <h2 class="responsive font-weight-bold text-center my-4">
-                    Reaching Targets
-                </h2>
-            </div>
+    <div class="d-flex justify-content-center" id="loader-spinner">
+        <div class="spinner-border text-primary loader-spinner" role="status">
+            <span class="sr-only">Loading...</span>
         </div>
-        <hr />
     </div>
 );
 
 axios
     .get("/api/rsr/impact-reach/uii")
+    .then((res) => {
+        $("#loader-spinner").remove();
+        $(".tmp-footer")[0].style.position = "relative";
+        $("main").append(
+            <div>
+                <div class="row" id="zero-row">
+                    <div class="col-md-12">
+                        <h2 class="responsive font-weight-bold text-center my-4">
+                            Reaching Targets
+                        </h2>
+                    </div>
+                </div>
+                <hr />
+            </div>
+        );
+        return res;
+    })
     .then((res) => {
         const data = res.data;
         $("main").append(

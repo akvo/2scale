@@ -105,7 +105,6 @@ Route::get('/test', function (Request $request) {
 
 
 /** POC  */
-// home investment not yet
 Route::get('/flow/partnerships', 'Api\ApiController@getPartnership');
 Route::get('/flow/sectors', 'Api\ApiController@getSector');
 Route::get('/flow/rnr-gender', 'Api\ApiController@getRnrGender');
