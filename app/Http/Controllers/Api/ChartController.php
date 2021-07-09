@@ -640,7 +640,7 @@ class ChartController extends Controller
                 "value" => "countries",
                 "children" => $partnership,
                 "itemStyle" => array("color" => "#33b5e5"),
-                "label" => array("fontSize" =>  15),
+                "label" => array("fontSize" =>  14),
             );
         })->values();
         return array(
@@ -648,7 +648,7 @@ class ChartController extends Controller
             "value" => "Global",
             "children" => $organisation,
             "itemStyle" => array("color" => "#aa66cc"),
-            "label" => array("fontSize" => 20),
+            "label" => array("fontSize" => 16),
         );
 	}
 

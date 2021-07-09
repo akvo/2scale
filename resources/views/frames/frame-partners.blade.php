@@ -29,7 +29,7 @@ body{
     margin: 5px;
 }
 #hierarchy{
-	height: 70vh;
+	height: 78vh;
 }
 .full-width {
     width: 100%;

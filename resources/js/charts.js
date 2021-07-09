@@ -301,6 +301,12 @@ export const getHierarchy = (data) => {
                         align: "right",
                         fontSize: 12,
                         fontFamily: "Roboto",
+                        formatter: function(params) {
+                            if (!params.data.children) {
+                                return params.name;
+                            }
+                            return params.name + " (" + params.data.children.length + ")";
+                        }
                     },
                 },
                 leaves: {
