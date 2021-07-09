@@ -14,11 +14,11 @@
       <li class="nav-item {{Route::is('impactreach') ? 'active' : '' }}">
           <a class="nav-link" href="/impactreach">Impact and Reach</a>
       </li>
-      <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
-          <a class="nav-link" href="/partnership">Partnership</a>
-      </li>
       <li class="nav-item {{Route::is('countries') ? 'active' : '' }}">
-          <a class="nav-link" href="/countries">Countries</a>
+        <a class="nav-link" href="/countries">Countries</a>
+      </li>
+      <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
+        <a class="nav-link" href="/partnership">Partnership</a>
       </li>
 
       @if (Auth::check())
