@@ -16,6 +16,7 @@ use App\RsrDetail;
 use App\RsrMaxCustomValues;
 use App\ViewRsrOverview;
 use App\ViewRsrCountryOverview;
+use App\ViewRsrCountryData;
 
 class ApiController extends Controller
 {
@@ -365,95 +366,86 @@ class ApiController extends Controller
         return $results;
     }
 
-    public function getRsrCountryData(Request $request, ViewRsrCountryOverview $overview)
-    {
-        $countryData = Cache::get('rsr-country-data');
-        if ($countryData) {
-            return $countryData;
+    public function getRsrCountryData( Request $request, ViewRsrCountryData $countryData) {
+        $cacheData = Cache::get('rsr-country-data');
+        if ($cacheData) {
+            return $cacheData;
         }
         $config = collect(config('akvo-rsr.impact_react_charts'))->groupBy('group');
-        $overview = $overview
-            ->get()
-            ->groupBy('country')
-            ->map(function($results, $countryName) use ($config) {
-                $data = $config->map(function($groups, $groupName) use ($results) {
-                    $childrens = $groups->map(function($group) use ($results) {
-                        $res = $results->where('result_title', $group['result_title']);
-                        $dimension = $res->whereNotNull('dimension_title')->values();
-                        $values = $res->groupBy('indicator_id')->map(function($i){
-                            $i = $i->first();
-                            return [
-                                'target' => $i['indicator_target'],
-                                'actual' => $i['period_value']
-                            ];
-                        })->values();
-                        if (count($dimension)) {
-                            $dimension = $dimension
-                                ->groupBy('dimension_title')
-                                ->map(function($d, $dimensionName) use ($group) {
-                                    $values = $d
-                                        ->groupBy('dimension_value_title')
-                                        ->map(function($dv, $dimensionValueTitle){
-                                            return [
-                                                'name' => $this->transformDimensionValueName($dimensionValueTitle),
-                                                'target_value' => $dv->sum('dimension_target_value'),
-                                                'actual_value' => $dv->sum('period_dimension_actual_value'),
-                                            ];
-                                        })->values();
+        $countryData = $countryData->get()->groupBy('country');
+        $countryData = $countryData->map(function($results, $countryName) use ($config){
+            $data = $config->map(function($groups, $groupName) use ($results){
+                $childrens = $groups->map(function($group) use ($results){
+                    $res = $results->where('result_title', $group['result_title']);
+                    $ind = $res->first();
+                    $dimensions = $res->whereNotNull('dimension_title')->values();
+                    if (count($dimensions)) {
+                        $dimensions = $dimensions
+                            ->groupBy('dimension_title')
+                            ->map(function($d, $dimensionName) use ($group){
+                                $values = $d->map(function($dv){
+                                    $name = $this
+                                        ->transformDimensionValueName($dv->dimension_value_title);
                                     return [
-                                        'name' => $dimensionName,
-                                        'target_text' => null,
-                                        'values' => $values
+                                        'name' => $name,
+                                        'target_value' => $dv->dimension_target_value,
+                                        'actual_value' => $dv->dimension_actual_value
                                     ];
+                                });
+                                return [
+                                    'name' => $dimensionName,
+                                    'target_text' => null,
+                                    'values' => $values
+                                ];
                             })->values();
-                        }
-                        if (isset($group['dimensions'])) {
-                            $dimension = collect($group['dimensions'])
-                                ->map(function($g, $ig) use ($dimension, $group, $values) {
-                                    $d = $dimension->filter(function($d) use ($g) {
-                                        return Str::contains($d['name'], $g['dimension']);
-                                    })->values()->first();
-                                    if ($d) {
-                                        $d['name'] = $this->transformDimensionName($d['name']);
-                                        $d['target_text'] = $g['target_text'];
-                                        return $d;
-                                    }
-                                    if ($group['replace_value_with'] === $g['order']) {
-                                        return [
-                                            'name' => "50,000,000 Euros as value of additional financial services.",
-                                            'target_text' => $g['target_text'],
-                                            'values' => [],
-                                            'target_value' => $values->sum('target'),
-                                            'actual_value' => $values->sum('actual'),
-                                        ];
-                                    }
+                    }
+                    if (isset($group['dimensions'])) {
+                        $dimensions = collect($group['dimensions'])
+                            ->map(function($g, $ig) use ($dimensions, $ind, $group) {
+                                $d = $dimensions->filter(function($d) use ($g) {
+                                    return Str::contains($d['name'], $g['dimension']);
+                                })->values()->first();
+                                if ($d) {
+                                    $d['name'] = $this->transformDimensionName($d['name']);
+                                    $d['target_text'] = $g['target_text'];
+                                    return $d;
+                                }
+                                if ($group['replace_value_with'] === $g['order']) {
                                     return [
-                                        'name' => $this->transformDimensionName($g['dimension_title']),
+                                        'name' => "50,000,000 Euros as value of additional financial services.",
                                         'target_text' => $g['target_text'],
                                         'values' => [],
+                                        'target_value' => $ind->target_value,
+                                        'actual_value' => $ind->actual_value,
                                     ];
-                                })->values();
-                        }
-                        return [
-                            'uii' => $group['name'],
-                            'target_text' => $group['target_text'],
-                            'target_value' => $values->sum('target'),
-                            'actual_value' => $values->sum('actual'),
-                            'dimensions' => $dimension,
-                        ];
-                    });
+                                }
+                                return [
+                                    'name' => $this->transformDimensionName($g['dimension_title']),
+                                    'target_text' => $g['target_text'],
+                                    'values' => [],
+                                ];
+                            })->values();
+                    }
                     return [
-                        'group' => $groupName,
-                        'childrens' => $childrens
+                        'uii' => $group['name'],
+                        'target_text' => $group['target_text'],
+                        'target_value' => $ind->target_value,
+                        'actual_value' => $ind->actual_value,
+                        'dimensions' => $dimensions,
                     ];
                 })->values();
                 return [
-                    'country' => $countryName,
-                    'data' => $data
+                    'group' => $groupName,
+                    'childrens' => $childrens
                 ];
             })->values();
-        Cache::put('rsr-country-data', $overview, 86400);
-        return $overview;
+            return [
+                'country' => $countryName,
+                'data' => $data
+            ];
+        })->values();
+        Cache::put('rsr-country-data', $countryData, 86400);
+        return $countryData;
     }
 
     private function transformDimensionName($name)

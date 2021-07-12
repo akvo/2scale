@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\RsrSeedController;
 use App\Http\Controllers\Api\ApiController;
 use App\ViewRsrOverview;
-use App\ViewRsrCountryOverview;
+use App\ViewRsrCountryData;
 class RsrSyncCommand extends Command
 {
     /**
@@ -80,9 +80,9 @@ class RsrSyncCommand extends Command
         // * Create cache
         $api = new ApiController();
         $rsrOverview = new ViewRsrOverview();
-        $rsrCountryOverview = new ViewRsrCountryOverview();
+        $rsrCountryData= new ViewRsrCountryData();
         $api->getRsrUiiReport($request, $rsrOverview);
-        $api->getRsrCountryData($request, $rsrCountryOverview);
+        $api->getRsrCountryData($request, $rsrCountryData);
         $this->info("Cache created");
 
         $this->info("Time : ".date("H:i:s",$time_elapsed_secs));
