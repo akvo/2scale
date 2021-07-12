@@ -34,7 +34,10 @@ const BarStack = (data, extra) => {
                                     (d) => d.name.toLowerCase() === "achieved"
                                 )
                                 .find((d) => d.group === params.name);
-                            return total.value + params.value;
+                            if (total?.value) {
+                                return total.value + params.value;
+                            }
+                            return "";
                         },
                         show: true,
                         position: "top",
