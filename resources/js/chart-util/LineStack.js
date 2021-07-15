@@ -8,6 +8,7 @@ import {
 import _ from "lodash";
 
 const LineStack = (data, extra) => {
+    const { xAxisName, yAxisName } = extra;
     if (!data) {
         return {
             title: {
@@ -66,9 +67,9 @@ const LineStack = (data, extra) => {
         },
         grid: {
             top: "50px",
-            left: "auto",
+            left: yAxisName ? "50px" : "auto",
             right: "100px",
-            bottom: "25px",
+            bottom: xAxisName ? "50px" : "25px",
             borderColor: "#ddd",
             borderWidth: 0.5,
             show: true,
@@ -85,6 +86,14 @@ const LineStack = (data, extra) => {
         },
         toolbox: { show: false },
         yAxis: {
+            name: yAxisName ? yAxisName : "",
+            nameLocation: "center",
+            nameGap: 25,
+            nameTextStyle: {
+                fontFamily: "MarkPro",
+                fontSize: 14,
+                color: "#222",
+            },
             type: "value",
             axisLabel: {
                 inside: true,
@@ -97,6 +106,14 @@ const LineStack = (data, extra) => {
             axisLine: { show: false },
         },
         xAxis: {
+            name: xAxisName ? xAxisName : "",
+            nameLocation: "center",
+            nameGap: 35,
+            nameTextStyle: {
+                fontFamily: "MarkPro",
+                fontSize: 14,
+                color: "#222",
+            },
             data: xAxis,
             type: "category",
             axisLine: {
