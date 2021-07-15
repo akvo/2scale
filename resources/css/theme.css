@@ -41,7 +41,7 @@ iframe.has-filter {
     height: calc(100% - 56px);
 }
 .graphic {
-    background-image: url(/images/2scale-infographic.svg);
+    background-image: url(/images/infographic.png);
     height: 365px;
     background-repeat: no-repeat;
 }
