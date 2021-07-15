@@ -37,7 +37,7 @@ export const generateOptions = (type, dataset, extra = {}) => {
 };
 
 const generateCharts = (
-    { endpoint, type, title, id, parentId, md, height },
+    { endpoint, type, title, id, parentId, md, height, axisName },
     transform = false
 ) => {
     const html = (
@@ -97,7 +97,7 @@ const generateCharts = (
                     });
                     option = collections;
                 }
-                option = generateOptions(type, option);
+                option = generateOptions(type, option, axisName);
                 myChart.setOption(option);
             }, 1000);
         })

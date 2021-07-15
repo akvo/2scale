@@ -23,13 +23,73 @@ body {
     font-family: "MarkPro", sans-serif;
     color: #333433;
 }
+.popover {
+    font-family: "MarkPro";
+    font-size: 14px;
+    padding: 10px 15px;
+    max-width: 500px;
+}
+.popover-header {
+    font-weight: bold;
+    background-color: #fff;
+    border-bottom: 2px solid #A43332;
+    padding: .5rem 0rem;
+}
+.popover-body {
+    background-color: #fff;
+    padding: .5rem 0rem;
+}
 .graphic {
-    padding: 60px 0px;
-    background: #edeeea;
+    /* padding: 25px 0px 40px; */
+    background: #EDEEE9;
+    background-image: url(/images/infographic.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 28rem;
     margin-top: 2rem;
-    -moz-box-shadow: inset 0 0 10px #d8d8d8;
+    /* -moz-box-shadow: inset 0 0 10px #d8d8d8;
     -webkit-box-shadow: inset 0 0 10px #d8d8d8;
-    box-shadow: inset 0 0 10px #d8d8d8;
+    box-shadow: inset 0 0 10px #d8d8d8; */
+}
+.graphic-bottom {
+    background: #EDEEE9;
+    height: 50px;
+    margin-bottom: 2rem;
+}
+.popover-graphic-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+#infoBlock1 {
+    cursor: pointer;
+    margin-top: 17%;
+    height: 12rem;
+    width: 28%;
+}
+#infoBlock2 {
+    cursor: pointer;
+    margin-top: 10%;
+    height: 12rem;
+    width: 10%;
+}
+#infoBlock3 {
+    cursor: pointer;
+    margin-top: 17%;
+    height: 12rem;
+    width: 10%;
+}
+#infoBlock4 {
+    cursor: pointer;
+    margin-top: 10%;
+    height: 12rem;
+    width: 20%;
+}
+#infoBlock5 {
+    cursor: pointer;
+    margin-top: 10%;
+    height: 12rem;
+    width: 32%;
 }
 .graphic img {
     padding: 20px;

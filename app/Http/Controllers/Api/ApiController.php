@@ -376,7 +376,14 @@ class ApiController extends Controller
         $countryData = $countryData->map(function($results, $countryName) use ($config){
             $data = $config->map(function($groups, $groupName) use ($results){
                 $childrens = $groups->map(function($group) use ($results){
-                    $res = $results->where('result_title', $group['result_title']);
+                    $title = explode(':', $group['result_title']);
+                    if (count($title) > 0) {
+                        $res = $results->filter(function ($res) use ($title) {
+                            return Str::contains($res['result_title'], $title[0]);
+                        })->values();
+                    } else {
+                        $res = $results->where('result_title', $group['result_title']);
+                    }
                     $ind = $res->first();
                     $dimensions = $res->whereNotNull('dimension_title')->values();
                     if (count($dimensions)) {
@@ -430,8 +437,8 @@ class ApiController extends Controller
                         'uii' => $group['name'],
                         'target_text' => $group['target_text'],
                         'tab' => $group['tab'],
-                        'target_value' => $ind->target_value,
-                        'actual_value' => $ind->actual_value,
+                        'target_value' => $ind ? $ind->target_value : 0,
+                        'actual_value' => $ind ? $ind->actual_value : 0,
                         'dimensions' => $dimensions,
                     ];
                 })->values();
