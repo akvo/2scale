@@ -176,7 +176,7 @@ class PartnershipPageController extends Controller
                 $chart['actual_value'] = $result['actual_value'];
                 $chart['dimensions'] = collect($result['dimensions'])->transform(function ($dim) {
                     return [
-                        'name' => $dim['name'],
+                        'name' => $this->transformDimensionName($dim['name']),
                         'target_text' => null,
                         'order' => null,
                         'target_value' => $dim['target_value'],
@@ -203,7 +203,7 @@ class PartnershipPageController extends Controller
                     })->values()->first();
                     if (count($res['dimensions']) > 0) {
                         return [
-                            'name' => $res['title'],
+                            'name' => $this->transformDimensionName($res['title']),
                             'target_text' => $dim['target_text'],
                             'order' => $dim['order'],
                             'values' => $res['dimensions']->pluck('values')->flatten(1)->transform(function ($d) {
@@ -218,7 +218,7 @@ class PartnershipPageController extends Controller
                         ];;
                     } else {
                         return [
-                            'name' => $res['title'],
+                            'name' => $this->transformDimensionName($res['title']),
                             'target_text' => $dim['target_text'],
                             'order' => $dim['order'],
                             'values' => $res['dimensions'],
@@ -309,28 +309,54 @@ class PartnershipPageController extends Controller
         return $type_answers;
     }
 
+    private function transformDimensionName($name)
+    {
+        if (Str::contains($name, "Smallholder Farmers")) {
+            $name = "Smallholder Farmers";
+        }
+        if (Str::contains($name, "Gender(led/owned)")) {
+            $name = "SMEs";
+        }
+        if (Str::contains($name, "Non-farming Employment")) {
+            $name = "Non-farm jobs";
+        }
+        if (Str::contains($name, "Micro-enterprenuers/SMEs")) {
+            $name = "MSME";
+        }
+        if (Str::contains($name, "Number of newly added SHFs")) {
+            $name = "Smallholder farmers accessing finances";
+        }
+        if (Str::contains($name, "Number of newly added micro-entrepreneurs")) {
+            $name = "Micro-entreprenuers accessing finances";
+        }
+        if (Str::contains($name, "Number of newly added SMEs")) {
+            $name = "SMEs accessing finances";
+        }
+        return $name;
+    }
+
     private function transformDimensionValueName($name)
     {
         if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
             if (Str::contains($name, "Male")) {
-                $name = "Male";
+                $name = "Male-led/owned";
             }
             if (Str::contains($name, "Female")) {
-                $name = "Female";
+                $name = "Female-led/owned";
             }
         }
         if (Str::contains($name, ">") || Str::contains($name, "<")) {
             if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-                $name = "Senior Male";
+                $name = "Senior Men - SM";
             }
             if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-                $name = "Junior Male";
+                $name = "Junior Men - JM";
             }
             if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-                $name = "Senior Female";
+                $name = "Senior Women - SW";
             }
             if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-                $name = "Junior Female";
+                $name = "Junior Women - JW";
             }
         }
         return $name;
