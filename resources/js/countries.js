@@ -61,43 +61,25 @@ const dimensions = (x, idx) => {
                 },
             ];
         }
-        if (d.values.length === 0 && d?.actual_value) {
+        if (d?.values?.length === 0) {
+            let actualValue = d?.actual_value ? d.actual_value : 0;
             let restTarget =
-                (d?.target_value ? d.target_value : d.actual_value) -
-                d.actual_value;
-            if (restTarget < d.actual_value) {
-                currentCharts = [
-                    ...currentCharts,
-                    {
-                        id: id,
-                        data: [
-                            {
-                                name: "Achieved",
-                                value: d.actual_value,
-                            },
-                        ],
-                        type: "DOUGHNUT",
-                    },
-                ];
-            } else {
-                currentCharts = [
-                    ...currentCharts,
-                    {
-                        id: id,
-                        data: [
-                            {
-                                name: "Pending",
-                                value: restTarget,
-                            },
-                            {
-                                name: "Achieved",
-                                value: d.actual_value,
-                            },
-                        ],
-                        type: "DOUGHNUT",
-                    },
-                ];
-            }
+                (d?.target_value ? d.target_value : actualValue) - actualValue;
+            const dCharts =
+                restTarget < actualValue
+                    ? [{ name: "Achieved", value: actualValue }]
+                    : [
+                          { name: "Achieved", value: actualValue },
+                          { name: "Pending", value: restTarget },
+                      ];
+            currentCharts = [
+                ...currentCharts,
+                {
+                    id: id,
+                    data: dCharts,
+                    type: "DOUGHNUT",
+                },
+            ];
         }
         countryStore.update((s) => {
             s.charts = currentCharts;
