@@ -251,7 +251,6 @@ class Echarts
         $textStyle = array(
             'fontFamily' => 'MarkPro',
             'fontWeight' => 500,
-            'fontStyle' => 'italic',
         );
         $data = collect($data)->map(function($dt){
             $dt = collect($dt);
@@ -259,22 +258,22 @@ class Echarts
                 'label' => array(
                     'show' => true,
                     'fontSize' => 14,
-                	'fontWeight' => 400,
-					'color' => '#fff'
+                    'fontWeight' => 400,
+                    'color' => '#fff'
                 ),
             );
             $dt['label'] = array(
                 'show' => false,
                 'fontSize' => 12,
-				'color' => '#fff'
+                'color' => '#fff'
             );
-			$dt['itemStyle'] = array(
+            $dt['itemStyle'] = array(
                 'normal' => array(
                     'color' => $this->pallete[0],
                     'borderWidth' => 2,
                     'borderColor' => "#fff"
                 ),
-				'emphasis' => array(
+                'emphasis' => array(
                     'shadowOffsetX' =>  0,
                     'shadowOffsetY' => 0,
                     'shadowBlur' => 50,
@@ -282,8 +281,8 @@ class Echarts
                     'borderColor' => '#FFF',
                     'shadowColor' => 'rgba(0, 0, 0, .7)',
                     'color' => $this->pallete[0]
-				)
-			);
+                )
+            );
             return $dt;
         })->toArray();
         $steps = array (
@@ -327,6 +326,13 @@ class Echarts
               'aspectScale' => 1,
               'map' => 'africa',
               'data' => $data,
+              'emphasis' => array(
+                  'itemStyle' => array (
+                      'areaColor' =>  "#609ca8",
+                      'shadowColor' =>  "rgba(0, 0, 0, 0.5)",
+                      'shadowBlur' => 10,
+                  ),
+              )
             ),
           ),
           'textStyle' => $textStyle,
