@@ -600,7 +600,7 @@ $("main").append(
         <div class="col-md-12" id="filters"></div>
         <div class="col-md-12 main-page">
             <h2 class="responsive font-weight-bold text-center my-4">
-                Reaching Targets
+                Meeting Targets
             </h2>
             <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>
