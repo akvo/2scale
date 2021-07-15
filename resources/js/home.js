@@ -117,5 +117,6 @@ getMaps("maps", "home/map");
 getCharts("home/investment-tracking", "second-row", "12", "Investment Tracking (Euros)", 375);
 
 $('.popover-graphic').popover({
-    trigger: 'hover focus'
+    trigger: 'hover focus',
+    placement: 'top'
 });
