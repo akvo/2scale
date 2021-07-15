@@ -429,6 +429,7 @@ class ApiController extends Controller
                     return [
                         'uii' => $group['name'],
                         'target_text' => $group['target_text'],
+                        'tab' => $group['tab'],
                         'target_value' => $ind->target_value,
                         'actual_value' => $ind->actual_value,
                         'dimensions' => $dimensions,
@@ -469,24 +470,24 @@ class ApiController extends Controller
     {
         if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
             if (Str::contains($name, "Male")) {
-                $name = "Male";
+                $name = "Men";
             }
             if (Str::contains($name, "Female")) {
-                $name = "Female";
+                $name = "Women";
             }
         }
         if (Str::contains($name, ">") || Str::contains($name, "<")) {
             if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-                $name = "Senior Male";
+                $name = "Senior Men - SM";
             }
             if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-                $name = "Junior Male";
+                $name = "Junior Men - JM";
             }
             if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-                $name = "Senior Female";
+                $name = "Senior Women - SW";
             }
             if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-                $name = "Junior Female";
+                $name = "Junior Women - JW";
             }
         }
         return $name;

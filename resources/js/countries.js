@@ -61,43 +61,25 @@ const dimensions = (x, idx) => {
                 },
             ];
         }
-        if (d.values.length === 0 && d?.actual_value) {
+        if (d?.values?.length === 0) {
+            let actualValue = d?.actual_value ? d.actual_value : 0;
             let restTarget =
-                (d?.target_value ? d.target_value : d.actual_value) -
-                d.actual_value;
-            if (restTarget < d.actual_value) {
-                currentCharts = [
-                    ...currentCharts,
-                    {
-                        id: id,
-                        data: [
-                            {
-                                name: "Achieved",
-                                value: d.actual_value,
-                            },
-                        ],
-                        type: "DOUGHNUT",
-                    },
-                ];
-            } else {
-                currentCharts = [
-                    ...currentCharts,
-                    {
-                        id: id,
-                        data: [
-                            {
-                                name: "Pending",
-                                value: restTarget,
-                            },
-                            {
-                                name: "Achieved",
-                                value: d.actual_value,
-                            },
-                        ],
-                        type: "DOUGHNUT",
-                    },
-                ];
-            }
+                (d?.target_value ? d.target_value : actualValue) - actualValue;
+            const dCharts =
+                restTarget < actualValue
+                    ? [{ name: "Achieved", value: actualValue }]
+                    : [
+                          { name: "Achieved", value: actualValue },
+                          { name: "Pending", value: restTarget },
+                      ];
+            currentCharts = [
+                ...currentCharts,
+                {
+                    id: id,
+                    data: dCharts,
+                    type: "DOUGHNUT",
+                },
+            ];
         }
         countryStore.update((s) => {
             s.charts = currentCharts;
@@ -433,7 +415,7 @@ const changeFilter = (path, value) => {
 };
 
 const createFilterList = (
-    { name, text, path, parentPath, childrens, value },
+    { name, text, bold, path, parentPath, childrens, value },
     parent,
     valuePath
 ) => {
@@ -442,6 +424,17 @@ const createFilterList = (
         : "filter-content full";
     if (valuePath === path) {
         filterClass = `${filterClass} active`;
+    }
+    if (bold) {
+        text = text
+            .replace(bold, "**[b]**")
+            .split("**")
+            .map((x) => {
+                if (x === "[b]") {
+                    return <b>{bold}</b>;
+                }
+                return x;
+            });
     }
     if (parent) {
         return (
@@ -452,14 +445,16 @@ const createFilterList = (
                 <span class="filter-parent">
                     <i class="fa fa-chevron-left"></i>
                 </span>
-                <span class="filter-content">{text ? text : name}</span>
+                <span class="filter-content">
+                    {text ? (bold ? text.map((x) => x) : text) : name}
+                </span>
             </li>
         );
     }
     return (
         <li class="list-group-item">
             <span class={filterClass} onClick={() => changeFilter(path, value)}>
-                {text ? text : name}
+                {text ? (bold ? text.map((x) => x) : text) : name}
             </span>
             {childrens.length ? (
                 <span
@@ -517,16 +512,7 @@ const fetchData = () => {
         const characters = genCharArray("a", "z");
         baseFilter.data.forEach((x, xi) => {
             x.childrens.forEach((c, ci) => {
-                let ctext = c.target_text
-                    .replace("##number##", "")
-                    .replace(".", "")
-                    .replace("Euros as", "");
-                let ntext = [];
-                ctext = ctext.trim().split("");
-                ctext.forEach((ct, cti) => {
-                    ntext.push(cti === 0 ? toTitleCase(ct) : ct);
-                });
-                ctext = ntext.join("");
+                let ctext = c?.tab ? c.tab.text : c.target_text;
                 let cchilds = [];
                 let cpath = genCharPath([xi, ci], characters);
                 /*
@@ -564,6 +550,7 @@ const fetchData = () => {
                 filters.push({
                     name: c.uii,
                     text: ctext,
+                    bold: c?.tab?.bold,
                     parent: null,
                     show: false,
                     path: cpath,
@@ -613,7 +600,7 @@ $("main").append(
         <div class="col-md-12" id="filters"></div>
         <div class="col-md-12 main-page">
             <h2 class="responsive font-weight-bold text-center my-4">
-                Reaching Targets
+                Meeting Targets
             </h2>
             <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>

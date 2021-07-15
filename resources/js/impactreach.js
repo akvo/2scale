@@ -252,7 +252,7 @@ axios
                 <div class="row" id="zero-row">
                     <div class="col-md-12">
                         <h2 class="responsive font-weight-bold text-center my-4">
-                            Reaching Targets
+                            Meeting Targets
                         </h2>
                     </div>
                 </div>
@@ -325,7 +325,7 @@ axios
                 md: 12,
                 height: 600,
                 parentId: "second-row",
-                axisName: {xAxisName : "Activity dates", yAxisName : "Audiences"}
+                axisName: {xAxisName : "Activity Dates", yAxisName : "Audiences"}
             },
             increments
         );
