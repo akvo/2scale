@@ -64,32 +64,32 @@ body {
 #infoBlock1 {
     cursor: pointer;
     margin-top: 17%;
-    height: 12rem;
+    height: 10rem;
     width: 28%;
 }
 #infoBlock2 {
     cursor: pointer;
     margin-top: 10%;
-    height: 12rem;
+    height: 10rem;
     width: 10%;
 }
 #infoBlock3 {
     cursor: pointer;
     margin-top: 17%;
-    height: 12rem;
-    width: 10%;
+    height: 10rem;
+    width: 13%;
 }
 #infoBlock4 {
     cursor: pointer;
     margin-top: 10%;
-    height: 12rem;
-    width: 20%;
+    height: 10rem;
+    width: 15%;
 }
 #infoBlock5 {
     cursor: pointer;
     margin-top: 10%;
-    height: 12rem;
-    width: 32%;
+    height: 10rem;
+    width: 34%;
 }
 .graphic img {
     padding: 20px;
