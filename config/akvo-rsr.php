@@ -32,7 +32,11 @@ return [
             'name' => 'UII1 - BoP',
             'result_title' => 'UII-1 BoP: BoP consumers have improved access to affordable and nutritious food products',
             'group' => 'Food and Nutrition Security',
-            'target_text' => '##number## BoP consumers with improved access to food products.',
+            'target_text' => '##number## BoP consumers with improved access to nutritious foods.',
+            'tab' => [
+                'text' => 'BoP consumers with improved access to nutritious foods',
+                'bold' => 'BoP consumers '
+            ],
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
@@ -42,7 +46,11 @@ return [
             'name' => 'UII2 - SHF',
             'result_title' => 'UII-2 SHF: Smallholder farmers have improved agricultural productivity levels and have better terms of inclusion (value chains/ markets).',
             'group' => 'Food and Nutrition Security',
-            'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved productivity and access to markets.',
+            'tab' => [
+                'text' => 'Smallholder farmers with improved agricultural productivity and access to markets. (50% women, 40% youth)',
+                'bold' => 'Smallholder farmers '
+            ],
+            'target_text' => '##number## smallholder farmers with improved agricultural productivity and access to markets.',
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
@@ -52,7 +60,11 @@ return [
             'name' => 'UII3 - EEP',
             'result_title' => 'UII-3 EEP: Rural communities are resilient to the implications of climate change.',
             'group' => 'Food and Nutrition Security',
-            'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.',
+            'tab' => [
+                'text' => 'Eco-efficient farming practices adopted in a new area.',
+                'bold' => 'Eco-efficient farming practices '
+            ],
+            'target_text' => '##number## hectares of land on eco-efficient farming practices.',
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
@@ -62,7 +74,11 @@ return [
             'name' => 'UII4 - SME',
             'result_title' => 'UII-4 SME: SMEs drive inclusive business in target industries and develop leadership in industry platforms/ networks and policy advocacy',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number## SMEs driving inclusive business in target industries (125 women-led/women-owned).',
+            'tab' => [
+                'text' => 'SMEs driving inclusive business in target industries (50% women-led/women-owned)',
+                'bold' => 'SMEs '
+            ],
+            'target_text' => '##number## SMEs involved.',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -72,7 +88,11 @@ return [
             'name' => 'UII5 - NONFE',
             'result_title' => 'UII-5 NonFE: Creation of remunerative additional non-farming employment in targeted agribusiness clusters and value chains.',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000youth).',
+            'tab' => [
+                'text' => 'Non-farming jobs in targeted agribusiness clusters and value chains.(50% women, 40% youth)',
+                'bold' => 'Non-farming jobs '
+            ],
+            'target_text' => '##number## new non-farming jobs created.',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -82,7 +102,11 @@ return [
             'name' => 'UII6 - MSME',
             'result_title' => 'UII-6 MSME: Development of economically attractive and viable opportunities for micro-entrepreneurs and SMEs affiliated with the inclusive agribusiness',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
+            'target_text' => '##number## micro-entrepreneurs or SMEs associated.',
+            'tab' => [
+                'text' => 'Micro entrepreneurs/SMEs associated with partnerships. (50% women-led/women-owned and 40% young entrepreneurs)',
+                'bold' => 'Micro entrepreneurs/SMEs '
+            ],
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -93,6 +117,10 @@ return [
             'result_title' => 'UII-7 INNO: Innovative capacity of SMEs, micro-entrepreneurs, farmers strengthened',
             'group' => 'Inclusive Agribusiness and Innovation',
             'target_text' => '##number## non-farming innovations adopted.',
+            'tab' => [
+                'text' => 'Non-farming innovations adopted.',
+                'bold' => 'Non-farming innovations '
+            ],
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -102,7 +130,11 @@ return [
             'name' => 'UII8 - FSERV',
             'result_title' => 'UII-8 FSERV: Smallholder farmers, micro-entrepreneurs and SMEs have improved access to financial services.',
             'group' => 'Inclusive Agribusiness and Innovation',
-            "target_text" => "##number## Euros as value of additional financial services.",
+            "target_text" => "##number## Value of additional financial services.",
+            'tab' => [
+                'text' => 'Additional financial services',
+                'bold' => false
+            ],
             'max' => false,
             'replace_value_with' => 1,
             'orders' => true,
@@ -138,7 +170,11 @@ return [
             'name' => 'Private contribution',
             'result_title' => "Private sector contribution (in kind/in cash) (€)",
             'group' => "Input Additionality",
-            'target_text' => '##number## Euros as private sector contribution.',
+            'target_text' => 'Value of private sector contribution (Euros).',
+            'tab' => [
+                'text' => 'Financial value of private sector contributions (Euros)',
+                'bold' => ' private sector contributions'
+            ],
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -148,7 +184,11 @@ return [
             'name' => '2SCALE contribution',
             'result_title' => "2SCALE's Contribution (€)",
             'group' => "Input Additionality",
-            'target_text' => '##number## Euros as 2SCALE contribution.',
+            'target_text' => 'Value of 2SCALE’s contribution.',
+            'tab' => [
+                'text' => 'Financial value of 2SCALE contribution (Euros)',
+                'bold' => ' 2SCALE contribution '
+            ],
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
