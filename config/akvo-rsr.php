@@ -30,9 +30,9 @@ return [
         [
             'id' => 42401,
             'name' => 'UII1 - BoP',
-            'result_title' => 'UII-1 BoP: BoP consumers have improved access to affordable and nutritious food products',
+            'result_title' => 'UII-1 BoP: BoP consumers have improved access to affordable food products',
             'group' => 'Food and Nutrition Security',
-            'target_text' => '##number## BoP consumers with improved access to nutritious foods.',
+            'target_text' => '##number## BoP consumers with improved access to affordable food products.',
             'tab' => [
                 'text' => 'BoP consumers with improved access to nutritious foods',
                 'bold' => 'BoP consumers '

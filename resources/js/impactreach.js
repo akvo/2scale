@@ -252,7 +252,7 @@ axios
                 <div class="row" id="zero-row">
                     <div class="col-md-12">
                         <h2 class="responsive font-weight-bold text-center my-4">
-                            Reaching Targets
+                            Meeting Targets
                         </h2>
                     </div>
                 </div>
@@ -293,7 +293,7 @@ axios
             <div class="row">
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
-                        Target audiences reached with program activities
+                        Progress on Reach
                     </h3>
                     <div id="first-row"></div>
                     <div id="second-row"></div>

@@ -66,7 +66,7 @@ const LineStack = (data, extra) => {
         },
         grid: {
             top: "50px",
-            left: "auto",
+            left: "50px",
             right: "100px",
             bottom: "25px",
             borderColor: "#ddd",
@@ -85,6 +85,12 @@ const LineStack = (data, extra) => {
         },
         toolbox: { show: false },
         yAxis: {
+            name: "Audiences",
+            nameTextStyle: {
+                fontFamily: "MarkPro",
+                fontSize: 12,
+                color: "#222",
+            },
             type: "value",
             axisLabel: {
                 inside: true,
@@ -97,6 +103,12 @@ const LineStack = (data, extra) => {
             axisLine: { show: false },
         },
         xAxis: {
+            name: "Activity Date",
+            nameTextStyle: {
+                fontFamily: "MarkPro",
+                fontSize: 12,
+                color: "#222",
+            },
             data: xAxis,
             type: "category",
             axisLine: {
