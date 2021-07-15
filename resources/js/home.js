@@ -61,6 +61,7 @@ $("main").append(
                     data-original-title="Small and medium-sized enterprises are local entrepreneurs such as traders, small processors, input suppliers or service providers. They play a key role in establishing a successful agribusiness cluster. "
                     title="">
                 </div>
+                <div id="infoBlock4"></div>
                 <div
                     class="popover-graphic hidden-xs"
                     id="infoBlock5"

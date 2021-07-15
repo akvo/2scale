@@ -63,31 +63,33 @@ body {
 }
 #infoBlock1 {
     cursor: pointer;
-    margin-top: 15%;
+    margin-top: 17%;
     height: 12rem;
     width: 28%;
-    /* background-color: yellow; */
 }
 #infoBlock2 {
     cursor: pointer;
-    margin-top: 8%;
+    margin-top: 10%;
     height: 12rem;
     width: 10%;
-    /* background-color: #a43332; */
 }
 #infoBlock3 {
     cursor: pointer;
-    margin-top: 15%;
+    margin-top: 17%;
     height: 12rem;
     width: 10%;
-    /* background-color: yellow; */
+}
+#infoBlock4 {
+    cursor: pointer;
+    margin-top: 10%;
+    height: 12rem;
+    width: 20%;
 }
 #infoBlock5 {
     cursor: pointer;
-    margin-top: 8%;
+    margin-top: 10%;
     height: 12rem;
-    width: 52%;
-    /* background-color: #a43332; */
+    width: 32%;
 }
 .graphic img {
     padding: 20px;
