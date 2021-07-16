@@ -39,15 +39,17 @@ body {
     background-color: #fff;
     padding: .5rem 0rem;
 }
+
 .graphic {
-    /* padding: 25px 0px 40px; */
     background: #EDEEE9;
-    background-image: url(/images/infographic.png);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    height: 28rem;
+    position: relative;
     margin-top: 2rem;
+    width: 100%;
+    height: 210px;
+    background-image: url(/images/2scale-infographic.svg);
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: contain;
     /* -moz-box-shadow: inset 0 0 10px #d8d8d8;
     -webkit-box-shadow: inset 0 0 10px #d8d8d8;
     box-shadow: inset 0 0 10px #d8d8d8; */
@@ -57,42 +59,177 @@ body {
     height: 50px;
     margin-bottom: 2rem;
 }
-.popover-graphic-wrapper {
-    display: flex;
-    flex-direction: row;
-}
-#infoBlock1 {
-    cursor: pointer;
-    margin-top: 17%;
-    height: 10rem;
-    width: 28%;
-}
-#infoBlock2 {
-    cursor: pointer;
-    margin-top: 10%;
-    height: 10rem;
-    width: 10%;
-}
-#infoBlock3 {
-    cursor: pointer;
-    margin-top: 17%;
-    height: 10rem;
-    width: 13%;
-}
-#infoBlock4 {
-    cursor: pointer;
-    margin-top: 10%;
-    height: 10rem;
-    width: 15%;
-}
-#infoBlock5 {
-    cursor: pointer;
-    margin-top: 10%;
-    height: 10rem;
-    width: 34%;
-}
 .graphic img {
     padding: 20px;
+}
+
+@media screen and (min-width: 500px) {
+    .graphic {
+        height: 135px;
+    }
+    .graphic-bottom {
+        height: 20px;
+    }
+}
+@media screen and (min-width: 600px) {
+    .graphic {
+        height: 170px;
+    }
+    .graphic-bottom {
+        height: 30px;
+    }
+}
+@media screen and (min-width: 700px) {
+    .graphic {
+        height: 200px;
+    }
+}
+@media screen and (min-width: 768px) {
+    .graphic {
+        background-image: url(/images/infographic.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        height: 210px;
+    }
+    .graphic-bottom {
+        height: 50px;
+    }
+    .popover-graphic-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+    #infoBlock1 {
+        cursor: pointer;
+        margin-top: 17%;
+        height: 10rem;
+        width: 28%;
+    }
+    #infoBlock2 {
+        cursor: pointer;
+        margin-top: 10%;
+        height: 10rem;
+        width: 10%;
+    }
+    #infoBlock3 {
+        cursor: pointer;
+        margin-top: 17%;
+        height: 10rem;
+        width: 13%;
+    }
+    #infoBlock4 {
+        height: 10rem;
+        width: 15%;
+    }
+    #infoBlock5 {
+        cursor: pointer;
+        margin-top: 10%;
+        height: 10rem;
+        width: 34%;
+    }
+}
+@media screen and (min-width: 992px) {
+    .graphic {
+        height: 270px;
+    }
+}
+@media screen and (min-width: 1200px) {
+    .graphic {
+        height: 330px;
+    }
+    #infoBlock1 {
+        cursor: pointer;
+        margin-top: 170px;
+        height: 140px;
+        width: 28%;
+    }
+    #infoBlock2 {
+        cursor: pointer;
+        margin-top: 90px;
+        height: 140px;
+        width: 10%;
+    }
+    #infoBlock3 {
+        cursor: pointer;
+        margin-top: 170px;
+        height: 140px;
+        width: 13%;
+    }
+    #infoBlock4 {
+        height: 140px;
+        width: 15%;
+    }
+    #infoBlock5 {
+        cursor: pointer;
+        margin-top: 90px;
+        height: 140px;
+        width: 34%;
+    }
+}
+@media screen and (min-width: 1400px) {
+    .graphic {
+        height: 380px;
+    }
+    #infoBlock1 {
+        cursor: pointer;
+        margin-top: 200px;
+        height: 140px;
+        width: 28%;
+    }
+    #infoBlock2 {
+        cursor: pointer;
+        margin-top: 110px;
+        height: 140px;
+        width: 10%;
+    }
+    #infoBlock3 {
+        cursor: pointer;
+        margin-top: 200px;
+        height: 140px;
+        width: 13%;
+    }
+    #infoBlock4 {
+        height: 140px;
+        width: 15%;
+    }
+    #infoBlock5 {
+        cursor: pointer;
+        margin-top: 110px;
+        height: 140px;
+        width: 34%;
+    }
+}
+@media screen and (min-width: 1600px) {
+    .graphic {
+        height: 430px;
+    }
+    #infoBlock1 {
+        cursor: pointer;
+        margin-top: 230px;
+        height: 140px;
+        width: 28%;
+    }
+    #infoBlock2 {
+        cursor: pointer;
+        margin-top: 130px;
+        height: 140px;
+        width: 10%;
+    }
+    #infoBlock3 {
+        cursor: pointer;
+        margin-top: 230px;
+        height: 140px;
+        width: 13%;
+    }
+    #infoBlock4 {
+        height: 140px;
+        width: 15%;
+    }
+    #infoBlock5 {
+        cursor: pointer;
+        margin-top: 130px;
+        height: 140px;
+        width: 34%;
+    }
 }
 
 .row {
