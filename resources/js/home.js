@@ -98,7 +98,7 @@ const countChildren = (data) => {
 generateCharts({
     type: "PIE",
     endpoint: "flow/partnerships",
-    title: "Number of PPPs per Country",
+    title: "Number of Partnerships per Country",
     id: "ppp-per-country",
     parentId: "first-row",
 });
