@@ -2,7 +2,7 @@ import createElement from "./app";
 import { db, storeDB } from "./dexie";
 import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
-import { formatNumber } from "./util";
+import { formatNumber, targetAndLastSync } from "./util";
 import _ from "lodash";
 const axios = window.axios;
 
@@ -24,6 +24,9 @@ const handleNotFound = () => {
         </div>
     );
 };
+
+let targetSyncText = "";
+targetAndLastSync().then(el => targetSyncText = el);
 
 const renderTextVisual = async () => {
     await axios
@@ -63,6 +66,7 @@ const renderTextVisual = async () => {
             $("main").append(
                 <div class="row visual" style="visibility: hidden;">
                     <div class="col-md-12">
+                        { targetSyncText }
                         <h3 class="responsive font-weight-bold text-center my-4">
                             { title }
                         </h3>

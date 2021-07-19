@@ -66,7 +66,7 @@ const createRows=(datas, rowType, colspan=false, res, index=1)=> {
             repeats.forEach(x => x.repeat_answers.forEach(y => repeat_answers.push(y)));
             let datapoints = _.values(_.groupBy(repeat_answers, x => x.datapoint_id));
             let answers = _.values(_.groupBy(datapoints[0], x => x.repeat_index));
-            
+
             // starting creating row
             answers.forEach((repeat,y) => {
                 // remap repeat answer to meet question length (fill with null)
@@ -80,7 +80,7 @@ const createRows=(datas, rowType, colspan=false, res, index=1)=> {
                 html+="<td>"+index+"</td>"; // id column
                 repeat.forEach((d,i) => {
                     let classname = i < 10 ? "default-hidden" : "";
-                    classname = (d !== null) 
+                    classname = (d !== null)
                     ? (d.text ? (classname + "") : (classname + " bg-light-grey"))
                     : (classname + " bg-light-grey");
                     html += "<td class='" + classname + "'>";
@@ -151,14 +151,14 @@ $(document).on("click", "a.gtabs" , function() {
             // each repeat group tab
             res['qgroups'] = res.qgroups.filter(x => x.id == question_group_id);
             res['questions'] = res.questions.filter(x => x.question_group_id == question_group_id);
-            
+
             res['datapoints'] = res.datapoints.map(dp => {
                 let qids = res.questions.map(x => x.question_id);
                 let data = dp.data.filter(d => qids.includes(d.question_id));
                 dp['data'] = data;
                 return dp;
             });
-            
+
             let table = '<table id="'+dtId+'" class="table table-bordered" style="width:100%" cellspacing="0"></table>'
             $("#"+gid+"").html(table);
             createTable("#"+dtId+"", res, "head");
@@ -221,10 +221,10 @@ getdata.then(res => {
         let ultabs = "<ul id='grouptabs' class='nav nav-tabs' style='margin-bottom:15px;'></ul>";
         $("#grouptabsWrapper").append(ultabs);
         createaNavTab('parent', 'All Data',true);
-        
+
         // one repeat group tab
         // createaNavTab('qgroup', 'Repeat Group Data');
-        
+
         // each repeat group tab
         groups.forEach(x => {
             createaNavTab(x.id, x.name);
@@ -264,7 +264,7 @@ const datatableOptions = (id, res) => {
                 extend: 'excel',
                 filename: optSelected,
             },
-            'copy', 
+            'copy',
             'colvis'
         ],
         scrollX: true,

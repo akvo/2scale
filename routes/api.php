@@ -120,3 +120,5 @@ Route::get('/flow/partnership/commodities/{country_id}/{partnership_id}/{start}/
 Route::get('/flow/partnership/text/{country_id}/{partnership_id}', 'Api\PartnershipPageController@getTextVisual');
 Route::get('/rsr/partnership/implementing-partner/{country_id}/{partnership_id}', 'Api\PartnershipPageController@getImplementingPartner');
 Route::get('/rsr/partnership/charts/{country_id}/{partnership_id}', 'Api\PartnershipPageController@getResultFramework');
+
+Route::get('/last_sync', 'Api\ApiController@getLastSync');

@@ -1,7 +1,7 @@
 import createElement from "./app";
 import generateCharts, { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
-import { formatNumber } from "./util";
+import { formatNumber, targetAndLastSync } from "./util";
 import _ from "lodash";
 const axios = window.axios;
 
@@ -242,6 +242,9 @@ $("main").append(
     </div>
 );
 
+let targetSyncText = "";
+targetAndLastSync().then(el => targetSyncText = el);
+
 axios
     .get("/api/rsr/impact-reach/uii")
     .then((res) => {
@@ -251,6 +254,7 @@ axios
             <div>
                 <div class="row" id="zero-row">
                     <div class="col-md-12">
+                        { targetSyncText }
                         <h2 class="responsive font-weight-bold text-center my-4">
                             Meeting Targets
                         </h2>

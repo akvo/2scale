@@ -33,7 +33,7 @@
     </style>
 </head>
 <body class="text-center">
-  <div class="cover-container d-flex h-100 mx-auto flex-column">
+  <div class="cover-container d-flex h-100 mx-auto py-3 flex-column">
     <main role="main" id="main" class="inner cover"></main>
   </div>
 @include('components.footer')
