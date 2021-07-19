@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 use App\SectorIndustry;
 use App\Datapoint;
 use App\ViewRnrGender;
@@ -17,6 +18,7 @@ use App\RsrMaxCustomValues;
 use App\ViewRsrOverview;
 use App\ViewRsrCountryOverview;
 use App\ViewRsrCountryData;
+use App\LastSync;
 
 class ApiController extends Controller
 {
@@ -573,5 +575,10 @@ class ApiController extends Controller
                 ];
             })->values();
         return $data;
+    }
+
+    public function getLastSync()
+    {
+        return Carbon::parse(LastSync::first()->date)->format('F d, Y');
     }
 }

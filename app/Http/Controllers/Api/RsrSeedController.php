@@ -16,6 +16,7 @@ use App\RsrPeriodDimensionValue;
 use App\RsrPeriodData;
 use App\RsrTitle;
 use App\RsrTitleable;
+use App\LastSync;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
@@ -39,6 +40,7 @@ class RsrSeedController extends Controller
     {
         $this->seedRsrProjects($partnership, $project, $request);
         $this->seedRsrResults($project, $result, $indicator, $period,  $dimension,  $dimensionValue, $periodDimensionValue, $periodData, $request);
+        $lastSync = LastSync::updateOrCreate(['id' => 1], ['date' => now()]);
         return "Done";
     }
 

@@ -17,6 +17,7 @@ use App\Datapoint;
 use App\Answer;
 use App\Sync;
 use App\QuestionGroup;
+use App\LastSync;
 use \Mailjet\Resources;
 use Mailjet\LaravelMailjet\Facades\Mailjet;
 
@@ -48,7 +49,10 @@ class SyncController extends Controller
         $cascades = $this->breakCascade($cascades);
         // $insert = $partnerships->insert($cascades);
         $insert = collect($cascades)->map(function ($cascade) use ($partnerships) {
-            return $partnerships->updateOrCreate(['cascade_id' => $cascade['cascade_id']], $cascade);
+            // * Use code to check, beacause cascade_id changed when sync
+            // * Example, on fresh seed, South Sudan cascade_id = 73, and when sync that id is 71
+            // * so, code can't be changed
+            return $partnerships->updateOrCreate(['code' => $cascade['code']], $cascade);
         });
         $childs = $partnerships->get();
         $childs = collect($childs)->map(function($child) use ($flow, $partnerships, $resource) {
@@ -60,7 +64,7 @@ class SyncController extends Controller
                         // $cascade = new Partnership($cascade);
                         // return $cascade;
                         $cascade['parent_id'] = $partnership['id'];
-                        return $partnerships->updateOrCreate(['cascade_id' => $cascade['cascade_id']], $cascade);
+                        return $partnerships->updateOrCreate(['code' => $cascade['code']], $cascade);
                     });
                     // $insert = $partnership->childrens()->saveMany($cascades);
                     // return [$child->id => $insert];
@@ -672,6 +676,7 @@ class SyncController extends Controller
             if ($isNotFirstSyncRun) {
                 $postSync = new Sync(['url' => $syncUrl]);
                 $postSync->save();
+                $lastSync = LastSync::updateOrCreate(['id' => 1], ['date' => now()]);
                 $this->results->push($syncUrl);
             }
 
@@ -837,6 +842,7 @@ class SyncController extends Controller
         if ($isNotFirstSyncRun) {
             $postSync = new Sync(['url' => $syncUrl]);
             $postSync->save();
+            $lastSync = LastSync::updateOrCreate(['id' => 1], ['date' => now()]);
             $this->results->push($syncUrl);
         }
 
