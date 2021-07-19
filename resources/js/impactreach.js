@@ -242,27 +242,29 @@ $("main").append(
     </div>
 );
 
-let targetSyncText = "";
-targetAndLastSync().then(el => targetSyncText = el);
+targetAndLastSync().then(el => {
+    $("#last-sync-temp").append(el);
+});
+
+$("main").append(
+    <div>
+        <div class="row" id="zero-row">
+            <div class="col-md-12">
+                <div id="last-sync-temp"></div>
+                <h2 class="responsive font-weight-bold text-center my-4">
+                    Meeting Targets
+                </h2>
+            </div>
+        </div>
+        <hr />
+    </div>
+);
 
 axios
     .get("/api/rsr/impact-reach/uii")
     .then((res) => {
         $("#loader-spinner").remove();
         $(".tmp-footer")[0].style.position = "relative";
-        $("main").append(
-            <div>
-                <div class="row" id="zero-row">
-                    <div class="col-md-12">
-                        { targetSyncText }
-                        <h2 class="responsive font-weight-bold text-center my-4">
-                            Meeting Targets
-                        </h2>
-                    </div>
-                </div>
-                <hr />
-            </div>
-        );
         return res;
     })
     .then((res) => {
