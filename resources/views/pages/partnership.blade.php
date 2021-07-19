@@ -2,8 +2,8 @@
 
 @section ('content')
 
-<div class="bg-white shadow-sm flex-display selector-bar">
-    <nav class="nav nav-md-6 nav-selector">
+<div class="bg-white shadow-sm flex-display selector-bar justify-content-center">
+    <nav class="nav nav-md-4 nav-selector">
         <select id="partnership-country" class="selectpicker" data-style="" data-live-search="true">
             <option value="0">Select Country</option>
             @foreach($countries as $country)
@@ -20,7 +20,7 @@
             {{-- <option value="0">All Countries</option> --}}
         </select>
     </nav>
-    <nav class="nav nav-md-6 nav-selector">
+    <nav class="nav nav-md-4 nav-selector">
         <select id="partnership-code" class="selectpicker" data-style="" data-live-search="true">
             <option value="">Select Partnership</option>
         </select>
