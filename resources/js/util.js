@@ -109,7 +109,7 @@ export const targetAndLastSync = () => {
     return axios
         .get('/api/last_sync')
         .then((res) => {
-            return <p class="text-center text-muted">
+            return <p class="text-center text-muted" style="font-size:14px;">
                 <span>Target 2019 - 2023</span>{" "}|{" "}
                 <span>Last Updated {res.data}</span>
             </p>;

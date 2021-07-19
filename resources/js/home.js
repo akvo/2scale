@@ -8,7 +8,7 @@ const axios = window.axios;
 $("main").append(
     <div>
         <div class="row" id="zero-row">
-            <div class="col-md-12 my-3">
+            <div class="col-md-12">
                 <div id="last-sync-temp"></div>
                 <h2 class="responsive font-weight-bold text-center my-4">
                     Incubating and accelerating inclusive agribusiness in Africa
