@@ -3,7 +3,13 @@ import axios from "axios";
 import { visualMap } from "./chart-util/chart-style";
 import { generateOptions } from "./chart-util";
 import { CountUp } from "countup.js";
-import { formatNumber, genCharArray, toTitleCase, genCharPath } from "./util";
+import {
+    formatNumber,
+    genCharArray,
+    toTitleCase,
+    genCharPath,
+    targetAndLastSync
+} from "./util";
 import sumBy from "lodash/sumBy";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
@@ -595,10 +601,15 @@ const createMaps = () => {
     }
 };
 
+targetAndLastSync().then(el => {
+    $("#last-sync-temp").append(el);
+});
+
 $("main").append(
     <div class="row">
         <div class="col-md-12" id="filters"></div>
         <div class="col-md-12 main-page">
+            <div id="last-sync-temp"></div>
             <h2 class="responsive font-weight-bold text-center my-4">
                 Meeting Targets
             </h2>
@@ -610,6 +621,7 @@ $("main").append(
         <div class="col-md-12" id="display"></div>
     </div>
 );
+
 
 $("main").append(
     <div class="d-flex justify-content-center" id="loader-spinner">

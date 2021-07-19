@@ -5,11 +5,14 @@ const echarts = window.echarts;
 const axios = require('axios');
 const gradients = ["purple", "peach", "blue", "morpheus-den"];
 import {getHierarchy} from './charts.js';
+import { targetAndLastSync } from "./util";
 
 const iframeheight = window.innerHeight - 56;
 $("#hierarchy").attr("height", iframeheight);
 
-
+targetAndLastSync().then(el => {
+    $("#last-sync-temp").append(el);
+});
 
 const titleCase = (str) => {
     str = str.toLowerCase().split('-');

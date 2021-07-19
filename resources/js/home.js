@@ -1,21 +1,27 @@
 import createElement from "./app";
 import generateCharts from "./chart-util";
 import { getMaps, getCharts } from "./charts";
+import { targetAndLastSync } from "./util";
 const axios = window.axios;
 
 // Page title
 $("main").append(
     <div>
         <div class="row" id="zero-row">
-            <div class="col-md-12">
+            <div class="col-md-12 my-3">
+                <div id="last-sync-temp"></div>
                 <h2 class="responsive font-weight-bold text-center my-4">
                     Incubating and accelerating inclusive agribusiness in Africa
                 </h2>
             </div>
         </div>
-        <hr/>
+        {/* <hr/> */}
     </div>
 );
+
+targetAndLastSync().then(el => {
+    $("#last-sync-temp").append(el);
+});
 
 /* First Row */
 $("main").append(
