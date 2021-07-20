@@ -367,10 +367,13 @@ class RsrSeedController extends Controller
         return RsrTitleable::updateOrCreate($titleable, $titleable);
     }
 
-    private function getResults($projectId)
+    public function getResults($projectId, $endpoint = null)
     {
+        if (!$endpoint) {
+            $endpoint = 'results';
+        }
         $data = collect();
-        $results = $this->rsr->get('results', 'project', $projectId);
+        $results = $this->rsr->get($endpoint, 'project', $projectId);
         if ($results['count'] == 0) {
             return [];
         }
