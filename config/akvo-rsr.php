@@ -50,7 +50,7 @@ return [
                 'text' => 'Smallholder farmers with improved agricultural productivity and access to markets. (50% women, 40% youth)',
                 'bold' => 'Smallholder farmers '
             ],
-            'target_text' => '##number## smallholder farmers with improved agricultural productivity and access to markets.',
+            'target_text' => '##number## smallholder farmers (50% women, 40% youth) with improved agricultural productivity and access to markets.',
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
@@ -64,7 +64,7 @@ return [
                 'text' => 'Eco-efficient farming practices adopted in a new area.',
                 'bold' => 'Eco-efficient farming practices '
             ],
-            'target_text' => '##number## hectares of land on eco-efficient farming practices.',
+            'target_text' => 'Eco-efficient farming practices adopted in a new area of ##number## hectares.',
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
@@ -78,7 +78,7 @@ return [
                 'text' => 'SMEs driving inclusive business in target industries (50% women-led/women-owned)',
                 'bold' => 'SMEs '
             ],
-            'target_text' => '##number## SMEs involved.',
+            'target_text' => '##number## SMEs ­driving inclusive business in target industries (125 women-led/women-owned).',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -92,7 +92,7 @@ return [
                 'text' => 'Non-farming jobs in targeted agribusiness clusters and value chains.(50% women, 40% youth)',
                 'bold' => 'Non-farming jobs '
             ],
-            'target_text' => '##number## new non-farming jobs created.',
+            'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000 youth).',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -102,11 +102,11 @@ return [
             'name' => 'UII6 - MSME',
             'result_title' => 'UII-6 MSME: Development of economically attractive and viable opportunities for micro-entrepreneurs and SMEs affiliated with the inclusive agribusiness',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number## micro-entrepreneurs or SMEs associated.',
             'tab' => [
                 'text' => 'Micro entrepreneurs/SMEs associated with partnerships. (50% women-led/women-owned and 40% young entrepreneurs)',
                 'bold' => 'Micro entrepreneurs/SMEs '
             ],
+            'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -116,11 +116,11 @@ return [
             'name' => 'UII7 - INNO',
             'result_title' => 'UII-7 INNO: Innovative capacity of SMEs, micro-entrepreneurs, farmers strengthened',
             'group' => 'Inclusive Agribusiness and Innovation',
-            'target_text' => '##number## non-farming innovations adopted.',
             'tab' => [
                 'text' => 'Non-farming innovations adopted.',
                 'bold' => 'Non-farming innovations '
             ],
+            'target_text' => '##number## non-farming innovations adopted.',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -143,7 +143,7 @@ return [
                     "order" => 1,
                     "dimension" => "financial services",
                     "dimension_title" => "Total value(Euros) of financial services accessed by the SHFs, micro-entrepreneurs and SMEs",
-                    "target_text" => "##number## Euros as value of additional financial services.",
+                    "target_text" => "##number## Euros as value of additional financial services accessed by smallholder farmers, MSMEs and SMEs.",
                 ],
                 [
                     "order" => 2,
@@ -170,7 +170,7 @@ return [
             'name' => 'Private contribution',
             'result_title' => "Private sector contribution (in kind/in cash) (€)",
             'group' => "Input Additionality",
-            'target_text' => 'Value of private sector contribution (Euros).',
+            'target_text' => '##number## Euros as private sector contribution.',
             'tab' => [
                 'text' => 'Financial value of private sector contributions (Euros)',
                 'bold' => ' private sector contributions'
@@ -184,7 +184,7 @@ return [
             'name' => '2SCALE contribution',
             'result_title' => "2SCALE's Contribution (€)",
             'group' => "Input Additionality",
-            'target_text' => 'Value of 2SCALE’s contribution.',
+            'target_text' => '##number## Euros as 2SCALE contribution.',
             'tab' => [
                 'text' => 'Financial value of 2SCALE contribution (Euros)',
                 'bold' => ' 2SCALE contribution '
