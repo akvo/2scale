@@ -19,6 +19,7 @@ use App\ViewRsrOverview;
 use App\ViewRsrCountryOverview;
 use App\ViewRsrCountryData;
 use App\LastSync;
+use App\Libraries\Util;
 
 class ApiController extends Controller
 {
@@ -54,7 +55,8 @@ class ApiController extends Controller
         return [$sum,$params,$customParams];
     }
 
-    private function appendCustomParams($data, $customParams) {
+    private function appendCustomParams($data, $customParams)
+    {
         return $data->transform(function($d) use ($customParams){
             $customParams->each(function($c) use ($d) {
                 $n = collect();
@@ -149,7 +151,8 @@ class ApiController extends Controller
         return $results;
     }
 
-    private function sumRsr($data, $groups, $index = 0) {
+    private function sumRsr($data, $groups, $index = 0)
+    {
         $data = collect($data)
             ->groupBy($groups[$index]."_id")->map(function($d, $k) use ($groups, $index) {
                 $child = $index + 1;
@@ -225,7 +228,7 @@ class ApiController extends Controller
                                              ->groupBy('dimension_value_title')
                                              ->map(function($dv, $dvk){
                                                  return [
-                                                     'name' => $this->transformDimensionValueName($dvk),
+                                                     'name' => Util::transformDimensionValueName($dvk),
                                                      'actual_value' => $dv->sum('period_dimension_actual_value')
                                                  ];
                                              })->values();
@@ -255,7 +258,7 @@ class ApiController extends Controller
                             $actualDimValues = $ind['rsr_periods']->pluck('rsr_period_dimension_values')
                                 ->flatten(1)->where('rsr_dimension_value_id', $dv['rsr_dimension_value_id']);
                             return [
-                                'name' => $this->transformDimensionValueName($dv['name']),
+                                'name' => Util::transformDimensionValueName($dv['name']),
                                 'target_value' => $dv['value'],
                                 'actual_value' => $actualDimValues->sum('value')
                             ];
@@ -368,7 +371,8 @@ class ApiController extends Controller
         return $results;
     }
 
-    public function getRsrCountryData( Request $request, ViewRsrCountryData $countryData) {
+    public function getRsrCountryData( Request $request, ViewRsrCountryData $countryData)
+    {
         $cacheData = Cache::get('rsr-country-data');
         if ($cacheData) {
             return $cacheData;
@@ -393,8 +397,7 @@ class ApiController extends Controller
                             ->groupBy('dimension_title')
                             ->map(function($d, $dimensionName) use ($group){
                                 $values = $d->map(function($dv){
-                                    $name = $this
-                                        ->transformDimensionValueName($dv->dimension_value_title);
+                                    $name = Util::transformDimensionValueName($dv->dimension_value_title);
                                     return [
                                         'name' => $name,
                                         'target_value' => $dv->dimension_target_value,
@@ -475,34 +478,8 @@ class ApiController extends Controller
         return $name;
     }
 
-    private function transformDimensionValueName($name)
+    private function getPartnershipCache()
     {
-        if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
-            if (Str::contains($name, "Male")) {
-                $name = "Men";
-            }
-            if (Str::contains($name, "Female")) {
-                $name = "Women";
-            }
-        }
-        if (Str::contains($name, ">") || Str::contains($name, "<")) {
-            if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-                $name = "Senior Men - SM";
-            }
-            if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-                $name = "Junior Men - JM";
-            }
-            if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-                $name = "Senior Women - SW";
-            }
-            if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-                $name = "Junior Women - JW";
-            }
-        }
-        return $name;
-    }
-
-    private function getPartnershipCache() {
         $partnership = Cache::get('partnership');
         if (!$partnership) {
             $partnership = Partnership::all();
@@ -529,7 +506,8 @@ class ApiController extends Controller
         return $data;
     }
 
-    private function sumBy($data, $partnership, $groups, $index = 0) {
+    private function sumBy($data, $partnership, $groups, $index = 0)
+    {
         $data = collect($data)
             ->groupBy($groups[$index])->map(function($d, $k) use ($partnership, $groups, $index) {
                 $child = $index + 1;
@@ -553,7 +531,8 @@ class ApiController extends Controller
         return $data;
     }
 
-    private function countBy($data, $partnership, $groups, $index = 0, $counter='datapoint_id') {
+    private function countBy($data, $partnership, $groups, $index = 0, $counter='datapoint_id')
+    {
         $data = collect($data)
             ->groupBy($groups[$index])->map(function($d, $k) use ($partnership, $groups, $index, $counter) {
                 $child = $index + 1;

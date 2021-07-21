@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller\Api\ApiController;
+use App\Http\Controllers\Api\RsrSeedController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use App\Libraries\AkvoRsr;
 use App\RsrProject;
+use App\Libraries\Util;
 
 class PartnershipPageController extends Controller
 {
@@ -18,6 +19,7 @@ class PartnershipPageController extends Controller
     public function __construct()
     {
         $this->rsr = new AkvoRsr();
+        $this->rsrSeed = new RsrSeedController();
     }
 
     public function getTextVisual(Request $request)
@@ -72,7 +74,7 @@ class PartnershipPageController extends Controller
         if (!$project) {
             return response('no data available', 503);
         }
-        $results = $this->fetchRsrData('partnership', $project['id'])->flatten(1);
+        $results = $this->rsrSeed->getResults($project['id'], 'partnership')->flatten(1);
         $results = $results->reject(function ($res) {
             return !Str::contains(strtolower($res['organisation_role_label']), 'implementing');
         });
@@ -97,7 +99,7 @@ class PartnershipPageController extends Controller
         }
 
         $charts = config('partnership-page.impact_charts');
-        $results = $this->fetchRsrData('results', $project['id'])->flatten(1);
+        $results = $this->rsrSeed->getResults($project['id'], 'results')->flatten(1);
 
         // * Transform results value
         $results = $results->filter(function ($res) {
@@ -183,7 +185,7 @@ class PartnershipPageController extends Controller
                         'actual_value' => $dim['actual_value'],
                         'values' => collect($dim['values'])->transform(function ($d) {
                             return [
-                                'name' => $this->transformDimensionValueName($d['value']),
+                                'name' => Util::transformDimensionValueName($d['value']),
                                 'target_value' => $d['target_value'],
                                 'actual_value' => $d['actual_value'],
                             ];
@@ -208,7 +210,7 @@ class PartnershipPageController extends Controller
                             'order' => $dim['order'],
                             'values' => $res['dimensions']->pluck('values')->flatten(1)->transform(function ($d) {
                                 return [
-                                    'name' => $this->transformDimensionValueName($d['value']),
+                                    'name' => Util::transformDimensionValueName($d['value']),
                                     'target_value' => $d['target_value'],
                                     'actual_value' => $d['actual_value'],
                                 ];
@@ -333,50 +335,5 @@ class PartnershipPageController extends Controller
             $name = "SMEs accessing finances";
         }
         return $name;
-    }
-
-    private function transformDimensionValueName($name)
-    {
-        if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
-            if (Str::contains($name, "Male")) {
-                $name = "Male-led/owned";
-            }
-            if (Str::contains($name, "Female")) {
-                $name = "Female-led/owned";
-            }
-        }
-        if (Str::contains($name, ">") || Str::contains($name, "<")) {
-            if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-                $name = "Senior Men - SM";
-            }
-            if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-                $name = "Junior Men - JM";
-            }
-            if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-                $name = "Senior Women - SW";
-            }
-            if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-                $name = "Junior Women - JW";
-            }
-        }
-        return $name;
-    }
-
-    private function fetchRsrData($endpoint, $projectId)
-    {
-        $data = collect();
-        $results = $this->rsr->get($endpoint, 'project', $projectId);
-        if ($results['count'] == 0) {
-            return [];
-        }
-        $data->push($results['results']);
-        // fetch next page
-        while($results['next'] !== null){
-            $results = $this->rsr->fetch($results['next']);
-            if ($results['count'] !== 0) {
-                $data->push($results['results']);
-            }
-        }
-        return $data;
     }
 }
