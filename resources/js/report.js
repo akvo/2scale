@@ -5,6 +5,7 @@ import { targetAndLastSync } from "./util";
 import { renderRsrTableTemplate, renderRsrTable } from "./rsrDatatables.js";
 
 const baseurl = $("meta[name=path]").attr("content");
+console.log(baseurl);
 
 const renderReportForm = () => {
     axios
@@ -101,7 +102,7 @@ $("#country-level").on("change", () => {
 const showModalError = (response) => {
     $("#myModalAuthTitle").html("Error");
     $("#myModalAuthBody").html(
-        '<div class="alert alert-warning" role="alert">'+response+'</div>'
+        <div class="alert alert-warning" role="alert">{response}</div>
     );
     $("#myModalAuth").modal({ backdrop: "static", keyboard: false });
 }
@@ -138,7 +139,7 @@ $("#generate-word-report").on("click", () => {
             $("#loader-spinner").remove();
             $("#myModalAuthTitle").html("Report ready to download");
             $("#myModalAuthBody").html(
-                <a target="_blank" href="' + res.data.link + '">
+                <a target="_blank" href={res.data.link}>
                     <button type="button" class="btn btn-primary"> Download Report</button>
                 </a>
             );
@@ -149,7 +150,7 @@ $("#generate-word-report").on("click", () => {
             $("#loader-spinner").remove();
             $("#myModalAuthTitle").html("Error");
             $("#myModalAuthBody").html(
-                '<div class="alert alert-danger" role="alert">'+err.response.data+'</div>'
+                <div class="alert alert-danger" role="alert">{err.response.data}</div>
             );
             $("#myModalBtnClose").show();
         });
