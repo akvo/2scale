@@ -13,6 +13,7 @@ use App\RsrProject;
 use App\Http\Controllers\Api\ChartController;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\Style\Table;
+use PhpOffice\PhpWord\Style\Image;
 
 class RsrWordReportController extends Controller
 {
@@ -20,6 +21,7 @@ class RsrWordReportController extends Controller
     private $alignVCentered = array('valign' => 'center');
     private $alignJustify = array('alignment' => Jc::BOTH);
     private $alignRight = array('align' => Jc::END);
+    private $alignLeft = array('align' => Jc::START);
 
     public function getRsrWordReport(Request $request)
     {
@@ -68,14 +70,15 @@ class RsrWordReportController extends Controller
 
         // New Word Document
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $rsrReport['data'], $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level);
+        $documentTitle = "Test";
+        $phpWord = $this->renderWordDoc($documentTitle, $phpWord, $rsrReport['columns'], $rsrReport['data'], $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level);
 
         // Not included the children/PPPs
         /*
         if (count($rsrReport['data']['childrens']) > 0) {
             // render document for the childrens
             foreach ($rsrReport['data']['childrens'] as $key => $child) {
-                $phpWord = $this->renderWordDoc($phpWord, $rsrReport['columns'], $child, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level);
+                $phpWord = $this->renderWordDoc($name, $phpWord, $rsrReport['columns'], $child, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level);
             }
         }
         */
@@ -94,7 +97,7 @@ class RsrWordReportController extends Controller
         return ["link" => env('APP_URL')."/".$filename.".".$writers['extension']];
     }
 
-    private function renderWordDoc($phpWord, $columns, $data, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level)
+    private function renderWordDoc($documentTitle, $phpWord, $columns, $data, $reportTimeTitle, $country, $reportConfig, $projects, $datapoints, $level)
     {
         $reportBody = $reportConfig['questions'];
         $n = microtime(true);
@@ -194,10 +197,13 @@ class RsrWordReportController extends Controller
                 $section->addTextBreak(1);
             }
         }
-
-        $footer = $section->addFooter();
+        $header = $section
+            ->createHeader()
+            ->addImage(url('/images/report-header.jpg'), array('width' => 80, 'align' => 'right'));
+        $footer = $section->createFooter();
+        $documentTitle = 'Internal report - '.$documentTitle.' '.$reportTimeTitle;
+        $footer->addPreserveText($documentTitle, null, $this->alignLeft);
         $footer->addPreserveText('Page {PAGE} of {NUMPAGES}', null, $this->alignRight);
-
         return $phpWord;
     }
 
