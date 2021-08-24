@@ -22,6 +22,7 @@ class RsrWordReportController extends Controller
     private $alignJustify = array('alignment' => Jc::BOTH);
     private $alignRight = array('align' => Jc::END);
     private $alignLeft = array('align' => Jc::START);
+    private $transparentCellStyle = array('borderSize' => 0, 'borderColor' => '#ffffff');
 
     public function getRsrWordReport(Request $request)
     {
@@ -201,9 +202,13 @@ class RsrWordReportController extends Controller
             ->createHeader()
             ->addImage(url('/images/report-header.jpg'), array('width' => 80, 'align' => 'right'));
         $footer = $section->createFooter();
+        $footerTable = $footer->addTable(array('borderSize' => 0));
+        $footerRow = $footerTable->addRow();
+        $footerCell = $footerRow->addCell(5000, $this->transparentCellStyle);
         $documentTitle = 'Internal report - '.$documentTitle.' '.$reportTimeTitle;
-        $footer->addPreserveText($documentTitle, null, $this->alignLeft);
-        $footer->addPreserveText('Page {PAGE} of {NUMPAGES}', null, $this->alignRight);
+        $footerCell->addPreserveText($documentTitle, array('positioning' => 'absolute', 'align' => 'start'), $this->alignLeft);
+        $footerCell = $footerRow->addCell(5500, $this->transparentCellStyle);
+        $footerCell->addPreserveText('Page {PAGE} of {NUMPAGES}', null, $this->alignRight);
         return $phpWord;
     }
 
