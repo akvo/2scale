@@ -101,7 +101,7 @@ $("main").append(
                 </h3>
             </div>
         </div>
-        <div class="row" id="second-row"></div>
+        <div class="row" id="custom-row"></div>
     </div>
 );
 
@@ -134,7 +134,7 @@ generateCharts(
 getMaps("maps", "home/map");
 getCharts(
     "home/investment-tracking",
-    "second-row",
+    "custom-row",
     "12",
     "Investment Tracking (Euros)",
     375

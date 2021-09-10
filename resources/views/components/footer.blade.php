@@ -1,8 +1,19 @@
 <footer class="footer">
-    <div class="col-md-12">
-        <div class="footer-row">
-            <div class="logo">
-                <a target="_blank" href="https://2scale.org">2SCALE</a>
+<div class="footer-container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="footer-title">
+                Follow Us:
+            </div>
+            <div class="socialWrap">
+            <a href="https://www.linkedin.com/company/2scale-africa/" target="_blank"><i class="fa fa-linkedin"></i></a>
+            <a href="https://www.facebook.com/2Sscale" target="_blank"><i class="fa fa-facebook"></i></a>
+            <a href="https://twitter.com/SCALE_2" target="_blank"><i class="fa fa-twitter"></i></a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="footer-title">
+                On This Site:
             </div>
             <div class="sitemap">
                 <ul class="nav">
@@ -18,5 +29,13 @@
                 </ul>
             </div>
         </div>
+        <div class="col-md-3 built-with">
+            <span>
+                Powered by:
+            </span>
+                <img class="akvo-logo" src="{{ asset('/images/akvo-logo.png') }}"/>
+            </div>
+        </div>
     </div>
+</div>
 </footer>
