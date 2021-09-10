@@ -41,6 +41,73 @@ const Pie = (data, extra, Doughnut = false) => {
     }
     let rose = {};
     const { textStyle } = TextStyle;
+    let series = [
+        {
+            name: "main",
+            type: "pie",
+            right: "center",
+            radius: Doughnut ? ["0%", "100%"] : ["50%", "100%"],
+            top: "30px",
+            label: {
+                normal: {
+                    formatter: function (params) {
+                        if (params.percent >= 0) {
+                            return Math.round(params.percent) + "%";
+                        }
+                        return "";
+                    },
+                    show: true,
+                    position: Doughnut ? "inner" : "outside",
+                    padding: 5,
+                    borderRadius: 100,
+                    backgroundColor: Doughnut
+                        ? "rgba(0,0,0,.5)"
+                        : "rgba(0,0,0,.3)",
+                    textStyle: {
+                        ...textStyle,
+                        color: "#fff",
+                    },
+                },
+                emphasis: {
+                    position: "center",
+                    show: true,
+                    padding: 5,
+                    borderRadius: 100,
+                    backgroundColor: "#f2f2f2",
+                    textStyle: textStyle,
+                },
+            },
+            labelLine: {
+                normal: {
+                    show: true,
+                },
+            },
+            data: data,
+            ...rose,
+        },
+    ];
+    if (!Doughnut) {
+        series = ["outside", "inner"].map((x) => {
+            return {
+                ...series[0],
+                label: {
+                    ...series[0].label,
+                    normal: {
+                        ...series[0].label.normal,
+                        position: x,
+                        formatter: function (params) {
+                            if (params.percent >= 0) {
+                                return x === "inner"
+                                    ? params.value
+                                    : Math.round(params.percent) + "%";
+                            }
+                            return "";
+                        },
+                    },
+                },
+            };
+        });
+    }
     let option = {
         tooltip: {
             show: true,
@@ -54,49 +121,7 @@ const Pie = (data, extra, Doughnut = false) => {
             },
         },
         series: [
-            {
-                name: "main",
-                type: "pie",
-                right: "center",
-                radius: Doughnut ? ["0%", "100%"] : ["50%", "100%"],
-                top: "30px",
-                label: {
-                    normal: {
-                        formatter: function (params) {
-                            if (params.percent >= 0) {
-                                return Math.round(params.percent) + "%";
-                            }
-                            return "";
-                        },
-                        show: true,
-                        position: Doughnut ? "inner" : "outside",
-                        padding: 5,
-                        borderRadius: 100,
-                        backgroundColor: Doughnut
-                            ? "rgba(0,0,0,.5)"
-                            : "rgba(0,0,0,.3)",
-                        textStyle: {
-                            ...textStyle,
-                            color: "#fff",
-                        },
-                    },
-                    emphasis: {
-                        position: "center",
-                        show: true,
-                        padding: 5,
-                        borderRadius: 100,
-                        backgroundColor: "#f2f2f2",
-                        textStyle: textStyle,
-                    },
-                },
-                labelLine: {
-                    normal: {
-                        show: true,
-                    },
-                },
-                data: data,
-                ...rose,
-            },
+            ...series,
             {
                 data: [total],
                 type: "pie",
