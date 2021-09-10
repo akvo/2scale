@@ -1268,7 +1268,7 @@ class ChartController extends Controller
                 "stack" => "investment",
                 "label" => [
                     "show" => true,
-                    "color" => "#fff",
+                    "color" => "#a43332",
                     "fontWeight" => "bold",
                     "position" => "insideBottomRight",
                     "formatter" => "{@p_togo}%"

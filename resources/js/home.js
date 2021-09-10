@@ -30,6 +30,22 @@ $("main").append(
                 <div class="row" id="maps"></div>
             </div>
         </div>
+        <div class="graphic-text">
+            <div class="col-md-12">
+                <h3 class="responsive font-weight-bold text-center my-4">
+                    How the Progam Works
+                </h3>
+                <p>
+                    2SCALE focuses on establishing agribusiness clusters built
+                    around business champions. Champions are either
+                    entrepreneurial producer organizations or local SMEs that
+                    trade or process the produce of farmers. By providing
+                    support to these clusters, 2SCALE is developing products and
+                    markets for local consumer markets, preferably at the base
+                    of the pyramid.
+                </p>
+            </div>
+        </div>
         <div class="graphic">
             {/* <img src="/images/infographic.png" class="img img-fluid" /> */}
             <div class="popover-graphic-wrapper">
@@ -85,15 +101,14 @@ $("main").append(
                 </h3>
             </div>
         </div>
-        <hr />
         <div class="row" id="second-row"></div>
     </div>
 );
 
-const countChildren = data => {
-    return data.map(d => ({
+const countChildren = (data) => {
+    return data.map((d) => ({
         name: d.name,
-        value: d.childrens.length
+        value: d.childrens.length,
     }));
 };
 
@@ -102,7 +117,7 @@ generateCharts({
     endpoint: "flow/partnerships",
     title: "Number of Partnerships per Country",
     id: "ppp-per-country",
-    parentId: "first-row"
+    parentId: "first-row",
 });
 
 generateCharts(
@@ -111,7 +126,7 @@ generateCharts(
         endpoint: "flow/sectors?sum=industry,country_id&form_id=20020001",
         title: "Sector Distribution",
         id: "sector-ddistribution",
-        parentId: "first-row"
+        parentId: "first-row",
     },
     countChildren
 );
@@ -127,5 +142,5 @@ getCharts(
 
 $(".popover-graphic").popover({
     trigger: "hover focus",
-    placement: "top"
+    placement: "top",
 });

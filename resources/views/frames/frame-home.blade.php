@@ -66,7 +66,7 @@
   </div>
   {{-- End of Static carousel --}}
 
-  <div class="cover-container d-flex h-100 mx-auto py-3 flex-column">
+  <div class="cover-container d-flex h-100 mx-auto flex-column">
     <main role="main" id="main" class="inner cover"></main>
   </div>
 @include('components.footer')

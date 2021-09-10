@@ -30,7 +30,7 @@ body {
 }
 
 body {
-    padding-top: 56px;
+    padding-top: 88px;
 }
 iframe {
     height: 100%;
@@ -154,15 +154,18 @@ iframe.has-filter {
 
 .nav,
 .navbar {
+    padding: 10px 30px;
     border-bottom: 1px solid #ddd;
 }
 .navbar .nav-link {
+    font-weight: bold;
+    font-size: 18px;
     padding: 1rem;
 }
 
 .navbar .navbar-brand {
     width: 150px;
-    padding: 1rem;
+    padding: 10px;
 }
 
 .flex-display {
@@ -286,8 +289,11 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     display: none !important;
 }
 
+.navbar {
+    box-shadow: 0px 1px 10px #777777;
+}
+
 .card,
-.navbar,
 .page-link {
     box-shadow: none !important;
 }
