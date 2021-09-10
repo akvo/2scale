@@ -32,16 +32,16 @@ body {
 .popover-header {
     font-weight: bold;
     background-color: #fff;
-    border-bottom: 2px solid #A43332;
-    padding: .5rem 0rem;
+    border-bottom: 2px solid #a43332;
+    padding: 0.5rem 0rem;
 }
 .popover-body {
     background-color: #fff;
-    padding: .5rem 0rem;
+    padding: 0.5rem 0rem;
 }
 
 .graphic {
-    background: #EDEEE9;
+    background: #edeee9;
     position: relative;
     margin-top: 2rem;
     width: 100%;
@@ -55,7 +55,7 @@ body {
     box-shadow: inset 0 0 10px #d8d8d8; */
 }
 .graphic-bottom {
-    background: #EDEEE9;
+    background: #edeee9;
     height: 50px;
     margin-bottom: 2rem;
 }
@@ -280,6 +280,14 @@ body {
     line-height: 60px; /* Vertically center the text there */
     background-color: #f5f5f5;
     border-top: 1px solid #ddd;
+}
+.footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.sitemap > .nav > .nav-item > .nav-link {
+    padding: 0 1rem;
 }
 
 .uii-col {
