@@ -42,8 +42,8 @@ mix.js("resources/js/app.js", "public/js")
     .sass("resources/sass/app.scss", "public/css")
     .version();
 
-mix.styles(["resources/css/theme.css"], "public/css/all.css");
-mix.styles(["resources/css/frame.css"], "public/css/frame.css");
+mix.styles(["resources/css/theme.css"], "public/css/all.css").version();
+mix.styles(["resources/css/frame.css"], "public/css/frame.css").version();
 
 mix.copyDirectory("resources/vendor", "public/vendor");
 mix.copyDirectory("resources/images", "public/images");
