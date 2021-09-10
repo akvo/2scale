@@ -134,7 +134,15 @@ class ApiController extends Controller
             $rnr = $this->appendCustomParams($rnr, $customParams);
         }
         if (isset($request->sum)) {
-            return $this->sumBy($rnr, $partnership, $sum);
+            $rnr = $this->sumBy($rnr, $partnership, $sum);
+            $rnr = $rnr->map(function($r){
+                $r["childrens"] = collect($r["childrens"])->map(function($c){
+                    $c["name"] = Util::transformDimensionValueName($c["name"]);
+                    return $c;
+                });
+                return $r;
+            });
+            return $rnr;
         }
         return $rnr;
     }

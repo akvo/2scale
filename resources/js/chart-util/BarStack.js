@@ -89,7 +89,7 @@ const BarStack = (data, extra) => {
             top: "50px",
             left: "auto",
             right: "auto",
-            bottom: "25px",
+            bottom: "50px",
             borderColor: "#ddd",
             borderWidth: 0.5,
             show: true,

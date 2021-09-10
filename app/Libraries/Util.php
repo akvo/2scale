@@ -7,6 +7,12 @@ class Util {
   //
   public static function transformDimensionValueName($name)
   {
+    if (Str::contains($name, "Senior")) {
+        $name = str_replace("Senior",">", $name);
+    }
+    if (Str::contains($name, "Junior")) {
+        $name = str_replace("Junior","<", $name);
+    }
     if (!Str::contains($name, ">") && !Str::contains($name, "<")) {
       if (Str::contains($name, "Male")) {
         $name = "Male-led/owned";
@@ -17,16 +23,16 @@ class Util {
     }
     if (Str::contains($name, ">") || Str::contains($name, "<")) {
       if (Str::contains($name, "Male") && Str::contains($name, ">")) {
-        $name = "Senior Men - SM";
+        $name = "Senior\nMen";
       }
       if (Str::contains($name, "Male") && Str::contains($name, "<")) {
-        $name = "Junior Men - JM";
+        $name = "Junior\nMen";
       }
       if (Str::contains($name, "Female") && Str::contains($name, ">")) {
-        $name = "Senior Women - SW";
+        $name = "Senior\nWomen";
       }
       if (Str::contains($name, "Female") && Str::contains($name, "<")) {
-        $name = "Junior Women - JW";
+        $name = "Junior\nWomen";
       }
     }
     return $name;
