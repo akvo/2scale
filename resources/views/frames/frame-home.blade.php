@@ -33,6 +33,39 @@
     </style>
 </head>
 <body class="text-center">
+  {{-- Static carousel --}}
+  <div id="home-carousel" class="carousel slide home-carousel-container" data-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item home-carousel-item active">
+        <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-1.JPG" alt="First slide">
+        <div class="carousel-caption d-none d-md-block">
+          <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
+        </div>
+      </div>
+      <div class="carousel-item home-carousel-item">
+        <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-2.JPG" alt="Second slide">
+        <div class="carousel-caption d-none d-md-block">
+          <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
+        </div>
+      </div>
+      <div class="carousel-item home-carousel-item">
+        <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-3.jpg" alt="Third slide">
+        <div class="carousel-caption d-none d-md-block">
+          <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
+        </div>
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#home-carousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#home-carousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+  {{-- End of Static carousel --}}
+
   <div class="cover-container d-flex h-100 mx-auto py-3 flex-column">
     <main role="main" id="main" class="inner cover"></main>
   </div>

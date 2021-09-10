@@ -387,3 +387,28 @@ h3#subtitle b {
 .map-notation {
     float: right;
 }
+
+/* Home carousel */
+.carousel-item.home-carousel-item {
+    background: #000000;
+}
+img.d-block.w-100.home-carousel-img {
+    height: 80vh;
+    object-fit: cover;
+    opacity: 0.6;
+}
+.carousel .carousel-control-next-icon,
+.carousel .carousel-control-prev-icon {
+    height: 50px;
+    width: 50px;
+}
+.carousel-caption.d-none.d-md-block {
+    margin-bottom: 90px;
+    width: 33%;
+    text-align: left;
+}
+.carousel-caption.d-none.d-md-block > h2 {
+    font-size: 50px;
+    text-shadow: 2px 2px 8px #000000;
+}
+/* Eol Home carousel */
