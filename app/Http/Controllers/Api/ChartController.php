@@ -1205,14 +1205,18 @@ class ChartController extends Controller
 
     private function getUiiValueByConfig($config, $charts)
     {
+        $charts = $charts->values();
         $programId = $config['projects']['parent'];
-        $rsrDetail =  \App\RsrDetail::where('project_id', $programId)
+         $rsrDetail =  \App\RsrDetail::where('project_id', $programId)
             ->whereIn('result_id', [48191,48259])->get();
-        $rsrDetail = collect($rsrDetail)->groupBy('result_title')->map(function ($v, $k){
+        $rsrDetail = collect($rsrDetail)->groupBy('result_title')->map(function ($v, $k) use ($charts) {
+            $result_id = $v->first()->result_id;
+            $custom_name = $charts->where('id', $result_id)->first()['name'];
             $pav = $v->sum('period_actual_value');
             $itv = $v->first()->indicator_target_value;
             return [
-                'name' => $k,
+                'id' => $result_id,
+                'name' => $custom_name ? $custom_name : $k,
                 'achieved' => $pav,
                 'target' => $itv,
                 'toGo' => $itv - $pav

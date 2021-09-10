@@ -16,11 +16,11 @@ return [
         'investment_tracking' => [
             'amount_of_co_financing' => [
                 'id' => 48191,
-                'name' => 'Private contribution',
+                'name' => "Private sector contributions (in cash/in kind) €",
             ], # title_id 148, # title id based on result, indicator title id 157 # parent result of this value 48191
             '2scale_contribution' => [
                 'id' => 48259,
-                'name' => '2SCALE contribution',
+                'name' => "2SCALE's contributions (in cash/in kind) €",
             ], # title_id 149, # title id based on result, indicator title id 158 # parent result of this value 48259
         ],
     ],
