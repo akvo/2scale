@@ -43,7 +43,9 @@ const generateCharts = (
     const html = (
         <div class={`col-md-${md ? md : "6"}`}>
             <div class="card">
-                <div class="card-header"><h4>{title}</h4></div>
+                <div class="card-header">
+                    <h4>{title}</h4>
+                </div>
                 <div class="card-body">
                     <div
                         class="d-flex justify-content-center"
@@ -98,6 +100,18 @@ const generateCharts = (
                     option = collections;
                 }
                 option = generateOptions(type, option, axisName);
+                if (option?.legend?.data?.[0] === "Junior\nMen") {
+                    const legend = [
+                        "Senior\nMen",
+                        "Senior\nWomen",
+                        "Junior\nMen",
+                        "Junior\nWomen",
+                    ];
+                    option = {
+                        ...option,
+                        legend: { ...option.legend, data: legend },
+                    };
+                }
                 myChart.setOption(option);
             }, 1000);
         })

@@ -4,7 +4,7 @@
     <!-- Required meta tags-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="cache-version" value="1.1.3">
+    <meta name="cache-version" value="1.1.5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="app-url" content="{{ env('APP_URL') }}">
     <meta name="description" content="2SCALE website">
