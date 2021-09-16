@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Libraries\FlowApi;
@@ -104,6 +105,11 @@ class SyncController extends Controller
                 return [$child->id => 'no-childrens'];
         });
         return $childs;
+    }
+
+    public function syncSectorCascade(Request $request, FlowApi $flow, Sector $sectors) {
+        $data = $this->syncSectors($flow, $sectors);
+        return $data;
     }
 
     private function breakCascade($cascades, $partnership = true){

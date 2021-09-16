@@ -35,6 +35,7 @@ Route::get('/cron', 'Api\DataController@cron');
 |
 */
 
+Route::get('/sync-sectors', 'Api\SyncController@syncSectorCascade');
 Route::get('/sync-survey-forms', 'Api\SyncController@syncSurveyForms');
 Route::get('/sync-questions', 'Api\SyncController@syncQuestions');
 Route::get('/sync-question-options', 'Api\SyncController@syncQuestionOptions');
