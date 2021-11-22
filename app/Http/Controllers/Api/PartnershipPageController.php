@@ -241,10 +241,42 @@ class PartnershipPageController extends Controller
             ];
         })->reject(function ($c) {
             return $c['actual_value'] <= floatVal(0);
-        })->groupBy('group')->transform(function ($g, $k) {
+        })->groupBy('group')->transform(function ($res, $key) {
+
+            // UII8 Modification to show all dimension target/achieve value
+            $childs = $res->reject(function ($r) {
+                return Str::contains($r['uii'], "UII8");
+            });
+            $uii8_custom = $res->filter(function ($r) {
+                return Str::contains($r['uii'], "UII8");
+            })->transform(function ($r) use ($childs) {
+                $r = $r["dimensions"]->map(function($d, $di) use ($r, $childs) {
+                    $dim = collect($r["dimensions"][$di]);
+                    $dimVal = collect($dim["values"]);
+                    $targetValue = $dimVal->sum("target_value");
+                    $actualValue = $dimVal->sum("actual_value");
+                    if (count($dimVal) == 0) {
+                        $targetValue = $dim["target_value"];
+                        $actualValue = $dim["actual_value"];
+                    }
+                    $new = [
+                        "group" => $r['group'],
+                        "uii" => $r["uii"],
+                        "target_text" => $d["target_text"],
+                        "target_value" => $targetValue,
+                        "actual_value" => $actualValue,
+                        "dimensions" => [$dim]
+                    ];
+                    $childs->push($new);
+                    return $new;
+                });
+                return $r;
+            });
+            // EOF UII8 Modification to show all dimension target/achieve value
+
             return [
-                'group' => $k,
-                'childrens' => $g
+                'group' => $key,
+                'childrens' => $childs
             ];
         })->values();
 
