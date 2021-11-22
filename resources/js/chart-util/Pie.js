@@ -48,6 +48,7 @@ const Pie = (data, extra, Doughnut = false) => {
             right: "center",
             radius: Doughnut ? ["0%", "100%"] : ["50%", "100%"],
             top: "30px",
+            bottom: "15px",
             label: {
                 normal: {
                     formatter: function (params) {
@@ -129,6 +130,7 @@ const Pie = (data, extra, Doughnut = false) => {
                 radius: Doughnut ? ["0%", "0%"] : ["0%", "40%"],
                 color: ["#f1f1f5"],
                 top: "30px",
+                bottom: "15px",
                 label: {
                     normal: {
                         formatter: function (params) {
