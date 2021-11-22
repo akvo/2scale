@@ -8,7 +8,7 @@ import {
     genCharArray,
     toTitleCase,
     genCharPath,
-    targetAndLastSync
+    targetAndLastSync,
 } from "./util";
 import sumBy from "lodash/sumBy";
 import maxBy from "lodash/maxBy";
@@ -95,7 +95,13 @@ const dimensions = (x, idx) => {
                 {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
                 <div
                     id={id}
-                    style={`height:${d?.height ? d.height : "450px"}`}
+                    style={`height:${
+                        d?.height
+                            ? d.height
+                            : d.values.length
+                            ? "450px"
+                            : "200px"
+                    }`}
                 ></div>
             </div>
         );
@@ -601,7 +607,7 @@ const createMaps = () => {
     }
 };
 
-targetAndLastSync().then(el => {
+targetAndLastSync().then((el) => {
     $("#last-sync-temp").append(el);
 });
 
@@ -621,7 +627,6 @@ $("main").append(
         <div class="col-md-12" id="display"></div>
     </div>
 );
-
 
 $("main").append(
     <div class="d-flex justify-content-center" id="loader-spinner">

@@ -281,6 +281,15 @@ class ApiController extends Controller
                                     $order = $item['order'];
                                 }
                             }
+                            // UII8 Modification to show all dimension target/achieve value
+                            return [
+                                'name' => $dim['name'],
+                                'target_text' => $text,
+                                // 'target_value' => $dimVal->sum('target_value'),
+                                // 'actual_value' => $dimVal->sum('actual_value'),
+                                'order' => $order,
+                                'values' => $dimVal
+                            ];
                         }
 
                         return [
@@ -368,10 +377,14 @@ class ApiController extends Controller
                 "target_value" => $target_value,
                 "actual_value" => $actual_value,
                 "dimensions" => $dimensions
-            ];})->groupBy('group')->map(function ($res, $key) {
+            ];
+        })->groupBy('group')->map(function ($res, $key) {
+            // UII8 Modification to show all dimension target/achieve value
+            $childs = Util::transformUii8Value($res, "UII-8", true, false);
+
             return [
                 "group" => $key,
-                "childrens" => $res
+                "childrens" => $childs
             ];
         })->values();
 
@@ -455,11 +468,16 @@ class ApiController extends Controller
                         'dimensions' => $dimensions,
                     ];
                 })->values();
+
+                // UII8 Modification to show all dimension target/achieve value
+                $childs = Util::transformUii8Value($childrens, "UII8", false, true);
+
                 return [
                     'group' => $groupName,
-                    'childrens' => $childrens
+                    'childrens' => $childs
                 ];
             })->values();
+
             return [
                 'country' => $countryName,
                 'data' => $data
