@@ -242,7 +242,7 @@ $("main").append(
     </div>
 );
 
-targetAndLastSync().then(el => {
+targetAndLastSync().then((el) => {
     $("#last-sync-temp").append(el);
 });
 
@@ -306,7 +306,7 @@ axios
                 </div>
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
-                        Progress  on reach
+                        Progress on reach
                     </h3>
                     <div id="second-row"></div>
                     <hr />
@@ -331,7 +331,10 @@ axios
                 md: 12,
                 height: 600,
                 parentId: "second-row",
-                axisName: {xAxisName : "Activity Dates", yAxisName : "Audiences"}
+                axisName: {
+                    xAxisName: "Activity Dates",
+                    yAxisName: "Audiences",
+                },
             },
             increments
         );

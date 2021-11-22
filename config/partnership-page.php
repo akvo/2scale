@@ -199,16 +199,16 @@ return [
       'max' => false,
       'replace_value_with' => false,
       'orders' => false,
-  ],
-  [
-      'id' => '2SCALE\'s Contribution',
-      'name' => '2SCALE contribution',
-      'group' => "Input Additionality",
-      'target_text' => '##number## Euros as 2SCALE contribution.',
-      'max' => false,
-      'replace_value_with' => false,
-      'orders' => false,
-  ],
+    ],
+    [
+        'id' => '2SCALE\'s Contribution',
+        'name' => '2SCALE contribution',
+        'group' => "Input Additionality",
+        'target_text' => '##number## Euros as 2SCALE contribution.',
+        'max' => false,
+        'replace_value_with' => false,
+        'orders' => false,
+    ],
   ],
   'text_visual' => [
     // * Agri-Business Cluster Form
