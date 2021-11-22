@@ -45,7 +45,7 @@ input.btn.dropdown-toggle.btn-light{
 }
 
 .dropdown-item.active, .dropdown-item:active{
-	background-color:#2dbbad;
+	background-color:#a43332;
 }
 .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn):focus {
 	outline: none;
