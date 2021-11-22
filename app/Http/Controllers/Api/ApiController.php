@@ -281,6 +281,15 @@ class ApiController extends Controller
                                     $order = $item['order'];
                                 }
                             }
+                            // UII8 Modification to show all dimension target/achieve value
+                            return [
+                                'name' => $dim['name'],
+                                'target_text' => $text,
+                                // 'target_value' => $dimVal->sum('target_value'),
+                                // 'actual_value' => $dimVal->sum('actual_value'),
+                                'order' => $order,
+                                'values' => $dimVal
+                            ];
                         }
 
                         return [
@@ -368,10 +377,43 @@ class ApiController extends Controller
                 "target_value" => $target_value,
                 "actual_value" => $actual_value,
                 "dimensions" => $dimensions
-            ];})->groupBy('group')->map(function ($res, $key) {
+            ];
+        })->groupBy('group')->map(function ($res, $key) {
+            $childs = $res->reject(function ($r) {
+                return Str::contains($r['uii'], "UII-8");
+            });
+
+            // UII8 Modification to show all dimension target/achieve value
+            $uii8_custom = $res->filter(function ($r) {
+                return Str::contains($r['uii'], "UII-8");
+            })->transform(function ($r) use ($childs) {
+                $r = $r["dimensions"]->map(function($d, $di) use ($r, $childs) {
+                    $dim = collect($r["dimensions"][$di]);
+                    $dimVal = collect($dim["values"]);
+                    $targetValue = $dimVal->sum("target_value");
+                    $actualValue = $dimVal->sum("actual_value");
+                    if (count($dimVal) == 0) {
+                        $targetValue = $dim["target_value"];
+                        $actualValue = $dim["actual_value"];
+                    }
+                    $new = [
+                        "group" => $r['group'],
+                        "uii" => $r["uii"],
+                        "target_text" => $d["target_text"],
+                        "target_value" => $targetValue,
+                        "actual_value" => $actualValue,
+                        "dimensions" => [$dim]
+                    ];
+                    $childs->push($new);
+                    return $new;
+                });
+                return $r;
+            });
+            // EOF UII8 Modification to show all dimension target/achieve value
+
             return [
                 "group" => $key,
-                "childrens" => $res
+                "childrens" => $childs
             ];
         })->values();
 
