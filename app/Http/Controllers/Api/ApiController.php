@@ -379,37 +379,8 @@ class ApiController extends Controller
                 "dimensions" => $dimensions
             ];
         })->groupBy('group')->map(function ($res, $key) {
-
             // UII8 Modification to show all dimension target/achieve value
-            $childs = $res->reject(function ($r) {
-                return Str::contains($r['uii'], "UII-8");
-            });
-            $uii8_custom = $res->filter(function ($r) {
-                return Str::contains($r['uii'], "UII-8");
-            })->transform(function ($r) use ($childs) {
-                $r = $r["dimensions"]->map(function($d, $di) use ($r, $childs) {
-                    $dim = collect($r["dimensions"][$di]);
-                    $dimVal = collect($dim["values"]);
-                    $targetValue = $dimVal->sum("target_value");
-                    $actualValue = $dimVal->sum("actual_value");
-                    if (count($dimVal) == 0) {
-                        $targetValue = $dim["target_value"];
-                        $actualValue = $dim["actual_value"];
-                    }
-                    $new = [
-                        "group" => $r['group'],
-                        "uii" => $r["uii"],
-                        "target_text" => $d["target_text"],
-                        "target_value" => $targetValue,
-                        "actual_value" => $actualValue,
-                        "dimensions" => [$dim]
-                    ];
-                    $childs->push($new);
-                    return $new;
-                });
-                return $r;
-            });
-            // EOF UII8 Modification to show all dimension target/achieve value
+            $childs = Util::transformUii8Value($res, "UII-8", true, false);
 
             return [
                 "group" => $key,
@@ -499,35 +470,7 @@ class ApiController extends Controller
                 })->values();
 
                 // UII8 Modification to show all dimension target/achieve value
-                $childs = $childrens->reject(function ($r) {
-                    return Str::contains($r['uii'], "UII8");
-                });;
-                $uii8_custom = $childrens->filter(function ($r) {
-                    return Str::contains($r['uii'], "UII8");
-                })->transform(function ($r) use ($childs) {
-                    $r = $r["dimensions"]->map(function($d, $di) use ($r, $childs) {
-                        $dim = collect($r["dimensions"][$di]);
-                        $dimVal = collect($dim["values"]);
-                        $targetValue = $dimVal->sum("target_value");
-                        $actualValue = $dimVal->sum("actual_value");
-                        if (count($dimVal) == 0) {
-                            $targetValue = $dim["target_value"];
-                            $actualValue = $dim["actual_value"];
-                        }
-                        $new = [
-                            "uii" => $r["uii"],
-                            "target_text" => $d["target_text"],
-                            "tab" => $r["tab"],
-                            "target_value" => $targetValue,
-                            "actual_value" => $actualValue,
-                            "dimensions" => [$dim]
-                        ];
-                        $childs->push($new);
-                        return $new;
-                    });
-                    return $r;
-                });
-                // EOF UII8 Modification to show all dimension target/achieve value
+                $childs = Util::transformUii8Value($childrens, "UII8", false, true);
 
                 return [
                     'group' => $groupName,
