@@ -82,14 +82,6 @@ const renderTextVisual = async () => {
                                     {workWith.length === 0
                                         ? ""
                                         : `${workWithText}. `}
-                                    For more details please visit{" "}
-                                    <a
-                                        target="_blank"
-                                        href={`${res.data.link}`}
-                                    >
-                                        project page
-                                    </a>
-                                    .
                                 </h5>
                             </div>
                         </div>
@@ -97,15 +89,34 @@ const renderTextVisual = async () => {
                     </div>
                 </div>
             );
-            return true;
+            return res.data.link;
         })
-        .then(async (res) => {
+        .then(async (link) => {
             await renderImplementingPartner();
-            return true;
+            return link;
         })
-        .then(async (res) => {
+        .then(async (link) => {
             await renderCharts();
-            return true;
+            return link;
+        })
+        .then((link) => {
+            $("main").append(
+                <div
+                    class="row visual justify-content-center"
+                    style="visibility: hidden;"
+                >
+                    For more information about this partnership, visit the
+                    partnership page
+                    <a
+                        target="_blank"
+                        href={`${link}`}
+                        style="margin-left: 4px;"
+                    >
+                        here
+                    </a>
+                    .
+                </div>
+            );
         })
         .then((res) => {
             let visuals = $(".visual");
