@@ -331,7 +331,7 @@ class PartnershipPageController extends Controller
             $name = "Smallholder farmers accessing finances";
         }
         if (Str::contains($name, "Number of newly added micro-entrepreneurs")) {
-            $name = "Micro-entreprenuers accessing finances";
+            $name = "Micro-entrepreneurs accessing finances";
         }
         if (Str::contains($name, "Number of newly added SMEs")) {
             $name = "SMEs accessing finances";

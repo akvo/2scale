@@ -272,6 +272,7 @@ class ApiController extends Controller
                             ];
                         });
 
+                        $dimensionName = str_replace("enterprenuers", "entrepreneurs", $dim['name']);
                         $text = null;
                         $order = null;
                         if (isset($chart['dimensions'])) {
@@ -281,19 +282,16 @@ class ApiController extends Controller
                                     $order = $item['order'];
                                 }
                             }
-                            // UII8 Modification to show all dimension target/achieve value
                             return [
-                                'name' => $dim['name'],
+                                'name' => $dimensionName,
                                 'target_text' => $text,
-                                // 'target_value' => $dimVal->sum('target_value'),
-                                // 'actual_value' => $dimVal->sum('actual_value'),
                                 'order' => $order,
                                 'values' => $dimVal
                             ];
                         }
 
                         return [
-                            'name' => $dim['name'],
+                            'name' => $dimensionName,
                             'target_text' => $text,
                             'order' => $order,
                             'values' => $dimVal
@@ -426,7 +424,7 @@ class ApiController extends Controller
                                     ];
                                 });
                                 return [
-                                    'name' => $dimensionName,
+                                    'name' => str_replace("enterprenuers", "entrepreneurs", $dimensionName),
                                     'target_text' => null,
                                     'values' => $values
                                 ];
