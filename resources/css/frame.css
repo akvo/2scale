@@ -382,7 +382,9 @@ h3#subtitle b {
     margin: auto;
 }
 .map-notation {
-    float: right;
+    position: absolute;
+    right: 24px;
+    top: 12px;
 }
 
 #custom-row {

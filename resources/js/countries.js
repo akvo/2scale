@@ -19,6 +19,7 @@ import countryStore from "./store/country-store.js";
 const mapName = "africa";
 
 const popupFormatter = (params) => {
+    const additionalText = "</br>Click country to show</br>details below";
     if (params?.data?.text) {
         let text = params.data.text.replace(
             "##number##",
@@ -27,14 +28,14 @@ const popupFormatter = (params) => {
         text = text.replace(".", "").split(" ");
         text = chunk(text, 3);
         text = text.map((x) => x.join(" "));
-        return text.join("</br>");
+        return text.join("</br>") + "</br>" + additionalText;
     }
     var value = (params.value + "").split(".");
     value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
     if (Number.isNaN(params.value)) {
         return;
     }
-    return params.name + ": " + value;
+    return params.name + ": " + value + "</br>" + additionalText;
 };
 
 const dimensions = (x, idx) => {
