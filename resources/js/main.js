@@ -124,16 +124,26 @@ $("#generate-reachreact-page").on("click", () => {
 });
 
 /* Partnership Page */
-const changePartnershipCode = (data, selectedId=false) => {
+const changePartnershipCode = (country, data, selectedId = false) => {
     $("#partnership-code option").remove();
     let html = `<option data-tokens="all" value="0" data-id="0">Select Partnership</options>`;
-    data.forEach((d, i) => {
-        let selected = (d.id === selectedId) ? "selected" : "";
-        html +=
-            `<option `+selected+` data-tokens="`+d.name+`" data-id="`+d.id+`" value="`+d.id+`">`
-                + titleCase(d.name) +
-            `</option>`;
-    });
+    if (country !== "0") {
+        data.forEach((d, i) => {
+            let selected = d.id === selectedId ? "selected" : "";
+            html +=
+                `<option ` +
+                selected +
+                ` data-tokens="` +
+                d.name +
+                `" data-id="` +
+                d.id +
+                `" value="` +
+                d.id +
+                `" style="max-width: 600px;">` +
+                titleCase(d.name) +
+                `</option>`;
+        });
+    }
     // html += `<option data-tokens="all" value="0" data-id="0">All Partnerships</options>`;
     $("#partnership-code").append(html);
     $("#partnership-code").selectpicker("refresh");
@@ -142,7 +152,7 @@ const changePartnershipCode = (data, selectedId=false) => {
 $("#partnership-country").on("change", (data) => {
     if (data.target.value !== "") {
         axios.get("/api/partnership/" + data.target.value).then((res) => {
-            changePartnershipCode(res.data);
+            changePartnershipCode(data.target.value, res.data);
         });
         return;
     }
@@ -154,24 +164,30 @@ $("#partnership-country").on("change", (data) => {
 const loadDefaultPartnership = async () => {
     let country_id = $("#partnership-country").val();
     await axios.get("/api/partnership/" + country_id).then((res) => {
-        changePartnershipCode(res.data, 11);
+        changePartnershipCode(country_id, res.data, 11);
     });
 
     let partnership_id = $("#partnership-code").val();
-    $("#data-frame").attr("src", "/frame/partnership/" + country_id + "/" + partnership_id);
+    $("#data-frame").attr(
+        "src",
+        "/frame/partnership/" + country_id + "/" + partnership_id
+    );
 };
 
 if (window.location.pathname === "/partnership") {
     $("#partnership-code").on("change", (data) => {
         let country_id = $("#partnership-country").val();
         if (data.target.value !== "") {
-            $("#data-frame").attr("src", "/frame/partnership/" + country_id + "/" + data.target.value);
+            $("#data-frame").attr(
+                "src",
+                "/frame/partnership/" + country_id + "/" + data.target.value
+            );
             return;
         }
         return;
     });
     loadDefaultPartnership();
-};
+}
 
 // * Old partnership page for generate pdf report
 $("#generate-partnership-page").on("click", () => {
@@ -250,9 +266,8 @@ $("#generate-report-link").on("click", () => {
         formData.set("filename", filename);
         formData.set("date", todayDate);
 
-        let cards = iframe[0].contentWindow.document.getElementById(
-            "third-row-value"
-        );
+        let cards =
+            iframe[0].contentWindow.document.getElementById("third-row-value");
         formData.set(
             "card",
             cards.getAttribute("dataTitle") +
