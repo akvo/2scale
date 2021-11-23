@@ -380,6 +380,34 @@ class ApiController extends Controller
             // UII8 Modification to show all dimension target/achieve value
             $childs = Util::transformUii8Value($res, "UII-8", true, false);
 
+            // Custom automate calculation
+            $childs = Util::addUiiAutomateCalculation($childs);
+            // ->transform(function ($c) {
+            //     if (Str::contains($c['uii'], "UII-2") || Str::contains($c['uii'], "UII2")) {
+            //         /* ## SHF
+            //         - % of women smallholder farmers reached ((senior women+junior women) /total achieved %)
+            //         - % of youth smallholder farmers reached ((junior men+junior women) /total achieved %) */
+            //         $totalAchieved = $c["actual_value"];
+            //         $dimension = collect($c["dimensions"])->first();
+            //         $seniorWomenAchieved = collect($dimension["values"])->filter(function ($v) {
+            //             return Str::containsAll(Str::lower($v["name"]), ["senior", "women"]);
+            //         })->first();
+            //         $juniorWomenAchieved = collect($dimension["values"])->filter(function ($v) {
+            //             return Str::containsAll(Str::lower($v["name"]), ["junior", "women"]);
+            //         })->first();
+            //         $juniorMenAchieved = collect($dimension["values"])->filter(function ($v) {
+            //             return Str::containsAll(Str::lower($v["name"]), ["junior", "men"]);
+            //         })->first();
+            //         $womenShf = ($seniorWomenAchieved["actual_value"] + $juniorWomenAchieved["actual_value"]) / $totalAchieved;
+            //         $youthShf = ($juniorMenAchieved["actual_value"] + $juniorWomenAchieved["actual_value"]) / $totalAchieved;
+            //         $c["women_shf"] = round($womenShf * 100);
+            //         $c["youth_shf"] = round($youthShf * 100);
+            //         return $c;
+            //     }
+            //     return $c;
+            // });
+            // End of custom automate calculation
+
             return [
                 "group" => $key,
                 "childrens" => $childs
