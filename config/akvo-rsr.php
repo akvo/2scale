@@ -40,6 +40,7 @@ return [
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'BoP Consumers',
         ],
         [
             'id' => 42865,
@@ -54,6 +55,7 @@ return [
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Smallholder Farmers',
         ],
         [
             'id' => 42698,
@@ -68,6 +70,7 @@ return [
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Hectares',
         ],
         [
             'id' => 42804,
@@ -82,6 +85,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'SMEs',
         ],
         [
             'id' => 42825,
@@ -96,6 +100,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Non-farm Employment',
         ],
         [
             'id' => 42835,
@@ -110,6 +115,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Micro-entreprenuers/SMEs',
         ],
         [
             'id' => 42845,
@@ -124,6 +130,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Non-farm Innovations',
         ],
         [
             'id' => 42855,
@@ -138,6 +145,7 @@ return [
             'max' => false,
             'replace_value_with' => 1,
             'orders' => true,
+            'chart_title' => null,
             'dimensions' => [
                 [
                     "order" => 1,
@@ -178,6 +186,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => null,
         ],
         [
             'id' => 48259,
@@ -192,6 +201,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => null,
         ],
     ],
     'charts' => [

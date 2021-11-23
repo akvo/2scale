@@ -324,23 +324,25 @@ class ApiController extends Controller
 
             if ($chart['max']) {
                 $agg = $customAgg->where('uii', $uii)->first();
+                $aggDimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')
+                    ->flatten(1)->map(function ($d) use ($agg) {
+                        $match = $agg['dimensions']->where('name', $d['name'])->first();
+                        $d['actual_value'] = $match['actual_value'];
+                        $d['values'] = $d['values']->map(function ($v) use ($match) {
+                            $v['actual_value'] = $match['values']
+                                ->where('name', $v['name'])->first()['actual_value'];
+                            return $v;
+                        });
+                        return $d;
+                    });
                 return [
                     "group" => $chart['group'],
                     "uii" => $uii,
                     "target_text" => $chart['target_text'],
                     "target_value" => $rs['rsr_indicators']->sum('target_value'),
                     "actual_value" => $agg['actual_value'],
-                    "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')
-                                        ->flatten(1)->map(function ($d) use ($agg) {
-                                            $match = $agg['dimensions']->where('name', $d['name'])->first();
-                                            $d['actual_value'] = $match['actual_value'];
-                                            $d['values'] = $d['values']->map(function ($v) use ($match) {
-                                                $v['actual_value'] = $match['values']
-                                                    ->where('name', $v['name'])->first()['actual_value'];
-                                                return $v;
-                                            });
-                                            return $d;
-                                        })
+                    "dimensions" => $aggDimensions,
+                    "chart_title" => $chart['chart_title'],
                 ];
             }
 
@@ -374,7 +376,8 @@ class ApiController extends Controller
                 "target_text" => $target_text,
                 "target_value" => $target_value,
                 "actual_value" => $actual_value,
-                "dimensions" => $dimensions
+                "dimensions" => $dimensions,
+                "chart_title" => $chart['chart_title'],
             ];
         })->groupBy('group')->map(function ($res, $key) {
             // UII8 Modification to show all dimension target/achieve value

@@ -63,7 +63,8 @@ class Util {
                   "target_text" => $d["target_text"],
                   "target_value" => $targetValue,
                   "actual_value" => $actualValue,
-                  "dimensions" => [$dim]
+                  "dimensions" => [$dim],
+                  "chart_title" => $r["chart_title"],
               ];
               if ($group) {
                 $new["group"] = $r['group'];
