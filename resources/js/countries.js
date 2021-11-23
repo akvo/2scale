@@ -43,7 +43,7 @@ const popupFormatter = (params) => {
     return params.name + ": " + value + "</br>" + additionalText;
 };
 
-const dimensions = (x, idx) => {
+const dimensions = (x, idx, chartTitle = null) => {
     return x.map((d, i) => {
         const { currentState } = countryStore;
         let currentCharts = currentState.charts;
@@ -98,7 +98,13 @@ const dimensions = (x, idx) => {
         });
         return (
             <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
-                {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
+                {chartTitle ? (
+                    <div class="uii-title">{chartTitle}</div>
+                ) : d.name.length > 0 ? (
+                    <div class="uii-title">{d.name}</div>
+                ) : (
+                    ""
+                )}
                 <div
                     id={id}
                     style={`height:${
@@ -197,7 +203,7 @@ const uii = (x, idx) => {
             s.counts = currentCounts;
         });
         const dim = c.dimensions?.length
-            ? dimensions(c.dimensions, `${idx}-${i}`)
+            ? dimensions(c.dimensions, `${idx}-${i}`, c?.chart_title)
             : dimensions(
                   [
                       {
@@ -208,7 +214,8 @@ const uii = (x, idx) => {
                           height: "200px",
                       },
                   ],
-                  `${idx}-${i}`
+                  `${idx}-${i}`,
+                  c?.chart_title
               );
         return (
             <div class="col-md-12">
