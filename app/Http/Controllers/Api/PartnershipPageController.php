@@ -238,6 +238,7 @@ class PartnershipPageController extends Controller
                 'target_value' => $chart['target_value'],
                 'actual_value' => $chart['actual_value'],
                 'dimensions' => $chart['dimensions'],
+                'chart_title' => $chart['chart_title'],
             ];
         })->reject(function ($c) {
             return $c['actual_value'] <= floatVal(0);

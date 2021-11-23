@@ -64,7 +64,7 @@ class Util {
                   "target_value" => $targetValue,
                   "actual_value" => $actualValue,
                   "dimensions" => [$dim],
-                  "chart_title" => $r["chart_title"],
+                  "chart_title" => (isset($r["chart_title"])) ? $r["chart_title"] : "",
               ];
               if ($group) {
                 $new["group"] = $r['group'];

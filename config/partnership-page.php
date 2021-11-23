@@ -105,6 +105,7 @@ return [
       'max' => true,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'BoP Consumers',
     ],
     [
       'id' => 'UII-2',
@@ -114,6 +115,7 @@ return [
       'max' => true,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'Smallholder Farmers',
     ],
     [
       'id' => 'UII-3',
@@ -123,6 +125,7 @@ return [
       'max' => true,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'Hectares',
     ],
     [
       'id' => 'UII-4',
@@ -132,6 +135,7 @@ return [
       'max' => false,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'SMEs',
     ],
     [
       'id' => 'UII-5',
@@ -141,6 +145,7 @@ return [
       'max' => false,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'Non-farm Employment',
     ],
     [
       'id' => 'UII-6',
@@ -150,6 +155,7 @@ return [
       'max' => false,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'Micro-entreprenuers/SMEs',
     ],
     [
       'id' => 'UII-7',
@@ -159,6 +165,7 @@ return [
       'max' => false,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => 'Non-farm Innovations',
     ],
     [
       'id' => 'UII-8',
@@ -168,6 +175,7 @@ return [
       'max' => false,
       'replace_value_with' => 1,
       'orders' => true,
+      'chart_title' => null,
       'dimensions' => [
         [
           "order" => 1,
@@ -199,6 +207,7 @@ return [
       'max' => false,
       'replace_value_with' => false,
       'orders' => false,
+      'chart_title' => null,
     ],
     [
         'id' => '2SCALE\'s Contribution',
@@ -208,6 +217,7 @@ return [
         'max' => false,
         'replace_value_with' => false,
         'orders' => false,
+        'chart_title' => null,
     ],
   ],
   'text_visual' => [
