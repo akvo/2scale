@@ -112,7 +112,7 @@ const dimensions = (x, idx, chartTitle = null) => {
                             ? d.height
                             : d.values.length
                             ? "450px"
-                            : "200px"
+                            : "450px"
                     }`}
                 ></div>
             </div>
@@ -217,6 +217,56 @@ const uii = (x, idx) => {
                   `${idx}-${i}`,
                   c?.chart_title
               );
+        // custom render for UII-8
+        if (c?.uii?.toLowerCase()?.includes("uii8")) {
+            return (
+                <div class="col-md-6 uii-8-group">
+                    <div class="row odd-row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div
+                                        class="uii-col uii-percentage"
+                                        id={`percentage-${idx}-${i}`}
+                                    >
+                                        {percentage ? 0 : " - "}
+                                    </div>
+                                    <div class="uii-col uii-detail">
+                                        <span style="font-weight:bold;">
+                                            ACHIEVED:{" "}
+                                        </span>
+                                        <span
+                                            style="font-weight:bold;color:#a43332;"
+                                            id={`achieved-${idx}-${i}`}
+                                        >
+                                            0
+                                        </span>
+                                        {/* show automate calculation */}
+                                        {automateCalculation
+                                            ? automateCalculation
+                                            : ""}
+                                        <br />
+                                        <span style="font-weight:bold;">
+                                            TARGET:{" "}
+                                        </span>
+                                        {target.length > 1 ? target : " - "}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            {c.dimensions?.length ? (
+                                <div class="row">{dim}</div>
+                            ) : (
+                                <div class="row">
+                                    <div class="col-md-6">{dim}</div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div class="col-md-12">
                 <div class={`row ${even ? "even-row" : "odd-row"}`}>
