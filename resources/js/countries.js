@@ -15,6 +15,7 @@ import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import chunk from "lodash/chunk";
 import countryStore from "./store/country-store.js";
+import uniqBy from "lodash/uniqBy";
 
 const mapName = "africa";
 
@@ -576,7 +577,7 @@ const fetchData = () => {
         });
         countryStore.update((s) => {
             s.data = res.data;
-            s.filters = filters;
+            s.filters = uniqBy(filters, "name");
             s.valuePath = "a";
             s.selectedPath = null;
         });
@@ -621,7 +622,7 @@ $("main").append(
                 Meeting Targets
             </h2>
             <h3 id="subtitle"></h3>
-            <div id="maps" style="height:700px;"></div>
+            <div id="maps" style="height:750px;"></div>
             <div class="map-notation">Click country to show details</div>
         </div>
         <div id="country-container"></div>

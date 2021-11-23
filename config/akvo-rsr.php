@@ -132,8 +132,8 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             "target_text" => "##number## Value of additional financial services.",
             'tab' => [
-                'text' => 'Additional financial services',
-                'bold' => false
+                'text' => 'Financial value of additional financial services accessed by smallholder farmers(50% women, 40% youth), micro-entreprenuers (50% women, 40% youth) and SMEs (50% women-led)',
+                'bold' => 'additional financial services'
             ],
             'max' => false,
             'replace_value_with' => 1,
