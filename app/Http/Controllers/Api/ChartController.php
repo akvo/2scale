@@ -619,11 +619,11 @@ class ChartController extends Controller
                             return array(
                                 "name" => str_replace('_',' ', $data["organisation"]),
                                 "value" => "organisation",
-                                "itemStyle" => array("color" => "#ff4444"),
+                                "itemStyle" => array("color" => "#609ba7"),
                                 "label" => array("fontSize" => 12),
                             );
                         }),
-                        "itemStyle" => array("color" => "#ffbb33"),
+                        "itemStyle" => array("color" => "#a43332"),
                         "label" => array("fontSize" => 12),
                     );
                     if (count($data)) {
@@ -635,7 +635,7 @@ class ChartController extends Controller
                     "name" => $partnership,
                     "value" => "partnership",
                     "children" => $projects,
-                    "itemStyle" => array("color" => "#00C851"),
+                    "itemStyle" => array("color" => "#3b3b3b"),
                     "label" => array("fontSize" => 12),
                 );
                 if (count($projects)) {
@@ -647,7 +647,7 @@ class ChartController extends Controller
                 "name" => $country,
                 "value" => "countries",
                 "children" => $partnership,
-                "itemStyle" => array("color" => "#33b5e5"),
+                "itemStyle" => array("color" => "#609ba7"),
                 "label" => array("fontSize" =>  12),
             );
             if (count($partnership)) {
@@ -659,7 +659,7 @@ class ChartController extends Controller
             "name" => "2SCALE",
             "value" => "Global",
             "children" => $organisation,
-            "itemStyle" => array("color" => "#aa66cc"),
+            "itemStyle" => array("color" => "#a43332"),
             "label" => array("fontSize" => 12),
         );
         if (count($organisation)) {
