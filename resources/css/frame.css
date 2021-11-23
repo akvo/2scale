@@ -23,6 +23,12 @@ body {
     font-family: "MarkPro", sans-serif;
     color: #333433;
 }
+
+/* Main container  */
+.cover-container {
+    padding: 1rem 0;
+}
+
 .popover {
     font-family: "MarkPro";
     font-size: 14px;
@@ -246,14 +252,17 @@ body {
     }
 }
 
-.row {
+/* .row {
     margin-left: 0px !important;
     margin-right: 0px !important;
-}
+} */
 
 .row .even-row {
-    background-color: #fbfbfb;
-    padding-bottom: 1rem;
+    background-color: #eeeeee;
+    padding: 0.75rem 1.25rem;
+}
+.row .odd-row {
+    padding: 0.75rem 1.25rem;
 }
 
 .card,
@@ -332,7 +341,7 @@ body {
     color: green;
 }
 #filters .card .list-group .list-group-item span {
-    padding: 0.75rem 1.25rem;
+    padding: 0.5rem 1.25rem;
 }
 #filters .card .list-group .list-group-item span b {
     color: #a43332;

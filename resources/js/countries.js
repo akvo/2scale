@@ -208,7 +208,7 @@ const uii = (x, idx) => {
               );
         return (
             <div class="col-md-12">
-                <div class={`row ${even ? "even-row" : ""}`}>
+                <div class={`row ${even ? "even-row" : "odd-row"}`}>
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
@@ -664,7 +664,7 @@ $("main").append(
                 Meeting Targets
             </h2>
             <h3 id="subtitle"></h3>
-            <div id="maps" style="height:750px;"></div>
+            <div id="maps" style="height:700px;"></div>
             <div class="map-notation">Click country to show details</div>
         </div>
         <div id="country-container"></div>
