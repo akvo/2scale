@@ -473,6 +473,9 @@ class ApiController extends Controller
                 // UII8 Modification to show all dimension target/achieve value
                 $childs = Util::transformUii8Value($childrens, "UII8", false, true);
 
+                // Custom automate calculation
+                $childs = Util::addUiiAutomateCalculation($childs);
+
                 return [
                     'group' => $groupName,
                     'childrens' => $childs
