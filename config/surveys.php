@@ -5,8 +5,8 @@ $FORM_URL = env('FORM_URL', 'http://localhost:3000') . '/' . $INSTANCE;
 
 return [
     "url" => $FORM_URL,
-    "cascade" => "cascade-30100013-v63.sqlite",
-    "sector_cascade" => "cascade-26130006-v23.sqlite",
+    "cascade" => "cascade-30100013-v70.sqlite",
+    "sector_cascade" => "cascade-26130006-v24.sqlite",
     "forms" => array(
         [
             "name" => "M&E Tools",
@@ -137,7 +137,7 @@ return [
         */
     ),
     // unused
-    "country_cascade" => "cascade-30100013-v63.sqlite",
+    "country_cascade" => "cascade-30100013-v70.sqlite",
     "countries" => array(
         [
             "id" => 1,
@@ -149,27 +149,35 @@ return [
         ],
         [
             "id" => 3,
-            "name" => "ethiopia",
+            "name" => "egypt",
         ],
         [
             "id" => 4,
-            "name" => "ghana",
+            "name" => "ethiopia",
         ],
         [
             "id" => 5,
-            "name" => "kenya",
+            "name" => "ghana",
         ],
         [
             "id" => 6,
-            "name" => "mali",
+            "name" => "kenya",
         ],
         [
             "id" => 7,
-            "name" => "niger",
+            "name" => "mali",
         ],
         [
             "id" => 8,
+            "name" => "niger",
+        ],
+        [
+            "id" => 9,
             "name" => "nigeria",
+        ],
+        [
+            "id" => 10,
+            "name" => "south sudan",
         ],
     ),
 ];
