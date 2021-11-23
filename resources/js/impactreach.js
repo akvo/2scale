@@ -151,7 +151,7 @@ const uui = (x, idx) => {
               );
         return (
             <div class="col-md-12">
-                <div class={`row ${even ? "even-row" : ""}`}>
+                <div class={`row ${even ? "even-row" : "odd-row"}`}>
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
