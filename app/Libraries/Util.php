@@ -121,8 +121,8 @@ class Util {
         $seniorWomenAchieved = self::findFirstDimensionValue($dimension, ["senior", "women"])["actual_value"];
         $juniorWomenAchieved = self::findFirstDimensionValue($dimension, ["junior", "women"])["actual_value"];
         $juniorMenAchieved = self::findFirstDimensionValue($dimension, ["junior", "men"])["actual_value"];
-        $womenShf = ($seniorWomenAchieved + $juniorWomenAchieved) / $totalAchieved;
-        $youthShf = ($juniorMenAchieved + $juniorWomenAchieved) / $totalAchieved;
+        $womenShf = $totalAchieved ? ($seniorWomenAchieved + $juniorWomenAchieved) / $totalAchieved : 0;
+        $youthShf = $totalAchieved ? ($juniorMenAchieved + $juniorWomenAchieved) / $totalAchieved : 0;
         $d["automate_calculation"] = [
           [
             "text" => "##number## women",
@@ -140,7 +140,7 @@ class Util {
         /* ## SMEs
         - % of women-led SMEs ((women-led SMEs/total achieved*%)) */
         $womenLedAchieved = self::findFirstDimensionValue($dimension, ["female-led", "owned"])["actual_value"];
-        $womenSmes = $womenLedAchieved / $totalAchieved;
+        $womenSmes = $totalAchieved ? $womenLedAchieved / $totalAchieved : 0;
         $d["automate_calculation"] = [
           [
             "text" => "##number## women",
