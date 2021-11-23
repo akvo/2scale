@@ -187,7 +187,7 @@ const renderImplementingPartner = async () => {
 let counts = [];
 let charts = [];
 
-const dimensions = (x, idx) => {
+const dimensions = (x, idx, chartTitle = null) => {
     return x.map((d, i) => {
         const id = `uii-chart-${i}-${idx}`;
         if (d.values.length > 0) {
@@ -230,7 +230,13 @@ const dimensions = (x, idx) => {
         }
         return (
             <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
-                {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
+                {chartTitle ? (
+                    <div class="uii-title">{chartTitle}</div>
+                ) : d.name.length > 0 ? (
+                    <div class="uii-title">{d.name}</div>
+                ) : (
+                    ""
+                )}
                 <div
                     id={id}
                     style={`height:${
@@ -315,7 +321,7 @@ const uui = (x, idx) => {
         }
         // eol automate calculation
         const dim = c.dimensions?.length
-            ? dimensions(c.dimensions, `${idx}-${i}`)
+            ? dimensions(c.dimensions, `${idx}-${i}`, c?.chart_title)
             : dimensions(
                   [
                       {
@@ -326,7 +332,8 @@ const uui = (x, idx) => {
                           height: "200px",
                       },
                   ],
-                  `${idx}-${i}`
+                  `${idx}-${i}`,
+                  c?.chart_title
               );
         return (
             <div class="col-md-12">
