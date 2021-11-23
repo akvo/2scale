@@ -41,11 +41,6 @@ body{
 #maps {
 	height: 500px;
 }
-.row .even-row {
-    background-color: #fbfbfb;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
-}
 </style>
 
 <body>

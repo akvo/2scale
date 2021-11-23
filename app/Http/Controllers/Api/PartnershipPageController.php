@@ -244,6 +244,10 @@ class PartnershipPageController extends Controller
         })->groupBy('group')->transform(function ($res, $key) {
             // UII8 Modification to show all dimension target/achieve value
             $childs = Util::transformUii8Value($res, "UII8", true, false);
+
+            // Custom automate calculation
+            $childs = Util::addUiiAutomateCalculation($childs);
+
             return [
                 'group' => $key,
                 'childrens' => $childs
