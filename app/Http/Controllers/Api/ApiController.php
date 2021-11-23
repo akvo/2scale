@@ -470,6 +470,7 @@ class ApiController extends Controller
                         'target_value' => $ind ? $ind->target_value : 0,
                         'actual_value' => $ind ? $ind->actual_value : 0,
                         'dimensions' => $dimensions,
+                        'chart_title' => $group['chart_title'],
                     ];
                 })->values();
 
