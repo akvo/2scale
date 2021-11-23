@@ -5,6 +5,8 @@ use Illuminate\Support\Str;
 
 class Util {
   //
+  public function __construct() { }
+
   public static function transformDimensionValueName($name)
   {
     if (Str::contains($name, "Senior")) {
@@ -75,5 +77,82 @@ class Util {
           return $r;
       });
       return $childs;
+  }
+
+  public static function findFirstDimensionValue($dimension, $search = [])
+  {
+    $filter = collect($dimension["values"])->filter(function ($v) use ($search) {
+      return Str::containsAll(Str::lower($v["name"]), $search);
+    })->first();
+    return $filter;
+  }
+
+  public static function addUiiAutomateCalculation($data)
+  {
+    // Custom automate calculation
+    $result = $data->transform(function ($d) {
+      $totalAchieved = $d["actual_value"];
+      $dimension = collect($d["dimensions"])->first();
+
+      if (
+        Str::contains($d['uii'], "UII-2") || Str::contains($d['uii'], "UII2")
+        || Str::contains($d['uii'], "UII-6") || Str::contains($d['uii'], "UII6")
+        || (
+            (Str::contains($d['uii'], "UII-8") || Str::contains($d['uii'], "UII8"))
+            && (
+              Str::contains($d['target_text'], "smallholder farmers")
+              || Str::contains($d['target_text'], "MSMEs"))
+          )
+      ) {
+        /* ## SHF - UII 2
+        - % of women smallholder farmers reached ((senior women+junior women) /total achieved %)
+        - % of youth smallholder farmers reached ((junior men+junior women) /total achieved %) */
+
+        /* ## MSMEs - UII 6
+        - % of women micro-entreprenuers ((senior women+junior women)/total achieved %)
+        - % of youth micro-entreprenuers ((junior men+junior women) /total achieved *%) */
+
+        /* ## Access to finance
+        - % of women smallholder farmers accessing additional ((senior women+junior women) /total achieved *%)
+        - % of youth smallholder farmers accessing additional ((junior men+junior women) /total achieved *%)
+        - % of women micro-entreprenuers accessing additional ((senior women+junior women) /total achieved *%)
+        - % of youth micro-entreprenuers accessing additional ((junior men+junior women) /total achieved *%) */
+
+        $seniorWomenAchieved = self::findFirstDimensionValue($dimension, ["senior", "women"])["actual_value"];
+        $juniorWomenAchieved = self::findFirstDimensionValue($dimension, ["junior", "women"])["actual_value"];
+        $juniorMenAchieved = self::findFirstDimensionValue($dimension, ["junior", "men"])["actual_value"];
+        $womenShf = ($seniorWomenAchieved + $juniorWomenAchieved) / $totalAchieved;
+        $youthShf = ($juniorMenAchieved + $juniorWomenAchieved) / $totalAchieved;
+        $d["automate_calculation"] = [
+          [
+            "text" => "##number## women",
+            "value" => $womenShf * 100
+          ],
+          [
+            "text" => "##number## youth",
+            "value" => $youthShf * 100
+          ]
+        ];
+        return $d;
+      }
+
+      if (Str::contains($d['uii'], "UII-4") || Str::contains($d['uii'], "UII4")) {
+        /* ## SMEs
+        - % of women-led SMEs ((women-led SMEs/total achieved*%)) */
+        $womenLedAchieved = self::findFirstDimensionValue($dimension, ["female-led", "owned"])["actual_value"];
+        $womenSmes = $womenLedAchieved / $totalAchieved;
+        $d["automate_calculation"] = [
+          [
+            "text" => "##number## women",
+            "value" => $womenSmes * 100
+          ],
+        ];
+        return $d;
+      }
+
+      return $d;
+    });
+
+    return $result;
   }
 }
