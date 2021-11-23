@@ -20,7 +20,11 @@ import uniqBy from "lodash/uniqBy";
 const mapName = "africa";
 
 const popupFormatter = (params) => {
-    const additionalText = "</br>Click country to show</br>details below";
+    const additionalText =
+        "<div style='margin-top:10px;'>" +
+        "(<span style='font-style: italic;'>" +
+        "Click on the country to</br>view details below)" +
+        "</span></div>";
     if (params?.data?.text) {
         let text = params.data.text.replace(
             "##number##",
