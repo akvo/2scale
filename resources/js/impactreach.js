@@ -100,6 +100,41 @@ const uui = (x, idx) => {
             val: c.actual_value,
             suf: "",
         });
+        // automate calculation
+        let automateCalculation = 0;
+        if (c?.automate_calculation) {
+            let temp = c.automate_calculation?.map((it, itx) => {
+                const value = it.value.toFixed(3);
+                let text = it.text.split("##").map((t) => {
+                    if (t === "number") {
+                        return (
+                            <span
+                                style="font-weight:bold;color:#a43332; margin-left: 4px;"
+                                id={`automate-calculation-item-${idx}-${i}-${itx}`}
+                            >
+                                {value}
+                            </span>
+                        );
+                    }
+                    return t;
+                });
+                counts.push({
+                    id: `automate-calculation-item-${idx}-${i}-${itx}`,
+                    val: value,
+                    suf: "%",
+                });
+                return text;
+            });
+            automateCalculation = (
+                <span
+                    style="margin-left: 4px"
+                    id={`automate-calculation-${idx}-${i}`}
+                >
+                    | {temp}
+                </span>
+            );
+        }
+        // eol automate calculation
         const dim = c.dimensions?.length
             ? dimensions(c.dimensions, `${idx}-${i}`)
             : dimensions(
@@ -136,6 +171,10 @@ const uui = (x, idx) => {
                                     >
                                         0
                                     </span>
+                                    {/* show automate calculation */}
+                                    {automateCalculation
+                                        ? automateCalculation
+                                        : ""}
                                     <br />
                                     <span style="font-weight:bold;">
                                         TARGET:{" "}
