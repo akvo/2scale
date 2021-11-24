@@ -43,7 +43,7 @@
     <div class="carousel-inner">
       @for ($ind = 1; $ind <= 8; $ind++)
         <div class="carousel-item home-carousel-item {{$ind === 1 ? 'active' : ''}}">
-          <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-{{$ind}}.jpg" alt="slide-{{$ind}}">
+          <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/hr-slider-{{$ind}}.jpg" alt="slide-{{$ind}}">
           <div class="carousel-caption d-none d-md-block">
             <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
           </div>
