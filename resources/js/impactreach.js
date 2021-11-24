@@ -208,7 +208,7 @@ const uui = (x, idx) => {
     });
 };
 
-const groups = (x, i) => {
+const groups = (x, i, dataLength) => {
     return (
         <div class="row">
             <div class="col-md-12">
@@ -216,7 +216,7 @@ const groups = (x, i) => {
                     {x.group}
                 </h3>
                 <div class="row">{uui(x, i)}</div>
-                <hr />
+                {i === dataLength - 1 ? <hr /> : ""}
             </div>
         </div>
     );
@@ -325,7 +325,7 @@ axios
         const data = res.data;
         $("main").append(
             data.map((x, i) => {
-                return groups(x, i);
+                return groups(x, i, data?.length);
             })
         );
         return { counts: counts, charts: charts };

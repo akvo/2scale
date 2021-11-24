@@ -277,7 +277,6 @@ const groups = (x, i) => {
                     {x.group}
                 </h3>
                 <div class="row">{uii(x, i)}</div>
-                <hr />
             </div>
         </div>
     );
