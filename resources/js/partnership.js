@@ -255,7 +255,7 @@ const dimensions = (x, idx, chartTitle = null) => {
 const uui = (x, idx) => {
     return x.childrens.map((c, i) => {
         let even = false;
-        if (i % 2 != 0) {
+        if (i % 2 == 0) {
             even = true;
         }
         let target = c.target_text || "";
@@ -336,59 +336,11 @@ const uui = (x, idx) => {
                   c?.chart_title
               );
         // custom render for UII-8
-        if (c?.uii?.toLowerCase()?.includes("uii8")) {
-            return (
-                <div class="col-md-6 uii-8-group">
-                    <div class="row odd-row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div
-                                        class="uii-col uii-percentage"
-                                        id={`percentage-${idx}-${i}`}
-                                    >
-                                        {percentage ? 0 : " - "}
-                                    </div>
-                                    <div class="uii-col uii-detail">
-                                        <span style="font-weight:bold;">
-                                            ACHIEVED:{" "}
-                                        </span>
-                                        <span
-                                            style="font-weight:bold;color:#a43332;"
-                                            id={`achieved-${idx}-${i}`}
-                                        >
-                                            0
-                                        </span>
-                                        {/* show automate calculation */}
-                                        {automateCalculation
-                                            ? automateCalculation
-                                            : ""}
-                                        <br />
-                                        <span style="font-weight:bold;">
-                                            TARGET:{" "}
-                                        </span>
-                                        {target.length > 1 ? target : " - "}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            {c.dimensions?.length ? (
-                                <div class="row">{dim}</div>
-                            ) : (
-                                <div class="row">
-                                    <div class="col-md-6">{dim}</div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            );
-        }
+        const isUii8 = c?.uii?.toLowerCase()?.includes("uii8");
         return (
-            <div class="col-md-12">
-                <div class={`row ${even ? "even-row" : "odd-row"}`}>
-                    <div class="col-md-4">
+            <div class={`${isUii8 ? "col-md-6 uii-8-group" : "col-md-12"}`}>
+                <div class={`row ${even && !isUii8 ? "even-row" : "odd-row"}`}>
+                    <div class={`${isUii8 ? "col-md-12" : "col-md-4"}`}>
                         <div class="card">
                             <div class="card-body">
                                 <div
@@ -420,7 +372,7 @@ const uui = (x, idx) => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class={`${isUii8 ? "col-md-12" : "col-md-8"}`}>
                         {c.dimensions?.length ? (
                             <div class="row">{dim}</div>
                         ) : (
