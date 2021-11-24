@@ -401,7 +401,7 @@ h3#subtitle b {
 }
 
 #custom-row {
-    background: #edeee9;
+    background: #eeeeee;
 }
 
 #custom-row h4 {
@@ -422,7 +422,7 @@ h3#subtitle b {
 img.d-block.w-100.home-carousel-img {
     height: 100vh;
     min-height: 100vh;
-    object-fit: cover;
+    object-fit: fill;
     opacity: 0.6;
 }
 .carousel .carousel-control-next-icon,
@@ -431,12 +431,12 @@ img.d-block.w-100.home-carousel-img {
     width: 50px;
 }
 .carousel-caption.d-none.d-md-block {
-    height: 68vh;
+    height: 60vh;
     width: 50%;
     text-align: left;
 }
 .carousel-caption.d-none.d-md-block > h2 {
-    font-size: 50px;
+    font-size: 48px;
     font-weight: bold;
     text-shadow: 2px 2px 8px #000000;
 }
