@@ -382,6 +382,17 @@ const handleCountryClick = (c) => {
             })
         );
         updateStates();
+        // scroll to content
+        const target = $("#country-container");
+        if (target.length) {
+            $("html,body").animate(
+                {
+                    scrollTop: target.offset().top - 20, // with 20 upper padding
+                },
+                850
+            );
+            return false;
+        }
     }
 };
 
