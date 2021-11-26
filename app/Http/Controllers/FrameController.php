@@ -62,6 +62,10 @@ class FrameController extends Controller
         if(isset($request->country)) {
             $url .= '/' . $request->country;
         }
+        $partnership = '';
+        if(isset($request->partnership)) {
+            $url .= '/' . $request->partnership;
+        }
         return view('frames.frame-database', [
             'url' => $url . '/' . $request->start . '/' . $request->end,
             'start' => $request->start,

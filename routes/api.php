@@ -67,10 +67,10 @@ Route::get('/chart/{id}', 'Api\ChartController@chartsById');
 | DATATABLES API
 |
 */
-// unused
 Route::get('/datatables/{form_id}','Api\DataTableController@getDataPoints');
 Route::get('/datatables/{form_id}/{start}/{end}','Api\DataTableController@getDataPoints');
 Route::get('/datatables/{form_id}/{country}/{start}/{end}','Api\DataTableController@getDataPoints');
+Route::get('/datatables/{form_id}/{country}/{partnership}/{start}/{end}','Api\DataTableController@getDataPoints');
 
 
 /*

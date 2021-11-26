@@ -72,8 +72,47 @@ $(function () {
     );
 });
 
-/* DataTables API */
+/** Database Page */
+const changeSurveyPartnershipCode = (country, data, selectedId = false) => {
+    $("#select-partnership-survey option").remove();
+    let html = `<option data-tokens="all" value="" data-id="0">Select Partnership</options>`;
+    if (country !== "") {
+        data.forEach((d, i) => {
+            let selected = d.id === selectedId ? "selected" : "";
+            html +=
+                `<option ` +
+                selected +
+                ` data-tokens="` +
+                d.name +
+                `" data-id="` +
+                d.id +
+                `" value="` +
+                d.id +
+                `" style="max-width: 600px;">` +
+                titleCase(d.name) +
+                `</option>`;
+        });
+    }
+    $("#select-partnership-survey").append(html);
+    $("#select-partnership-survey").selectpicker("refresh");
+};
 
+$("#select-country-survey").on("change", (data) => {
+    if (data.target.value !== "") {
+        axios.get("/api/partnership/" + data.target.value).then((res) => {
+            changeSurveyPartnershipCode(data.target.value, res.data);
+        });
+        return;
+    }
+    $("#select-partnership-survey option").remove();
+    $("#select-partnership-survey").append(
+        `<option data-tokens="all" value="" data-id="0">Select Partnership</options>`
+    );
+    $("#select-partnership-survey").selectpicker("refresh");
+    return;
+});
+
+/* DataTables API */
 $(".btn.dropdown-toggle.btn-light").removeClass("btn-light");
 $(".btn.dropdown-toggle.btn-light").addClass("btn-primary");
 
@@ -89,6 +128,10 @@ $("#btn-data-inspect").click(() => {
     const country_select = $("#select-country-survey").val();
     if (country_select) {
         url += "/" + country_select;
+    }
+    const partnership_select = $("#select-partnership-survey").val();
+    if (partnership_select) {
+        url += "/" + partnership_select;
     }
     if (form_select === "") {
         $("#notable").modal("show");
@@ -111,6 +154,7 @@ $("#btn-data-download").on("click", () => {
         }
     }, 1000);
 });
+/** EOL Database page */
 
 $("#generate-reachreact-page").on("click", () => {
     let params = selectPicker();
@@ -245,7 +289,6 @@ $("#generate-report-link").on("click", () => {
     $("#myModalAuth").modal({ backdrop: "static", keyboard: false });
 
     generatePartnershipChart().then((res) => {
-        // console.log('get canvas');
         let todayDate = new Date().toISOString().slice(0, 10);
         let iframe = document.getElementsByTagName("iframe");
         let token = document.querySelector('meta[name="csrf-token"]').content;
@@ -306,7 +349,6 @@ $("#generate-report-link").on("click", () => {
                     "X-CSRF-TOKEN": token,
                 })
                 .then((res) => {
-                    // console.log(res);
                     $("#loader-spinner").remove();
                     $("#myModalAuthTitle").html("Report ready to download");
                     $("#myModalAuthBody").html(
