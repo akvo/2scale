@@ -499,3 +499,13 @@ img.d-block.w-100.home-carousel-img {
     height: 44px;
     padding: 0 1rem;
 }
+
+/* Customize database tab/page */
+/* Datatable button style */
+button.btn.btn-secondary.buttons-excel.buttons-html5,
+button.btn.btn-secondary.buttons-copy.buttons-html5 {
+    background: #3d588a !important;
+}
+button.btn.btn-secondary.buttons-collection.dropdown-toggle.buttons-colvis {
+    background: #609ba7 !important;
+}
