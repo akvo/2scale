@@ -41,6 +41,14 @@ body{
 #maps {
 	height: 500px;
 }
+.cover-container {
+    /* custom for this page */
+    padding: 1rem 1rem 0 1rem !important;
+}
+.more-information-text {
+    background: #eeeeee;
+    padding: 15px 0;
+}
 </style>
 
 <body>

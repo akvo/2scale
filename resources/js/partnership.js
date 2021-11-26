@@ -102,19 +102,21 @@ const renderTextVisual = async () => {
         .then((link) => {
             $("main").append(
                 <div
-                    class="row visual justify-content-center"
+                    class="row visual justify-content-center more-information-text"
                     style="visibility: hidden;"
                 >
-                    For more information about this partnership, visit the
-                    partnership page
-                    <a
-                        target="_blank"
-                        href={`${link}`}
-                        style="margin-left: 4px;"
-                    >
-                        here
-                    </a>
-                    .
+                    <div className="col-md-12">
+                        For more information about this partnership, visit the
+                        partnership page
+                        <a
+                            target="_blank"
+                            href={`${link}`}
+                            style="margin-left: 4px;"
+                        >
+                            here
+                        </a>
+                        .
+                    </div>
                 </div>
             );
         })
@@ -395,7 +397,7 @@ const groups = (x, i, dataLength) => {
                     {x.group}
                 </h3>
                 <div class="row">{uui(x, i)}</div>
-                {i === dataLength - 1 ? <hr /> : ""}
+                {/* {i === dataLength - 1 ? <hr /> : ""} */}
             </div>
         </div>
     );
