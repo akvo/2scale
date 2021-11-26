@@ -91,18 +91,21 @@ h1 {
 </head>
 <body class="text-center">
     <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-      </header>
+      {{-- <header class="masthead mb-auto">
+      </header> --}}
 
-      <main role="main" class="inner cover">
+      <main role="main" class="inner cover" style="margin-top: 25vh">
         <h1>Survey Forms & Database Explorer</h1>
       </main>
 
-      <footer class="mastfoot mt-auto">
+      {{-- <footer class="mastfoot mt-auto">
         <div class="inner">
           <p> The 2SCALE Program with implementing partners:<br><a href="https://ifdc.org" target="_blank">IFDC</a>, <a href="https://www.bopinc.org" target="_blank">Bop Inc</a> <a href="https://snv.org" target="_blank">SNV</a>. </p>
         </div>
-      </footer>
+      </footer> --}}
+    </div>
+    <div class="tmp-footer" style="position: absolute; bottom: 0; width: 100%;">
+        @include('components.footer')
     </div>
 </body>
 </html>

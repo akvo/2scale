@@ -306,7 +306,6 @@ getdata
 
         // new table headers with question groups
         createTable("#datatables", res, "head");
-        $("#loader-spinner").remove();
         return res;
     })
     .then((res) => {
@@ -318,6 +317,11 @@ getdata
             datatableOptions("#datatables", res);
         }
         return true;
+    })
+    .then((res) => {
+        // change footer style to relative
+        $("#loader-spinner").remove();
+        $(".tmp-footer")[0].style.position = "relative";
     });
 
 const datatableOptions = (id, res) => {
