@@ -154,6 +154,9 @@ $("#partnership-country").on("change", (data) => {
         axios.get("/api/partnership/" + data.target.value).then((res) => {
             changePartnershipCode(data.target.value, res.data);
         });
+        if (data.target.value == 0) {
+            $("#data-frame").attr("src", "/frame/partnership/0/0");
+        }
         return;
     }
     $("#partnership-code option").remove();

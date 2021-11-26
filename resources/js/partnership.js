@@ -14,10 +14,14 @@ const endpoints = [country_id, partnership_id].join("/");
 
 const handleNotFound = () => {
     $("#loader-spinner").remove();
+    const text =
+        country_id == 0 && partnership_id == 0
+            ? "No Data"
+            : "Partnership data not found.";
     $("main").append(
-        <div class="row" style="margin-top: 325px;">
+        <div class="row" style="margin-top: 30vh;">
             <div class="col-md-12">
-                <h5 class="text-center">Partnership data not found.</h5>
+                <h5 class="text-center">{text}</h5>
             </div>
         </div>
     );
