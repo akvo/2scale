@@ -61,6 +61,10 @@ const BarStack = (data, extra) => {
                 label: {
                     show: true,
                     position: "inside",
+                    formatter: function (params) {
+                        const { value } = params;
+                        return value ? formatNumber(value) : 0;
+                    },
                 },
                 barWidth: 50,
                 stack: "t",
@@ -102,7 +106,10 @@ const BarStack = (data, extra) => {
         },
         tooltip: {
             trigger: "item",
-            formatter: "{b}: {c}",
+            formatter: function (params) {
+                const { name, value } = params;
+                return `${name} : ${value ? formatNumber(value) : 0}`;
+            },
             backgroundColor: "#ffffff",
             ...TextStyle,
         },
