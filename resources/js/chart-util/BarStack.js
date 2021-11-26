@@ -6,6 +6,7 @@ import {
     Icons,
 } from "./chart-style.js";
 import _ from "lodash";
+import { formatNumber } from "../util.js";
 
 const BarStack = (data, extra) => {
     if (!data) {
@@ -35,7 +36,8 @@ const BarStack = (data, extra) => {
                                 )
                                 .find((d) => d.group === params.name);
                             if (total?.value) {
-                                return total.value + params.value;
+                                let sum = total.value + params.value;
+                                return formatNumber(sum);
                             }
                             return "";
                         },
