@@ -35,6 +35,8 @@
     </div> --}}
 </div>
 
+<div class="instruction-text-wrapper">Select Country/Partnership for details</div>
+
 <iframe id="data-frame" class="has-filter" src="/frame/partnership/0/0" frameborder=0 width="100%"></iframe>
 
 <!--Modal: modalCookie-->

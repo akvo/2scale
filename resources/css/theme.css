@@ -321,3 +321,10 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
         padding-top: 50px;
     }
 }
+
+.instruction-text-wrapper {
+    position: absolute;
+    top: 5.3rem;
+    right: 3rem;
+    font-size: 15px;
+}
