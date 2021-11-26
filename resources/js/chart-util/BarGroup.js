@@ -6,6 +6,8 @@ import {
     Icons,
 } from "./chart-style.js";
 import _ from "lodash";
+import { formatNumber } from "../util.js";
+import { param } from "jquery";
 
 const BarGroup = (data, extra) => {
     if (!data) {
@@ -29,6 +31,10 @@ const BarGroup = (data, extra) => {
                 label: {
                     show: true,
                     position: "top",
+                    formatter: function (params) {
+                        const { value } = params;
+                        return value ? formatNumber(value) : 0;
+                    },
                 },
                 type: "bar",
                 barWidth: 200 / x.length,
@@ -67,7 +73,12 @@ const BarGroup = (data, extra) => {
         },
         tooltip: {
             trigger: "item",
-            formatter: "{b}: {c}",
+            formatter: function (params) {
+                const { name, value, seriesName } = params;
+                return `<b>${name}</b><br>${seriesName}: ${
+                    value ? formatNumber(value) : 0
+                }`;
+            },
             backgroundColor: "#ffffff",
             ...TextStyle,
         },
