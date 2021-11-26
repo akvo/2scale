@@ -334,8 +334,9 @@ button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
 .instruction-text-wrapper {
     position: absolute;
     top: 5.3rem;
-    right: 3rem;
+    left: 3rem;
     font-size: 15px;
+    font-style: italic;
 }
 
 .select-dropdown-wrapper {

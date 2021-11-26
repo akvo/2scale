@@ -2,7 +2,7 @@
 
 @section ('content')
 
-<div class="bg-white shadow-sm flex-display selector-bar select-dropdown-wrapper">
+<div class="bg-white shadow-sm flex-display selector-bar select-dropdown-wrapper justify-content-center">
     <nav class="nav nav-md-4 nav-selector">
         <select id="partnership-country" class="selectpicker" data-style="" data-live-search="true">
             <option value="0">Select Country</option>
@@ -36,7 +36,7 @@
     </div> --}}
 </div>
 
-<div class="instruction-text-wrapper">Select Country/Partnership for details</div>
+<div class="instruction-text-wrapper">(Select Country/Partnership for details)</div>
 
 <iframe id="data-frame" class="has-filter" src="/frame/partnership/0/0" frameborder=0 width="100%"></iframe>
 
