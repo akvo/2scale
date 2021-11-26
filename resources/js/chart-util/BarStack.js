@@ -107,8 +107,10 @@ const BarStack = (data, extra) => {
         tooltip: {
             trigger: "item",
             formatter: function (params) {
-                const { name, value } = params;
-                return `${name} : ${value ? formatNumber(value) : 0}`;
+                const { name, value, seriesName } = params;
+                return `${name} : ${
+                    value ? formatNumber(value) : 0
+                } (${seriesName})`;
             },
             backgroundColor: "#ffffff",
             ...TextStyle,
