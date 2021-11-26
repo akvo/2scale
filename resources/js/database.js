@@ -228,6 +228,8 @@ $(document).on("click", "a.gtabs", function () {
 });
 
 const createaNavTab = (id, name, active = false) => {
+    name =
+        name.toLowerCase() === "all data" ? name : `${name} - (Repeat group)`;
     let cactive = active ? "active" : "";
     let ids = "gtabs-" + id;
     let tabs = '<li class="nav-item">';
