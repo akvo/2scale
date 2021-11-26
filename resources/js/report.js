@@ -139,7 +139,7 @@ $("main").append(
                             id="loader-test"
                         >
                             <form class="row form-inline">
-                                <div class="col-auto form-group required">
+                                <div class="col-auto form-group">
                                     <label class="control-label"></label>
                                     <select
                                         id="profile-country-level"
@@ -187,8 +187,11 @@ $("main").append("<div class='row' id='total-activities-row'></div>");
 // getCharts("report/total-activities", "total-activities-row", "12");
 
 // Rsr Datatables
-// renderRsrTableTemplate("datatables", "90%");
-// renderRsrTable(["0", "0"].join("/"), baseurl, "datatables");
+renderRsrTableTemplate("datatables", "65vh");
+renderRsrTable(["0", "0"].join("/"), baseurl, "datatables").then((res) => {
+    // refine footer style
+    $(".tmp-footer")[0].style.position = "relative";
+});
 
 // All of Event Function
 $("#country-level").on("change", () => {

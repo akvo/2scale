@@ -1,8 +1,5 @@
-import { CountUp } from "countup.js";
-import { staticText, gradients, titleCase } from "./util.js";
 import { db, storeDB } from "./dexie";
 
-const echarts = window.echarts;
 const axios = window.axios;
 const table = db.databases;
 const tableTitle = "Reported Values for Universal Impact Indicators";
@@ -555,7 +552,7 @@ export const datatableOptions = (id, res, baseurl) => {
         scrollY: "75vh",
         height: 400,
         paging: false,
-        fixedHeader: true,
+        // fixedHeader: true,
         // fixedColumns: true,
         scrollCollapse: true,
         autoWidth: true,
@@ -566,26 +563,8 @@ export const datatableOptions = (id, res, baseurl) => {
             { targets: 0, width: "12%" },
             {
                 targets: [
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    18,
-                    19,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                    17, 18, 19,
                 ],
                 visible: true,
             },
@@ -662,8 +641,8 @@ const formatDetails = (d) => {
 let html = "";
 let datas = {};
 let status = {};
-export const renderRsrTable = (endpoint, baseurl, datatableId) => {
-    return loadData(endpoint)
+export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
+    return await loadData(endpoint)
         .then((res) => {
             datas = res;
             // data refactoring
@@ -965,7 +944,7 @@ export const renderRsrTableTemplate = (datatableId, position, title = null) => {
                 </div>\
             </div>\
         </div>\
-        <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-top:25px; margin-bottom:50px;">\
+        <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin: 25px">\
             <div class="d-flex justify-content-center" id="loader-spinner-table">\
                 <div class="spinner-border text-primary loader-spinner" style="top:' +
             position +
