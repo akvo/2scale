@@ -38,6 +38,7 @@ const BarGroup = (data, extra) => {
                 },
                 type: "bar",
                 barWidth: 200 / x.length,
+                barGap: "35%",
                 data: x.map((v) => v.value),
             };
         })
@@ -92,8 +93,14 @@ const BarGroup = (data, extra) => {
                     padding: 5,
                     fontFamily: "MarkPro",
                     fontSize: 12,
+                    color: "#000",
                 },
                 axisLine: { show: false },
+                splitLine: {
+                    lineStyle: {
+                        color: "#c4c4c4",
+                    },
+                },
             },
         ],
         xAxis: {
@@ -101,13 +108,13 @@ const BarGroup = (data, extra) => {
             type: "category",
             axisLine: {
                 lineStyle: {
-                    color: "#ddd",
+                    color: "#c4c4c4",
                 },
             },
             axisLabel: {
                 fontFamily: "MarkPro",
                 fontSize: 12,
-                color: "#222",
+                color: "#000",
             },
         },
         series: series,

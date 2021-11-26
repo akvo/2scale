@@ -350,20 +350,18 @@ axios
     })
     .then((x) => {
         $("main").append(
-            <div class="row">
+            <div class="row even-row">
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
                         Target audiences reached with program activities
                     </h3>
-                    <div id="first-row"></div>
-                    <hr />
+                    <div id="first-row" class="row even-row"></div>
                 </div>
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
                         Progress on reach
                     </h3>
-                    <div id="second-row"></div>
-                    <hr />
+                    <div id="second-row" class="row odd-row"></div>
                 </div>
             </div>
         );
