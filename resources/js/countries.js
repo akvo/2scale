@@ -585,16 +585,20 @@ const updateFilter = (init = false) => {
 };
 
 const fetchData = () => {
-    axios.get("/api/rsr/country-data").then((res) => {
-        let filters = [];
-        const baseFilter = res.data.find((x) => x.country === "Burkina Faso");
-        const characters = genCharArray("a", "z");
-        baseFilter.data.forEach((x, xi) => {
-            x.childrens.forEach((c, ci) => {
-                let ctext = c?.tab ? c.tab.text : c.target_text;
-                let cchilds = [];
-                let cpath = genCharPath([xi, ci], characters);
-                /*
+    axios
+        .get("/api/rsr/country-data")
+        .then((res) => {
+            let filters = [];
+            const baseFilter = res.data.find(
+                (x) => x.country === "Burkina Faso"
+            );
+            const characters = genCharArray("a", "z");
+            baseFilter.data.forEach((x, xi) => {
+                x.childrens.forEach((c, ci) => {
+                    let ctext = c?.tab ? c.tab.text : c.target_text;
+                    let cchilds = [];
+                    let cpath = genCharPath([xi, ci], characters);
+                    /*
                 c?.dimensions?.forEach((d, di) => {
                     let dchilds = [];
                     let dpath = genCharPath([xi, ci, di], characters);
@@ -626,30 +630,34 @@ const fetchData = () => {
                     });
                 });
                 */
-                filters.push({
-                    name: c.uii,
-                    text: ctext,
-                    bold: c?.tab?.bold,
-                    parent: null,
-                    show: false,
-                    path: cpath,
-                    parentPath: null,
-                    pathName: `${x.group}|${c.uii}`,
-                    value: c?.actual_value,
-                    childrens: cchilds,
+                    filters.push({
+                        name: c.uii,
+                        text: ctext,
+                        bold: c?.tab?.bold,
+                        parent: null,
+                        show: false,
+                        path: cpath,
+                        parentPath: null,
+                        pathName: `${x.group}|${c.uii}`,
+                        value: c?.actual_value,
+                        childrens: cchilds,
+                    });
                 });
             });
+            countryStore.update((s) => {
+                s.data = res.data;
+                s.filters = uniqBy(filters, "name");
+                s.valuePath = "a";
+                s.selectedPath = null;
+            });
+            updateMapOptions();
+            updateFilter(true);
+        })
+        .then((res) => {
+            // change footer style to relative
+            $("#loader-spinner").remove();
+            $(".tmp-footer")[0].style.position = "relative";
         });
-        countryStore.update((s) => {
-            s.data = res.data;
-            s.filters = uniqBy(filters, "name");
-            s.valuePath = "a";
-            s.selectedPath = null;
-        });
-        updateMapOptions();
-        updateFilter(true);
-        $("#loader-spinner").remove();
-    });
 };
 
 const createMaps = () => {
