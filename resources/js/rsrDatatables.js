@@ -865,7 +865,7 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
             // html += '<td>&nbsp;</td>';
             html += '<td colspan="' + footerColspan + '">' + legend + "</td>";
             html += "</tr></tfoot>";
-            $("#" + datatableId).append(html);
+            $("#" + datatableId).html(html);
             return res;
         })
         .then((res) => {
@@ -932,9 +932,13 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
         });
 };
 
-export const renderRsrTableTemplate = (datatableId, position, title = null) => {
-    title = title ? title : tableTitle;
-    return $("main").append(
+export const renderRsrTableTemplate = async (
+    datatableId,
+    position,
+    title = null
+) => {
+    title = title !== null ? title : tableTitle;
+    return await $("main").append(
         '<div class="row">\
             <div class="col-md-12">\
                 <div class="card">\

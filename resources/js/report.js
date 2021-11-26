@@ -15,6 +15,7 @@ const renderReportForm = () => {
                     '<option value="' + c.id + '">' + c.name + "</option>";
                 $("#country-level").append(country_opt);
                 $("#profile-country-level").append(country_opt);
+                $("#uii-country-level").append(country_opt);
                 if (c.childrens.length > 0) {
                     c.childrens.forEach((p) => {
                         $("#partnership-level").append(
@@ -35,6 +36,15 @@ const renderReportForm = () => {
                                 p.name +
                                 "</option>"
                         );
+                        $("#uii-partnership-level").append(
+                            '<option class="uii-partnerships uii-ppp-' +
+                                c.id +
+                                '" value="' +
+                                p.id +
+                                '">' +
+                                p.name +
+                                "</option>"
+                        );
                     });
                 }
             });
@@ -42,6 +52,8 @@ const renderReportForm = () => {
         })
         .then((res) => {
             $(".partnerships").hide("fast");
+            $(".profile-partnerships").hide("fast");
+            $(".uii-partnerships").hide("fast");
         });
 };
 
@@ -129,7 +141,6 @@ $("main").append(
         <div class="row" id="second-row">
             <div class="col-md-12">
                 <div class="card">
-                    <div id="last-sync-temp"></div>
                     <div class="card-header">
                         <h3>Generate Partnership Profile Report</h3>
                     </div>
@@ -178,19 +189,71 @@ $("main").append(
             </div>
         </div>
         <hr />
+        <div class="row" id="uii-report-row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Reported Values for Universal Impact Indicators</h3>
+                    </div>
+                    <div class="card-body">
+                        <div
+                            class="d-flex justify-content-center align-items-center"
+                            id="loader-test"
+                        >
+                            <form class="row form-inline">
+                                <div class="col-auto form-group">
+                                    <label class="control-label"></label>
+                                    <select
+                                        id="uii-country-level"
+                                        class="form-control"
+                                    >
+                                        <option value="0" selected>
+                                            Select Country
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-auto form-group">
+                                    <label class="control-label"></label>
+                                    <select
+                                        id="uii-partnership-level"
+                                        class="form-control"
+                                        style="width: 250px;"
+                                    >
+                                        <option value="0" selected>
+                                            Select Partnership
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button
+                                        id="filter-uii-report"
+                                        type="button"
+                                        class="btn btn-sm btn-primary"
+                                        style="height:35px;"
+                                    >
+                                        Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 );
 renderReportForm();
 
-$("main").append("<div class='row' id='total-activities-row'></div>");
 /* total-activities Row Total Activities chart */
+// $("main").append("<div class='row' id='total-activities-row'></div>");
 // getCharts("report/total-activities", "total-activities-row", "12");
 
-// Rsr Datatables
-renderRsrTableTemplate("datatables", "65vh");
-renderRsrTable(["0", "0"].join("/"), baseurl, "datatables").then((res) => {
-    // refine footer style
-    $(".tmp-footer")[0].style.position = "relative";
+// Rsr Datatables / UII Report
+renderRsrTableTemplate("datatables", "68vh", "").then((res) => {
+    renderRsrTable(["0", "0"].join("/"), baseurl, "datatables").then((res) => {
+        // refine footer style
+        $(".tmp-footer")[0].style.position = "relative";
+    });
 });
 
 // All of Event Function
@@ -208,6 +271,13 @@ $("#profile-country-level").on("change", () => {
     $(".profile-ppp-" + country_id).show("fast");
 });
 
+$("#uii-country-level").on("change", () => {
+    let country_id = $("#uii-country-level").val();
+    $("#uii-partnership-level").val(0);
+    $(".uii-partnerships").hide("fast");
+    $(".uii-ppp-" + country_id).show("fast");
+});
+
 const showModalError = (response) => {
     $("#myModalAuthTitle").html("Error");
     $("#myModalAuthBody").html(
@@ -217,6 +287,22 @@ const showModalError = (response) => {
     );
     $("#myModalAuth").modal({ backdrop: "static", keyboard: false });
 };
+
+$("#filter-uii-report").on("click", () => {
+    let country_id = $("#uii-country-level").val();
+    let partnership_id = $("#uii-partnership-level").val();
+    $("#datatables")
+        .DataTable({
+            destroy: true,
+        })
+        .then((res) => {
+            renderRsrTable(
+                [country_id, partnership_id].join("/"),
+                baseurl,
+                "datatables"
+            ).then((res) => {});
+        });
+});
 
 $("#generate-word-report").on("click", () => {
     let country_id = $("#country-level").val();
