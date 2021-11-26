@@ -2,9 +2,9 @@
 
 @section ('content')
 
-<div class="bg-white shadow-sm flex-display selector-bar">
+<div class="bg-white shadow-sm flex-display selector-bar select-dropdown-wrapper">
     <nav class="nav nav-md-6 nav-selector">
-        <select id="select-database-survey" class="selectpicker" data-style="btn-pink" data-live-search="true">
+        <select id="select-database-survey" class="selectpicker" data-style="" data-live-search="true">
             <option value="">Select Survey</option>
             @foreach ($surveys['forms'] as $form)
               <optgroup label="{{ $form['name'] }}">
@@ -21,7 +21,7 @@
         </select>
     </nav>
     <nav class="nav nav-md-6 nav-selector">
-        <select id="select-country-survey" class="selectpicker" data-style="btn-pink" data-live-search="true">
+        <select id="select-country-survey" class="selectpicker" data-style="" data-live-search="true">
             <option value="">Select Country</option>
             @foreach($surveys["countries"] as $country)
             <option

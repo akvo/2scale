@@ -2,7 +2,7 @@
 
 @section ('content')
 
-<div class="bg-white shadow-sm flex-display selector-bar justify-content-center" style="border-bottom: 1px solid #ddd;">
+<div class="bg-white shadow-sm flex-display selector-bar select-dropdown-wrapper">
     <nav class="nav nav-md-4 nav-selector">
         <select id="partnership-country" class="selectpicker" data-style="" data-live-search="true">
             <option value="0">Select Country</option>

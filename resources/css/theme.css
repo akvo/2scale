@@ -272,10 +272,19 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     color: #fff;
     background-color: #a43332 !important;
 }
+.bootstrap-select > .dropdown-toggle.bs-placeholder {
+    color: #000;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+    color: #000;
+}
 .daterangepicker .ranges li.active,
 .dropdown-item.active,
 .dropdown-item:active {
     background-color: #a43332;
+}
+button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
+    background-color: #a43332 !important;
 }
 
 .footer {
@@ -327,4 +336,8 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     top: 5.3rem;
     right: 3rem;
     font-size: 15px;
+}
+
+.select-dropdown-wrapper {
+    border-bottom: 1px solid #ddd;
 }
