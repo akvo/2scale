@@ -417,13 +417,14 @@ h3#subtitle b {
 }
 .carousel-item.home-carousel-item {
     height: 100vh;
-    background: #000000;
+    background: #fff;
 }
 img.d-block.w-100.home-carousel-img {
     height: 100vh;
     min-height: 100vh;
-    object-fit: fill;
-    opacity: 0.6;
+    object-fit: cover;
+    object-position: top;
+    opacity: 1;
 }
 .carousel .carousel-control-next-icon,
 .carousel .carousel-control-prev-icon {
@@ -431,7 +432,7 @@ img.d-block.w-100.home-carousel-img {
     width: 50px;
 }
 .carousel-caption.d-none.d-md-block {
-    height: 60vh;
+    height: 68vh;
     width: 50%;
     text-align: left;
 }
