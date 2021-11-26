@@ -23,3 +23,6 @@ Route::get('/database/{form_id}/{country}/{partnership}/{start}/{end}', 'FrameCo
 
 Route::get('/support', 'FrameController@support');
 Route::get('/report', 'FrameController@report');
+
+// RSR
+Route::post('/rsr-report', 'Api\RsrReportController@generateReport');

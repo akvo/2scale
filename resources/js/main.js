@@ -270,6 +270,7 @@ const selectPicker = () => {
     return params;
 };
 
+// PROFILE GENERATOR
 $("#generate-report-link").on("click", () => {
     let country = $("#partnership-country").val();
     let code = $("#partnership-code").val();

@@ -66,7 +66,7 @@ body{
             </div>
         </div>
     </div>
-    <div class="mt-5">
+    <div class="tmp-footer" style="position: absolute; bottom: 0; width: 100%;">
         @include('components.footer')
     </div>
     <!-- Global Dependencies -->
@@ -80,6 +80,11 @@ body{
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/js/mdb.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/fh-3.1.6/kt-2.5.1/r-2.2.3/datatables.min.js"></script>
     <!-- Bootstrap Select -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <!-- Moment -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<!-- DateRangePicker -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="{{ mix('/js/report.js') }}"></script>
 </body>
 </html>
