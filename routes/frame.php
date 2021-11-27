@@ -23,6 +23,8 @@ Route::get('/database/{form_id}/{country}/{partnership}/{start}/{end}', 'FrameCo
 
 Route::get('/support', 'FrameController@support');
 Route::get('/report', 'FrameController@report');
+Route::get('/uii-datatable-report', 'FrameController@uiiDatatableReport');
+Route::get('/uii-datatable-report/{country_id}/{partnership_id}', 'FrameController@uiiDatatableReport');
 
 // RSR
 Route::post('/rsr-report', 'Api\RsrReportController@generateReport');

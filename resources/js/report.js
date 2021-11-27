@@ -195,11 +195,8 @@ $("main").append(
                     <div class="card-header">
                         <h3>Reported Values for Universal Impact Indicators</h3>
                     </div>
-                    <div class="card-body">
-                        <div
-                            class="d-flex justify-content-center align-items-center"
-                            id="loader-test"
-                        >
+                    <div class="card-body" id="uii-report-filter">
+                        <div class="d-flex justify-content-center align-items-center">
                             <form class="row form-inline">
                                 <div class="col-auto form-group">
                                     <label class="control-label"></label>
@@ -212,7 +209,7 @@ $("main").append(
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-auto form-group">
+                                {/* <div class="col-auto form-group">
                                     <label class="control-label"></label>
                                     <select
                                         id="uii-partnership-level"
@@ -223,7 +220,7 @@ $("main").append(
                                             Select Partnership
                                         </option>
                                     </select>
-                                </div>
+                                </div> */}
                                 <div class="col-auto">
                                     <button
                                         id="filter-uii-report"
@@ -238,6 +235,17 @@ $("main").append(
                         </div>
                     </div>
                 </div>
+                <div className="row" style="margin-top:-25px">
+                    <div className="col-md-12" style="width:100%">
+                        <iframe
+                            id="uii-report-data-frame"
+                            src="/frame/uii-datatable-report"
+                            frameborder={0}
+                            width="100%"
+                            style="min-width:100%;"
+                        ></iframe>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -247,14 +255,6 @@ renderReportForm();
 /* total-activities Row Total Activities chart */
 // $("main").append("<div class='row' id='total-activities-row'></div>");
 // getCharts("report/total-activities", "total-activities-row", "12");
-
-// Rsr Datatables / UII Report
-renderRsrTableTemplate("datatables", "68vh", "").then((res) => {
-    renderRsrTable(["0", "0"].join("/"), baseurl, "datatables").then((res) => {
-        // refine footer style
-        $(".tmp-footer")[0].style.position = "relative";
-    });
-});
 
 // All of Event Function
 $("#country-level").on("change", () => {
@@ -289,19 +289,15 @@ const showModalError = (response) => {
 };
 
 $("#filter-uii-report").on("click", () => {
+    window.document.getElementById("uii-report-filter").style.visibility =
+        "hidden";
+    window.document.getElementById("uii-report-data-frame").height = "100px";
     let country_id = $("#uii-country-level").val();
     let partnership_id = $("#uii-partnership-level").val();
-    $("#datatables")
-        .DataTable({
-            destroy: true,
-        })
-        .then((res) => {
-            renderRsrTable(
-                [country_id, partnership_id].join("/"),
-                baseurl,
-                "datatables"
-            ).then((res) => {});
-        });
+    $("#uii-report-data-frame").attr(
+        "src",
+        `/frame/uii-datatable-report/${country_id}/${partnership_id}`
+    );
 });
 
 $("#generate-word-report").on("click", () => {

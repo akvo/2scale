@@ -84,4 +84,12 @@ class FrameController extends Controller
         return view('frames.frame-report');
     }
 
+    public function uiiDatatableReport(Request $request)
+    {
+        return view('frames.frame-uii-datatable-report', [
+            'country_id' => $request->country_id,
+            'partnership_id' => $request->partnership_id,
+        ]);
+    }
+
 }
