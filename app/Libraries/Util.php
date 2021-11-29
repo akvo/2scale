@@ -92,7 +92,7 @@ class Util {
   {
     // Custom automate calculation
     $result = $data->transform(function ($d) {
-      $totalAchieved = $d["actual_value"];
+      $totalAchieved = isset($d["actual_value"]) ? $d["actual_value"] : 0;
       $dimension = collect($d["dimensions"])->first();
 
       if (
@@ -119,9 +119,21 @@ class Util {
         - % of women micro-entreprenuers accessing additional ((senior women+junior women) /total achieved *%)
         - % of youth micro-entreprenuers accessing additional ((junior men+junior women) /total achieved *%) */
 
-        $seniorWomenAchieved = self::findFirstDimensionValue($dimension, ["senior", "women"])["actual_value"];
-        $juniorWomenAchieved = self::findFirstDimensionValue($dimension, ["junior", "women"])["actual_value"];
-        $juniorMenAchieved = self::findFirstDimensionValue($dimension, ["junior", "men"])["actual_value"];
+        $seniorWomenAchieved = 0;
+        $seniorWomenAchievedValue = self::findFirstDimensionValue($dimension, ["senior", "women"]);
+        if (isset($seniorWomenAchievedValue["actual_value"])) {
+          $seniorWomenAchieved = $seniorWomenAchievedValue["actual_value"];
+        }
+        $juniorWomenAchieved = 0;
+        $juniorWomenAchievedValue = self::findFirstDimensionValue($dimension, ["junior", "women"]);
+        if (isset($juniorWomenAchievedValue["actual_value"])) {
+          $juniorWomenAchieved = $juniorWomenAchievedValue["actual_value"];
+        }
+        $juniorMenAchieved = 0;
+        $juniorMenAchievedValue = self::findFirstDimensionValue($dimension, ["junior", "men"]);
+        if (isset($juniorMenAchievedValue["actual_value"])) {
+          $juniorMenAchieved = $juniorMenAchievedValue["actual_value"];
+        }
         $womenShf = $totalAchieved ? ($seniorWomenAchieved + $juniorWomenAchieved) / $totalAchieved : 0;
         $youthShf = $totalAchieved ? ($juniorMenAchieved + $juniorWomenAchieved) / $totalAchieved : 0;
         $d["automate_calculation"] = [
@@ -140,7 +152,11 @@ class Util {
       if (Str::contains($d['uii'], "UII-4") || Str::contains($d['uii'], "UII4")) {
         /* ## SMEs
         - % of women-led SMEs ((women-led SMEs/total achieved*%)) */
-        $womenLedAchieved = self::findFirstDimensionValue($dimension, ["female-led", "owned"])["actual_value"];
+        $womenLedAchieved = 0;
+        $womenLedAchievedValue = self::findFirstDimensionValue($dimension, ["female-led", "owned"]);
+        if (isset($womenLedAchievedValue["actual_value"])) {
+          $womenLedAchieved = $womenLedAchievedValue["actual_value"];
+        }
         $womenSmes = $totalAchieved ? $womenLedAchieved / $totalAchieved : 0;
         $d["automate_calculation"] = [
           [
