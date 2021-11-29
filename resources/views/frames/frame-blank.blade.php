@@ -101,6 +101,9 @@ h1 {
         @if ($page === 'partnership')
             <h1>Select country and partnership for information about partnerships in 2SCALE.</h1>
         @endif
+        @if ($page === 'database')
+            <h1>Database Explorer</h1>
+        @endif
       </main>
 
       {{-- <footer class="mastfoot mt-auto">

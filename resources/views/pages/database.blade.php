@@ -5,7 +5,7 @@
 <div class="bg-white shadow-sm flex-display selector-bar select-dropdown-wrapper">
     <nav class="nav nav-md-6 nav-selector">
         <select id="select-database-survey" class="selectpicker" data-style="" data-live-search="true">
-            <option value="">Select Survey</option>
+            <option value="">Select Survey Form</option>
             @foreach ($surveys['forms'] as $form)
               <optgroup label="{{ $form['name'] }}">
                 @foreach($form["list"] as $list)
@@ -62,7 +62,7 @@
     </nav>
 </div>
 
-<iframe id="data-frame" src="/frame/blank" class="has-filter" frameborder=0 width="100%"></iframe>
+<iframe id="data-frame" src="/frame/blank/database" class="has-filter" frameborder=0 width="100%"></iframe>
 
 <!--Modal: modalCookie-->
 <div class="modal fade top" id="notable" tabindex="-1" role="dialog" aria-labelledby="notable" aria-hidden="true" data-backdrop="true">

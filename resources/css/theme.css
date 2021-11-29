@@ -342,3 +342,23 @@ button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
 .select-dropdown-wrapper {
     border-bottom: 1px solid #ddd;
 }
+
+/* change color button datepicker etc to 2scale color */
+button.cancelBtn.btn.btn-sm.btn-default {
+    background: #609ba7 !important;
+}
+button.applyBtn.btn.btn-sm.btn-primary {
+    background: #3d588a !important;
+}
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background-color: #3d588a;
+    border-color: transparent;
+    color: #fff;
+}
+.daterangepicker td.in-range {
+    background-color: #ebf4f8;
+    border-color: transparent;
+    color: #000;
+    border-radius: 0;
+}
