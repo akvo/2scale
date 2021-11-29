@@ -696,7 +696,9 @@ $("main").append(
             </h2>
             <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>
-            <div class="map-notation">Click country to show details</div>
+            <div class="map-notation">
+                Click on the country to view details below
+            </div>
         </div>
         <div id="country-container"></div>
         <div class="col-md-12" id="display"></div>
