@@ -59,6 +59,7 @@ const renderReportForm = () => {
 
 targetAndLastSync().then((el) => {
     $("#last-sync-temp").append(el);
+    $("#last-sync-temp-uii").append(`(${el.innerText})`);
 });
 
 $("main").append(
@@ -69,7 +70,8 @@ $("main").append(
                 <div class="card">
                     <div id="last-sync-temp"></div>
                     <div class="card-header">
-                        <h3>Generate Internal Report</h3>
+                        <h3>Generate Internal Report Template</h3>
+                        <h6>include country and partnership filter</h6>
                     </div>
                     <div class="card-body">
                         <div
@@ -142,7 +144,8 @@ $("main").append(
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Generate Partnership Profile Report</h3>
+                        <h3>Partnership Report Generator</h3>
+                        <h6>include country, partnership filter</h6>
                     </div>
                     <div class="card-body">
                         <div
@@ -193,7 +196,11 @@ $("main").append(
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Reported Values for Universal Impact Indicators</h3>
+                        <h3>Table: UII Targets and Achievements</h3>
+                        <h6>
+                            <span id="last-sync-temp-uii"></span> - include
+                            country filter
+                        </h6>
                     </div>
                     <div class="card-body" id="uii-report-filter">
                         <div class="d-flex justify-content-center align-items-center">
