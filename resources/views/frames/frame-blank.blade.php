@@ -35,11 +35,11 @@ body {
 }
 
 .cover-container {
-  max-width: 42em;
+  max-width: 52em;
 }
 
 h1 {
-    font-weight: 100;
+    font-weight: 75;
 }
 
 .masthead {
@@ -95,7 +95,12 @@ h1 {
       </header> --}}
 
       <main role="main" class="inner cover" style="margin-top: 25vh">
-        <h1>Survey Forms & Database Explorer</h1>
+        @if ($page === 'default')
+            <h1>Survey Forms & Database Explorer</h1>
+        @endif
+        @if ($page === 'partnership')
+            <h1>Select country and partnership for information about partnerships in 2SCALE.</h1>
+        @endif
       </main>
 
       {{-- <footer class="mastfoot mt-auto">

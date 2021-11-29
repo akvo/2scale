@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 
 class FrameController extends Controller
 {
-	public function blank()
+	public function blank(Request $request)
     {
-        return view('frames.frame-blank');
+        $page = 'default';
+        if (isset($request->page)) {
+            $page = $request->page;
+        }
+        return view('frames.frame-blank', ['page' => strtolower($page)]);
 	}
 
 	public function undermaintenance()

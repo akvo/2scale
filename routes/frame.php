@@ -6,6 +6,7 @@
 */
 
 Route::get('/blank', 'FrameController@blank');
+Route::get('/blank/{page}', 'FrameController@blank');
 Route::get('/undermaintenance', 'FrameController@undermaintenance');
 
 Route::get('/home', 'FrameController@home');

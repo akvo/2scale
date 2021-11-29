@@ -16,7 +16,7 @@ const handleNotFound = () => {
     $("#loader-spinner").remove();
     const text =
         country_id == 0 && partnership_id == 0
-            ? "No Data"
+            ? "Select country and partnership for information about partnerships in 2SCALE."
             : "Partnership data not found.";
     $("main").append(
         <div class="row" style="margin-top: 30vh;">

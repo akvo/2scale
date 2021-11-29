@@ -233,7 +233,8 @@ if (window.location.pathname === "/partnership") {
         }
         return;
     });
-    loadDefaultPartnership();
+    // Disable load default partnership
+    // loadDefaultPartnership();
 }
 
 // * Old partnership page for generate pdf report
