@@ -81,7 +81,7 @@ return [
                 'text' => 'SMEs driving inclusive business in target industries (50% women-led/women-owned)',
                 'bold' => 'SMEs '
             ],
-            'target_text' => '##number## SMEs ­driving inclusive business in target industries (125 women-led/women-owned).',
+            'target_text' => '##number## SMEs ­driving inclusive business in target industries (50% women-led/women-owned).',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -96,7 +96,7 @@ return [
                 'text' => 'Non-farming jobs in targeted agribusiness clusters and value chains.(50% women, 40% youth)',
                 'bold' => 'Non-farming jobs '
             ],
-            'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000 youth).',
+            'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (50% women; 40% youth).',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
@@ -111,7 +111,7 @@ return [
                 'text' => 'Micro entrepreneurs/SMEs associated with partnerships. (50% women-led/women-owned and 40% young entrepreneurs)',
                 'bold' => 'Micro entrepreneurs/SMEs '
             ],
-            'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
+            'target_text' => '##number## micro entrepreneurs/SMEs (50% women-led/women-owned, 40% young entrepreneurs) associated with partnerships.',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
