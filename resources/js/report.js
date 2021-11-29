@@ -242,7 +242,7 @@ $("main").append(
                             src="/frame/uii-datatable-report"
                             frameborder={0}
                             width="100%"
-                            style="min-width:100%;"
+                            style="min-width:100%; min-height: 950px;"
                         ></iframe>
                     </div>
                 </div>
@@ -291,12 +291,13 @@ const showModalError = (response) => {
 $("#filter-uii-report").on("click", () => {
     window.document.getElementById("uii-report-filter").style.visibility =
         "hidden";
-    window.document.getElementById("uii-report-data-frame").height = "100px";
+    window.document.getElementById("uii-report-data-frame").style.minHeight =
+        "950px";
     let country_id = $("#uii-country-level").val();
     let partnership_id = $("#uii-partnership-level").val();
     $("#uii-report-data-frame").attr(
         "src",
-        `/frame/uii-datatable-report/${country_id}/${partnership_id}`
+        `/frame/uii-datatable-report/${country_id}/${partnership_id || null}`
     );
 });
 
