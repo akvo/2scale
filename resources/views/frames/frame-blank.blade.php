@@ -104,6 +104,9 @@ h1 {
         @if ($page === 'database')
             <h1>Database Explorer</h1>
         @endif
+        @if ($page === 'survey')
+            <h1>Survey Forms Explorer</h1>
+        @endif
       </main>
 
       {{-- <footer class="mastfoot mt-auto">

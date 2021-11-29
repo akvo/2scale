@@ -2,9 +2,9 @@
 
 @section ('content')
 
-<div class="bg-white shadow-sm flex-display selector-bar select-dropdown-wrapper">
+<div class="bg-white shadow-sm flex-display selector-bar justify-content-center select-dropdown-wrapper">
 @if(!isset($saved_survey))
-	<nav class="nav nav-md-6 nav-selector">
+	<nav class="nav nav-md-4 nav-selector">
         <select id="survey-parent" class="selectpicker" data-style="" data-live-search="true">
 		  <option value="select-init">Select Category</option>
             @foreach($surveys['forms'] as $index => $form)
@@ -15,7 +15,7 @@
             @endforeach
 		</select>
 	</nav>
-	<nav class="nav nav-md-6 nav-selector">
+	<nav class="nav nav-md-4 nav-selector">
         <select data-url="{{ $surveys['url'] }}" id="select-survey" data-style="" class="selectpicker" data-live-search="true">
             <option id="survey-init" value="survey-init">Select Questionnaire</option>
             @php
@@ -45,10 +45,12 @@
 @endif
 </div>
 
+<div class="instruction-text-wrapper">(Select the survey form and proceed with data capturing)</div>
+
 @if(isset($saved_survey))
 <iframe id="akvo-flow-web" class="has-filter" src="{{ $saved_survey }}" frameborder=0 width="100%" ></iframe>
 @else
-<iframe id="akvo-flow-web" class="has-filter" src="/frame/blank" frameborder=0 width="100%"></iframe>
+<iframe id="akvo-flow-web" class="has-filter" src="/frame/blank/survey" frameborder=0 width="100%"></iframe>
 @endif
 
 @endsection
