@@ -29,11 +29,16 @@ body {
 }
 .cover {
     padding: 0 1.5rem;
+    min-height: 78vh;
 }
 .cover .btn-lg {
     padding: .75rem 1.25rem;
     font-weight: 700;
-} */
+}
+.md-form textarea.md-textarea {
+    padding: 45px 0;
+    overflow-y: hidden;
+}
 </style>
 </head>
 <body class="text-center">
@@ -44,10 +49,10 @@ body {
             <section class="container mb-2" style="margin-top: 35px">
 
                 <!--Section heading-->
-                <h2 class="h1-responsive font-weight-bold text-center my-4">Report Issue</h2>
+                <h3 class="h1-responsive font-weight-bold text-center my-4">How can we help you?</h3>
                 <!--Section description-->
 
-                <div class="row d-flex justify-content-center">
+                <div class="row d-flex justify-content-center" style="margin-top: 75px">
 
                     <!--Grid column-->
                     <div class="col-md-10 mb-md-0 mb-5">

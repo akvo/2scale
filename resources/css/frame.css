@@ -523,3 +523,7 @@ button.btn.btn-secondary.buttons-collection.dropdown-toggle.buttons-colvis {
     top: auto;
     visibility: hidden;
 } */
+
+main.inner.cover {
+    min-height: 78vh;
+}
