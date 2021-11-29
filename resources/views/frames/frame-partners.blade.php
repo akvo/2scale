@@ -77,7 +77,7 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
         </select>
     </nav>
     <div class="d-flex justify-content-center mt-2">
-        <small class="text-muted">Actors collaborating within the partnerships</small>
+        <h6>Actors collaborating within the partnerships</h6>
     </div>
 </div>
     <!-- End Jumbotron-->

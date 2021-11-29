@@ -659,8 +659,8 @@ class ChartController extends Controller
             "name" => "2SCALE",
             "value" => "Global",
             "children" => $organisation,
-            "itemStyle" => array("color" => "#a43332"),
-            "label" => array("fontSize" => 12),
+            "itemStyle" => array("color" => "#3b3b3b"),
+            "label" => array("fontSize" => 14),
         );
         if (count($organisation)) {
             $result["tooltip"] = array("formatter" => "Click to expand/collapse");
