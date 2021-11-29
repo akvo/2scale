@@ -228,7 +228,7 @@ $("main").append(
                                         class="btn btn-sm btn-primary"
                                         style="height:35px;"
                                     >
-                                        Filter
+                                        Generate
                                     </button>
                                 </div>
                             </form>
@@ -242,7 +242,7 @@ $("main").append(
                             src="/frame/uii-datatable-report"
                             frameborder={0}
                             width="100%"
-                            style="min-width:100%; min-height: 950px;"
+                            style="min-width:100%; min-height: 175px;"
                         ></iframe>
                     </div>
                 </div>
@@ -289,8 +289,8 @@ const showModalError = (response) => {
 };
 
 $("#filter-uii-report").on("click", () => {
-    window.document.getElementById("uii-report-filter").style.visibility =
-        "hidden";
+    // window.document.getElementById("uii-report-filter").style.visibility =
+    //     "hidden";
     window.document.getElementById("uii-report-data-frame").style.minHeight =
         "950px";
     let country_id = $("#uii-country-level").val();

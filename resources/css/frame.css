@@ -512,10 +512,10 @@ button.btn.btn-secondary.buttons-collection.dropdown-toggle.buttons-colvis {
 
 /* Customize RSR UII Report */
 /* RSR UII filter style */
-div#uii-report-filter {
+/* div#uii-report-filter {
     margin-top: 100px;
     position: absolute;
     left: 25px;
     top: auto;
     visibility: hidden;
-}
+} */
