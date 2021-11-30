@@ -383,6 +383,8 @@ class SyncController extends Controller
             $instance_id = (int) $datapoints['id'];
             $datapoint_id = (int) $datapoints['dataPointId'];
             $submission_date = $datapoints['submissionDate'];
+            $device_identifier = $datapoints['deviceIdentifier'];
+            $submitter = $datapoints['submitter'];
             $partner = collect();
             $group = collect($datapoints['responses'])
                 ->flatten(1)
@@ -477,6 +479,8 @@ class SyncController extends Controller
                             'form_id' => $form['form_id'],
                             'name' => $form['name'],
                             'instance_id' => $instance_id,
+                            'submission_date' => date('Y-m-d', strtotime($submission_date)),
+                            'submitter' => $submitter,
                         )
                     );
                 }
@@ -605,6 +609,8 @@ class SyncController extends Controller
         }
         if ($status === 'error') {
             $thead .= '<th>Instance id</th>';
+            $thead .= '<th>Submitter</th>';
+            $thead .= '<th>Submission Date</th>';
         }
         $thead .= '</tr>';
 
@@ -624,6 +630,8 @@ class SyncController extends Controller
             }
             if ($status === 'error') {
                 $tbody .= '<td>'.$x['instance_id'].'</td>';
+                $tbody .= '<td>'.$x['submitter'].'</td>';
+                $tbody .= '<td>'.$x['submission_date'].'</td>';
             }
             $tbody .= '</tr>';
         }
@@ -639,8 +647,7 @@ class SyncController extends Controller
 
     private function sendEmail($subject, $html)
     {
-        $mails = ['joy@akvo.org', 'deden@akvo.org', 'galih@akvo.org'];
-        // $mails = ['galih@akvo.org'];
+        $mails = explode(",", config('mail.sync_recipients'));
         $recipients = collect();
         collect($mails)->each(function ($mail) use ($recipients) {
             $recipients->push(['Email' => $mail]);
