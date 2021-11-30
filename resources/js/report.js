@@ -83,10 +83,12 @@ $("main").append(
                                     <label class="control-label"></label>
                                     <select
                                         id="country-level"
-                                        class="form-control"
+                                        class="form-control selectpicker"
                                     >
                                         <option value="0" selected>
-                                            Select Country (CTL)
+                                            <div class="test">
+                                                Select Country (CTL)
+                                            </div>
                                         </option>
                                     </select>
                                 </div>
@@ -94,7 +96,7 @@ $("main").append(
                                     <label class="control-label"></label>
                                     <select
                                         id="partnership-level"
-                                        class="form-control"
+                                        class="form-control selectpicker"
                                     >
                                         <option value="0" selected>
                                             Select Partnership (PF)
@@ -103,7 +105,10 @@ $("main").append(
                                 </div>
                                 <div class="col-auto form-group required">
                                     <label class="control-label"></label>
-                                    <select id="year" class="form-control">
+                                    <select
+                                        id="year"
+                                        class="form-control selectpicker"
+                                    >
                                         <option value="0" selected>
                                             Year
                                         </option>
@@ -114,7 +119,10 @@ $("main").append(
                                 </div>
                                 <div class="col-auto form-group required">
                                     <label class="control-label"></label>
-                                    <select id="selector" class="form-control">
+                                    <select
+                                        id="selector"
+                                        class="form-control selectpicker"
+                                    >
                                         <option value="0" selected>
                                             Report Selector
                                         </option>
@@ -127,8 +135,7 @@ $("main").append(
                                     <button
                                         id="generate-word-report"
                                         type="button"
-                                        class="btn btn-sm btn-primary"
-                                        style="height:35px;"
+                                        class="btn btn-primary btn-report"
                                     >
                                         Download
                                     </button>
@@ -157,7 +164,7 @@ $("main").append(
                                     <label class="control-label"></label>
                                     <select
                                         id="profile-country-level"
-                                        class="form-control"
+                                        class="form-control selectpicker"
                                     >
                                         <option value="0" selected>
                                             Select Country
@@ -168,7 +175,7 @@ $("main").append(
                                     <label class="control-label"></label>
                                     <select
                                         id="profile-partnership-level"
-                                        class="form-control"
+                                        class="form-control selectpicker"
                                     >
                                         <option value="0" selected>
                                             Select Partnership
@@ -179,8 +186,7 @@ $("main").append(
                                     <button
                                         id="generate-partnership-profile-report"
                                         type="button"
-                                        class="btn btn-sm btn-primary"
-                                        style="height:35px;"
+                                        class="btn btn-primary btn-report"
                                     >
                                         Download
                                     </button>
@@ -209,7 +215,7 @@ $("main").append(
                                     <label class="control-label"></label>
                                     <select
                                         id="uii-country-level"
-                                        class="form-control"
+                                        class="form-control selectpicker"
                                     >
                                         <option value="0" selected>
                                             Select Country
@@ -220,7 +226,7 @@ $("main").append(
                                     <label class="control-label"></label>
                                     <select
                                         id="uii-partnership-level"
-                                        class="form-control"
+                                        class="form-control selectpicker"
                                         style="width: 250px;"
                                     >
                                         <option value="0" selected>
@@ -232,8 +238,7 @@ $("main").append(
                                     <button
                                         id="filter-uii-report"
                                         type="button"
-                                        class="btn btn-sm btn-primary"
-                                        style="height:35px;"
+                                        class="btn btn-primary btn-report"
                                     >
                                         Generate
                                     </button>

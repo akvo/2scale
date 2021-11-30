@@ -503,7 +503,8 @@ img.d-block.w-100.home-carousel-img {
 /* Customize database tab/page */
 /* Datatable button style */
 button.btn.btn-secondary.buttons-excel.buttons-html5,
-button.btn.btn-secondary.buttons-copy.buttons-html5 {
+button.btn.btn-secondary.buttons-copy.buttons-html5,
+button.btn.btn-secondary.buttons-print {
     background: #3d588a !important;
 }
 button.btn.btn-secondary.buttons-collection.dropdown-toggle.buttons-colvis {
@@ -524,6 +525,89 @@ button.btn.btn-secondary.buttons-collection.dropdown-toggle.buttons-colvis {
     visibility: hidden;
 } */
 
+/* set def height to page */
 main.inner.cover {
     min-height: 78vh;
+}
+
+/* selectpicker style custom */
+.btn {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+nav.nav button {
+    width: 20%;
+}
+nav.nav-md-6 {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    text-align: center;
+}
+.bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+    width: 100%;
+}
+nav.nav-selector {
+    padding-left: 10px;
+}
+nav span {
+    display: block !important;
+    min-width: 50%;
+    width: -webkit-calc(100% - 180px);
+    width: -moz-calc(100% - 180px);
+    width: calc(100% - 180px);
+}
+nav span input {
+    width: 100%;
+}
+nav span.daterange {
+    min-width: auto;
+    width: auto;
+}
+span.daterange {
+    background-color: #f8f9fa !important;
+    box-shadow: none;
+    cursor: unset;
+}
+span.daterange:hover {
+    box-shadow: none;
+}
+span.daterange::after {
+    display: none;
+}
+input.btn.dropdown-toggle.btn-light {
+    width: 200px;
+    text-align: left;
+    border: none;
+}
+.bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn):focus {
+    outline: none;
+}
+button.btn.dropdown-toggle.btn-pink.bs-placeholder {
+    color: #fff;
+    background-color: #a43332 !important;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder {
+    color: #000;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+    color: #000;
+}
+.daterangepicker .ranges li.active,
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: #a43332;
+}
+button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
+    background-color: #a43332 !important;
+}
+
+.form-inline {
+    margin-left: -9rem;
+}
+
+.btn.btn-report {
+    position: absolute;
+    font-size: 0.7rem;
+    top: -1.1rem;
 }
