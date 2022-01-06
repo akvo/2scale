@@ -35,11 +35,11 @@ body {
 }
 
 .cover-container {
-  max-width: 42em;
+  max-width: 52em;
 }
 
 h1 {
-    font-weight: 100;
+    font-weight: 75;
 }
 
 .masthead {
@@ -91,18 +91,32 @@ h1 {
 </head>
 <body class="text-center">
     <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-      </header>
+      {{-- <header class="masthead mb-auto">
+      </header> --}}
 
-      <main role="main" class="inner cover">
-        <h1>Survey Forms & Database Explorer</h1>
+      <main role="main" class="inner cover" style="margin-top: 25vh">
+        @if ($page === 'default')
+            <h1>Survey Forms & Database Explorer</h1>
+        @endif
+        @if ($page === 'partnership')
+            <h1>Select country and partnership for information about partnerships in 2SCALE.</h1>
+        @endif
+        @if ($page === 'database')
+            <h1>Database Explorer</h1>
+        @endif
+        @if ($page === 'survey')
+            <h1>Survey Forms Explorer</h1>
+        @endif
       </main>
 
-      <footer class="mastfoot mt-auto">
+      {{-- <footer class="mastfoot mt-auto">
         <div class="inner">
           <p> The 2SCALE Program with implementing partners:<br><a href="https://ifdc.org" target="_blank">IFDC</a>, <a href="https://www.bopinc.org" target="_blank">Bop Inc</a> <a href="https://snv.org" target="_blank">SNV</a>. </p>
         </div>
-      </footer>
+      </footer> --}}
+    </div>
+    <div class="tmp-footer" style="position: absolute; bottom: 0; width: 100%;">
+        @include('components.footer')
     </div>
 </body>
 </html>

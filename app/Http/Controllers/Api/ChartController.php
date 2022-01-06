@@ -612,44 +612,60 @@ class ChartController extends Controller
         $organisation = collect($organisation)->groupBy('country')->map(function($data, $country){
             $partnership = $data->groupBy("partnership")->map(function($data, $partnership) {
                 $projects = $data->groupBy("projects")->map(function($data, $project){
-                    return array(
+                    $result = array(
                         "name" => $project,
                         "value" => "projects",
                         "children" => $data->map(function($data){
                             return array(
                                 "name" => str_replace('_',' ', $data["organisation"]),
                                 "value" => "organisation",
-                                "itemStyle" => array("color" => "#ff4444"),
-                                "label" => array("fontSize" => 10),
+                                "itemStyle" => array("color" => "#609ba7"),
+                                "label" => array("fontSize" => 12),
                             );
                         }),
-                        "itemStyle" => array("color" => "#ffbb33"),
-                        "label" => array("fontSize" => 10)
+                        "itemStyle" => array("color" => "#a43332"),
+                        "label" => array("fontSize" => 12),
                     );
+                    if (count($data)) {
+                        $result["tooltip"] = array("formatter" => "Click to expand/collapse");
+                    }
+                    return $result;
                 })->values();
-                return array(
+                $result = array(
                     "name" => $partnership,
                     "value" => "partnership",
                     "children" => $projects,
-                    "itemStyle" => array("color" => "#00C851"),
+                    "itemStyle" => array("color" => "#3b3b3b"),
                     "label" => array("fontSize" => 12),
                 );
+                if (count($projects)) {
+                    $result["tooltip"] = array("formatter" => "Click to expand/collapse");
+                }
+                return $result;
             })->values();
-            return array(
+            $result = array(
                 "name" => $country,
                 "value" => "countries",
                 "children" => $partnership,
-                "itemStyle" => array("color" => "#33b5e5"),
-                "label" => array("fontSize" =>  14),
+                "itemStyle" => array("color" => "#609ba7"),
+                "label" => array("fontSize" =>  12),
             );
+            if (count($partnership)) {
+                $result["tooltip"] = array("formatter" => "Click to expand/collapse");
+            }
+            return $result;
         })->values();
-        return array(
+        $result = array(
             "name" => "2SCALE",
             "value" => "Global",
             "children" => $organisation,
-            "itemStyle" => array("color" => "#aa66cc"),
-            "label" => array("fontSize" => 16),
+            "itemStyle" => array("color" => "#3b3b3b"),
+            "label" => array("fontSize" => 14),
         );
+        if (count($organisation)) {
+            $result["tooltip"] = array("formatter" => "Click to expand/collapse");
+        }
+        return $result;
 	}
 
     private function filterQuery($request) {

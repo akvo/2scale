@@ -238,13 +238,20 @@ class PartnershipPageController extends Controller
                 'target_value' => $chart['target_value'],
                 'actual_value' => $chart['actual_value'],
                 'dimensions' => $chart['dimensions'],
+                'chart_title' => $chart['chart_title'],
             ];
         })->reject(function ($c) {
             return $c['actual_value'] <= floatVal(0);
-        })->groupBy('group')->transform(function ($g, $k) {
+        })->groupBy('group')->transform(function ($res, $key) {
+            // UII8 Modification to show all dimension target/achieve value
+            $childs = Util::transformUii8Value($res, "UII8", true, false);
+
+            // Custom automate calculation
+            $childs = Util::addUiiAutomateCalculation($childs);
+
             return [
-                'group' => $k,
-                'childrens' => $g
+                'group' => $key,
+                'childrens' => $childs
             ];
         })->values();
 
@@ -329,7 +336,7 @@ class PartnershipPageController extends Controller
             $name = "Smallholder farmers accessing finances";
         }
         if (Str::contains($name, "Number of newly added micro-entrepreneurs")) {
-            $name = "Micro-entreprenuers accessing finances";
+            $name = "Micro-entrepreneurs accessing finances";
         }
         if (Str::contains($name, "Number of newly added SMEs")) {
             $name = "SMEs accessing finances";

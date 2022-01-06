@@ -26,6 +26,7 @@ const endpoints = [country_id, partnership_id, start_date, end_date].join("/");
 // Table container
 renderRsrTableTemplate("datatables", "15%");
 
+// PROFILE REPORT GENERATOR
 // put a div (hidden) to store the charts for pdf report
 $("main").append(
     "<div id='chart-report-container' class='invisible' style='margin-top:-999rem'></div>"
@@ -60,6 +61,7 @@ getCharts(
     "12",
     "age-category"
 );
+// EOL PROFILE REPORT GENERATOR
 
 renderRsrTable([country_id, partnership_id].join("/"), baseurl, "datatables");
 

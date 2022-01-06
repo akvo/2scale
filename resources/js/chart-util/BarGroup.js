@@ -6,6 +6,8 @@ import {
     Icons,
 } from "./chart-style.js";
 import _ from "lodash";
+import { formatNumber } from "../util.js";
+import { param } from "jquery";
 
 const BarGroup = (data, extra) => {
     if (!data) {
@@ -29,9 +31,14 @@ const BarGroup = (data, extra) => {
                 label: {
                     show: true,
                     position: "top",
+                    formatter: function (params) {
+                        const { value } = params;
+                        return value ? formatNumber(value) : 0;
+                    },
                 },
                 type: "bar",
                 barWidth: 200 / x.length,
+                barGap: "35%",
                 data: x.map((v) => v.value),
             };
         })
@@ -67,7 +74,12 @@ const BarGroup = (data, extra) => {
         },
         tooltip: {
             trigger: "item",
-            formatter: "{b}: {c}",
+            formatter: function (params) {
+                const { name, value, seriesName } = params;
+                return `<b>${name}</b><br>${seriesName}: ${
+                    value ? formatNumber(value) : 0
+                }`;
+            },
             backgroundColor: "#ffffff",
             ...TextStyle,
         },
@@ -81,8 +93,14 @@ const BarGroup = (data, extra) => {
                     padding: 5,
                     fontFamily: "MarkPro",
                     fontSize: 12,
+                    color: "#000",
                 },
                 axisLine: { show: false },
+                splitLine: {
+                    lineStyle: {
+                        color: "#c4c4c4",
+                    },
+                },
             },
         ],
         xAxis: {
@@ -90,13 +108,13 @@ const BarGroup = (data, extra) => {
             type: "category",
             axisLine: {
                 lineStyle: {
-                    color: "#ddd",
+                    color: "#c4c4c4",
                 },
             },
             axisLabel: {
                 fontFamily: "MarkPro",
                 fontSize: 12,
-                color: "#222",
+                color: "#000",
             },
         },
         series: series,

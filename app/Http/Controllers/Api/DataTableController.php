@@ -26,17 +26,19 @@ class DataTableController extends Controller
         $country_cascade = explode('-', config('surveys.country_cascade'))[1];
         if (!isset($request->country)) {
             $country_id = $partnerships->select('id')->where('parent_id', null)->get()->pluck('id');
+        } else {
+            $country_id = [$request->country];
         }
-        if (isset($request->country)) {
-            $country_id = [$partnerships->where('name', $request->country)->first()->id];
+        $datapoints = $datapoints->where('form_id',$request->form_id)
+                ->whereIn('country_id',$country_id);
+        if (isset($request->partnership)) {
+            $datapoints =  $datapoints->where('partnership_id', $request->partnership);
         }
-        $datapoints = $datapoints
-            ->where('form_id',$request->form_id)
-            ->whereIn('country_id',$country_id)
-            ->whereBetween('submission_date', [
-                date($request->start),
-                date($request->end)
-            ])->with('answers')->with('country')->get();
+        $datapoints =  $datapoints->whereBetween('submission_date', [
+            date($request->start),
+            date($request->end)
+        ])->with('answers')->with('country')->get();
+
         $datapoints = $datapoints->transform(function($data) {
             return [
                 "datapoint_id" => $data->datapoint_id,
@@ -170,7 +172,7 @@ class DataTableController extends Controller
             return $q;
         });
         return [
-            'datapoints' => $datapoints->sortByDesc('submission_date')->values(), 
+            'datapoints' => $datapoints->sortByDesc('submission_date')->values(),
             'questions' => $questionTmp,
             // 'questions' => $questions,
             'qgroups' => $qgroups,

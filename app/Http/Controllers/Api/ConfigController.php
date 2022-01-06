@@ -11,12 +11,12 @@ class ConfigController extends Controller
 {
     public function getPartnership(Request $request, Partnership $partnerships)
     {
-        if ($request->parent_id === "0") {
-            return $partnerships->has('parents')->get();
+        $partnershipPageController = new PartnershipPageController();
+        $ps = $partnerships->has('parents')->get();
+        if ($request->parent_id !== "0") {
+            $ps = $partnerships->where('parent_id',$request->parent_id)->get();
         }
 
-        $partnershipPageController = new PartnershipPageController();
-        $ps = $partnerships->where('parent_id',$request->parent_id)->get();
         $ps = $ps->transform(function ($p) use ($partnershipPageController) {
             $p['name'] = $partnershipPageController->getPartnershipName($p['name']);
             return $p;

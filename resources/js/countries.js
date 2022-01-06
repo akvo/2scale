@@ -8,17 +8,23 @@ import {
     genCharArray,
     toTitleCase,
     genCharPath,
-    targetAndLastSync
+    targetAndLastSync,
 } from "./util";
 import sumBy from "lodash/sumBy";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import chunk from "lodash/chunk";
 import countryStore from "./store/country-store.js";
+import uniqBy from "lodash/uniqBy";
 
 const mapName = "africa";
 
 const popupFormatter = (params) => {
+    const additionalText =
+        "<div style='margin-top:10px;'>" +
+        "(<span style='font-style: italic;'>" +
+        "Click on the country to</br>view details below)" +
+        "</span></div>";
     if (params?.data?.text) {
         let text = params.data.text.replace(
             "##number##",
@@ -27,17 +33,17 @@ const popupFormatter = (params) => {
         text = text.replace(".", "").split(" ");
         text = chunk(text, 3);
         text = text.map((x) => x.join(" "));
-        return text.join("</br>");
+        return text.join("</br>") + "</br>" + additionalText;
     }
     var value = (params.value + "").split(".");
     value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
     if (Number.isNaN(params.value)) {
         return;
     }
-    return params.name + ": " + value;
+    return params.name + ": " + value + "</br>" + additionalText;
 };
 
-const dimensions = (x, idx) => {
+const dimensions = (x, idx, chartTitle = null) => {
     return x.map((d, i) => {
         const { currentState } = countryStore;
         let currentCharts = currentState.charts;
@@ -92,10 +98,22 @@ const dimensions = (x, idx) => {
         });
         return (
             <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
-                {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
+                {chartTitle ? (
+                    <div class="uii-title">{chartTitle}</div>
+                ) : d.name.length > 0 ? (
+                    <div class="uii-title">{d.name}</div>
+                ) : (
+                    ""
+                )}
                 <div
                     id={id}
-                    style={`height:${d?.height ? d.height : "450px"}`}
+                    style={`height:${
+                        d?.height
+                            ? d.height
+                            : d.values.length
+                            ? "450px"
+                            : "450px"
+                    }`}
                 ></div>
             </div>
         );
@@ -143,11 +161,49 @@ const uii = (x, idx) => {
                 suf: "",
             },
         ];
+        // automate calculation
+        let automateCalculation = 0;
+        if (c?.automate_calculation) {
+            let temp = c.automate_calculation?.map((it, itx) => {
+                const value = it.value.toFixed(3);
+                let text = it.text.split("##").map((t) => {
+                    if (t === "number") {
+                        return (
+                            <span
+                                style="font-weight:bold;color:#a43332; margin-left: 4px;"
+                                id={`automate-calculation-item-${idx}-${i}-${itx}`}
+                            >
+                                {value}
+                            </span>
+                        );
+                    }
+                    return t;
+                });
+                currentCounts = [
+                    ...currentCounts,
+                    {
+                        id: `automate-calculation-item-${idx}-${i}-${itx}`,
+                        val: value,
+                        suf: "%",
+                    },
+                ];
+                return text;
+            });
+            automateCalculation = (
+                <span
+                    style="margin-left: 4px"
+                    id={`automate-calculation-${idx}-${i}`}
+                >
+                    | {temp}
+                </span>
+            );
+        }
+        // eol automate calculation
         countryStore.update((s) => {
             s.counts = currentCounts;
         });
         const dim = c.dimensions?.length
-            ? dimensions(c.dimensions, `${idx}-${i}`)
+            ? dimensions(c.dimensions, `${idx}-${i}`, c?.chart_title)
             : dimensions(
                   [
                       {
@@ -158,12 +214,15 @@ const uii = (x, idx) => {
                           height: "200px",
                       },
                   ],
-                  `${idx}-${i}`
+                  `${idx}-${i}`,
+                  c?.chart_title
               );
+        // custom render for UII-8
+        const isUii8 = c?.uii?.toLowerCase()?.includes("uii8");
         return (
-            <div class="col-md-12">
-                <div class={`row ${even ? "even-row" : ""}`}>
-                    <div class="col-md-4">
+            <div class={`${isUii8 ? "col-md-6 uii-8-group" : "col-md-12"}`}>
+                <div class={`row ${even && !isUii8 ? "even-row" : "odd-row"}`}>
+                    <div class={`${isUii8 ? "col-md-12" : "col-md-4"}`}>
                         <div class="card">
                             <div class="card-body">
                                 <div
@@ -182,6 +241,10 @@ const uii = (x, idx) => {
                                     >
                                         0
                                     </span>
+                                    {/* show automate calculation */}
+                                    {automateCalculation
+                                        ? automateCalculation
+                                        : ""}
                                     <br />
                                     <span style="font-weight:bold;">
                                         TARGET:{" "}
@@ -191,11 +254,11 @@ const uii = (x, idx) => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class={`${isUii8 ? "col-md-12" : "col-md-8"}`}>
                         {c.dimensions?.length ? (
-                            <div class="row chart">{dim}</div>
+                            <div class="row">{dim}</div>
                         ) : (
-                            <div class="row chart">
+                            <div class="row">
                                 <div class="col-md-6">{dim}</div>
                             </div>
                         )}
@@ -214,7 +277,6 @@ const groups = (x, i) => {
                     {x.group}
                 </h3>
                 <div class="row">{uii(x, i)}</div>
-                <hr />
             </div>
         </div>
     );
@@ -319,6 +381,17 @@ const handleCountryClick = (c) => {
             })
         );
         updateStates();
+        // scroll to content
+        const target = $("#country-container");
+        if (target.length) {
+            $("html,body").animate(
+                {
+                    scrollTop: target.offset().top - 20, // with 20 upper padding
+                },
+                850
+            );
+            return false;
+        }
     }
 };
 
@@ -512,16 +585,20 @@ const updateFilter = (init = false) => {
 };
 
 const fetchData = () => {
-    axios.get("/api/rsr/country-data").then((res) => {
-        let filters = [];
-        const baseFilter = res.data.find((x) => x.country === "Burkina Faso");
-        const characters = genCharArray("a", "z");
-        baseFilter.data.forEach((x, xi) => {
-            x.childrens.forEach((c, ci) => {
-                let ctext = c?.tab ? c.tab.text : c.target_text;
-                let cchilds = [];
-                let cpath = genCharPath([xi, ci], characters);
-                /*
+    axios
+        .get("/api/rsr/country-data")
+        .then((res) => {
+            let filters = [];
+            const baseFilter = res.data.find(
+                (x) => x.country === "Burkina Faso"
+            );
+            const characters = genCharArray("a", "z");
+            baseFilter.data.forEach((x, xi) => {
+                x.childrens.forEach((c, ci) => {
+                    let ctext = c?.tab ? c.tab.text : c.target_text;
+                    let cchilds = [];
+                    let cpath = genCharPath([xi, ci], characters);
+                    /*
                 c?.dimensions?.forEach((d, di) => {
                     let dchilds = [];
                     let dpath = genCharPath([xi, ci, di], characters);
@@ -553,30 +630,34 @@ const fetchData = () => {
                     });
                 });
                 */
-                filters.push({
-                    name: c.uii,
-                    text: ctext,
-                    bold: c?.tab?.bold,
-                    parent: null,
-                    show: false,
-                    path: cpath,
-                    parentPath: null,
-                    pathName: `${x.group}|${c.uii}`,
-                    value: c?.actual_value,
-                    childrens: cchilds,
+                    filters.push({
+                        name: c.uii,
+                        text: ctext,
+                        bold: c?.tab?.bold,
+                        parent: null,
+                        show: false,
+                        path: cpath,
+                        parentPath: null,
+                        pathName: `${x.group}|${c.uii}`,
+                        value: c?.actual_value,
+                        childrens: cchilds,
+                    });
                 });
             });
+            countryStore.update((s) => {
+                s.data = res.data;
+                s.filters = uniqBy(filters, "name");
+                s.valuePath = "a";
+                s.selectedPath = null;
+            });
+            updateMapOptions();
+            updateFilter(true);
+        })
+        .then((res) => {
+            // change footer style to relative
+            $("#loader-spinner").remove();
+            $(".tmp-footer")[0].style.position = "relative";
         });
-        countryStore.update((s) => {
-            s.data = res.data;
-            s.filters = filters;
-            s.valuePath = "a";
-            s.selectedPath = null;
-        });
-        updateMapOptions();
-        updateFilter(true);
-        $("#loader-spinner").remove();
-    });
 };
 
 const createMaps = () => {
@@ -601,7 +682,7 @@ const createMaps = () => {
     }
 };
 
-targetAndLastSync().then(el => {
+targetAndLastSync().then((el) => {
     $("#last-sync-temp").append(el);
 });
 
@@ -615,13 +696,14 @@ $("main").append(
             </h2>
             <h3 id="subtitle"></h3>
             <div id="maps" style="height:700px;"></div>
-            <div class="map-notation">Click country to show details</div>
+            <div class="map-notation">
+                Click on the country to view details below
+            </div>
         </div>
         <div id="country-container"></div>
         <div class="col-md-12" id="display"></div>
     </div>
 );
-
 
 $("main").append(
     <div class="d-flex justify-content-center" id="loader-spinner">

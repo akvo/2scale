@@ -1,8 +1,6 @@
-import { CountUp } from "countup.js";
-import { staticText, gradients, titleCase } from "./util.js";
 import { db, storeDB } from "./dexie";
+import isEmpty from "lodash/isEmpty";
 
-const echarts = window.echarts;
 const axios = window.axios;
 const table = db.databases;
 const tableTitle = "Reported Values for Universal Impact Indicators";
@@ -38,7 +36,7 @@ export const loadData = async (endpoint) => {
 };
 
 const refactorDimensionValue = (columns) => {
-    return columns.map((item) => {
+    return columns?.map((item) => {
         let tmp = [];
         if (item.rsr_dimensions.length > 0) {
             item.rsr_dimensions.forEach((dimensions) => {
@@ -114,7 +112,7 @@ const refactorDimensionValue = (columns) => {
 
 const refactorChildrens = (childrens) => {
     if (typeof childrens !== "undefined" && childrens.length > 0) {
-        return childrens.map((child) => {
+        return childrens?.map((child) => {
             child.columns = refactorDimensionValue(child.columns);
             child.childrens = refactorChildrens(child.childrens);
             child["extras"] = [];
@@ -279,10 +277,10 @@ const renderRow = (
 
     // manage the child columns not match with children columns
     if (mainColumn.length !== data.columns.length && level !== 1) {
-        let tmp = mainColumn.map((val) => {
+        let tmp = mainColumn?.map((val) => {
             let find = data.columns.find((x) => x.title === val.title);
             if (typeof find === "undefined") {
-                let dimensions = val.dimensions.map((d) => {
+                let dimensions = val.dimensions?.map((d) => {
                     d.total_actual_value = 0;
                     d.value = 0;
                     return d;
@@ -301,10 +299,10 @@ const renderRow = (
 
     // there was a dimensions value not match with their parent
     if (mainColumn.length === data.columns.length && level !== 1) {
-        let tmp = mainColumn.map((val) => {
+        let tmp = mainColumn?.map((val) => {
             let find = data.columns.find((x) => x.title === val.title);
             if (val.dimensions.length !== find.dimensions.length) {
-                find.dimensions = val.dimensions.map((d) => {
+                find.dimensions = val.dimensions?.map((d) => {
                     d.total_actual_value = 0;
                     d.value = 0;
                     return d;
@@ -555,7 +553,7 @@ export const datatableOptions = (id, res, baseurl) => {
         scrollY: "75vh",
         height: 400,
         paging: false,
-        fixedHeader: true,
+        // fixedHeader: true,
         // fixedColumns: true,
         scrollCollapse: true,
         autoWidth: true,
@@ -566,26 +564,8 @@ export const datatableOptions = (id, res, baseurl) => {
             { targets: 0, width: "12%" },
             {
                 targets: [
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    18,
-                    19,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                    17, 18, 19,
                 ],
                 visible: true,
             },
@@ -662,12 +642,18 @@ const formatDetails = (d) => {
 let html = "";
 let datas = {};
 let status = {};
-export const renderRsrTable = (endpoint, baseurl, datatableId) => {
-    return loadData(endpoint)
+export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
+    return await loadData(endpoint)
         .then((res) => {
+            // remove no data text
+            document.getElementById("no-data").style.visibility = "hidden";
+            if (isEmpty(res)) {
+                return false;
+            }
+
             datas = res;
             // data refactoring
-            datas.columns = datas.columns.map((column) => {
+            datas.columns = datas.columns?.map((column) => {
                 // if (column.subtitle.length > 0) {
                 //     column.subtitle = column.subtitle.map(subtitle => {
                 //         let name = subtitle.toLowerCase();
@@ -702,11 +688,11 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
                 if (column.subtitle.length === 0) {
                     return column;
                 }
-                column.subtitle = column.subtitle.map((subtitle) => {
+                column.subtitle = column.subtitle?.map((subtitle) => {
                     if (subtitle.values.length === 0) {
                         return subtitle;
                     }
-                    subtitle.values = subtitle.values.map((value) => {
+                    subtitle.values = subtitle.values?.map((value) => {
                         let name = value.toLowerCase();
                         let isGender = name.includes("male");
                         let isFemale = name.includes("female");
@@ -747,7 +733,10 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             return datas;
         })
         .then((res) => {
-            // console.log(res);
+            if (!res) {
+                return false;
+            }
+
             // Header 1
             html += '<thead class="thead-dark">';
             // html += '<tr>';
@@ -765,7 +754,7 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             res.columns.forEach((column) => {
                 let colspan =
                     column.subtitle.length > 0
-                        ? column.subtitle.map((x) =>
+                        ? column.subtitle?.map((x) =>
                               x.values.length === 0 ? 1 : x.values.length
                           )
                         : [];
@@ -786,6 +775,10 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             return res;
         })
         .then((res) => {
+            if (!res) {
+                return false;
+            }
+
             // Header 2
             html += "<tr>";
             res.columns.forEach((column) => {
@@ -809,6 +802,9 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             return res;
         })
         .then((res) => {
+            if (!res) {
+                return false;
+            }
             // Header 3
             // html += '<tr>';
             // res.columns.forEach(column => {
@@ -841,6 +837,10 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             return res;
         })
         .then((res) => {
+            if (!res) {
+                return false;
+            }
+
             let url = res.config.url;
             let parentId = res.data.rsr_project_id;
             html += "<tbody>";
@@ -886,18 +886,19 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
             // html += '<td>&nbsp;</td>';
             html += '<td colspan="' + footerColspan + '">' + legend + "</td>";
             html += "</tr></tfoot>";
-            $("#" + datatableId).append(html);
+            $("#" + datatableId).html(html);
             return res;
         })
         .then((res) => {
+            $("#loader-spinner-table").remove();
             if (res) {
                 // $('.child').hide('fast');
                 $(".level_3").hide("fast");
                 $(".extras").hide("fast");
                 $(".grand_total").show("fast");
-                $("#loader-spinner-table").remove();
                 return datatableOptions("#" + datatableId, res, baseurl);
             }
+            document.getElementById("no-data").style.visibility = "visible";
             return false;
         })
         .then((table) => {
@@ -953,9 +954,13 @@ export const renderRsrTable = (endpoint, baseurl, datatableId) => {
         });
 };
 
-export const renderRsrTableTemplate = (datatableId, position, title = null) => {
-    title = title ? title : tableTitle;
-    return $("main").append(
+export const renderRsrTableTemplate = async (
+    datatableId,
+    position,
+    title = null
+) => {
+    title = title !== null ? title : tableTitle;
+    return await $("main").append(
         '<div class="row">\
             <div class="col-md-12">\
                 <div class="card">\
@@ -965,7 +970,7 @@ export const renderRsrTableTemplate = (datatableId, position, title = null) => {
                 </div>\
             </div>\
         </div>\
-        <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-top:25px; margin-bottom:50px;">\
+        <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin: 25px">\
             <div class="d-flex justify-content-center" id="loader-spinner-table">\
                 <div class="spinner-border text-primary loader-spinner" style="top:' +
             position +
@@ -979,6 +984,7 @@ export const renderRsrTableTemplate = (datatableId, position, title = null) => {
             '" class="table table-sm table-bordered" cellspacing="0" style="width:100%;"></table>\
             </div>\
             <div id="datatableWrapper" class="tab-content"></div>\
+            <div id="no-data" class="d-flex justify-content-center" style="margin-top: 100px; visibility:hidden;">No Data</div>\
         </div>\
     '
     );

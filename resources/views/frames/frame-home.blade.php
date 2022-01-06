@@ -29,30 +29,26 @@
     #maps {
       height: 670px;
     }
+
+    /* custom only for home page */
+    .row {
+      margin-left: 0px !important;
+      margin-right: 0px !important;
+    }
     </style>
 </head>
 <body class="text-center">
   {{-- Static carousel --}}
   <div id="home-carousel" class="carousel slide home-carousel-container" data-ride="carousel">
     <div class="carousel-inner">
-      <div class="carousel-item home-carousel-item active">
-        <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-1.JPG" alt="First slide">
-        <div class="carousel-caption d-none d-md-block">
-          <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
+      @for ($ind = 1; $ind <= 8; $ind++)
+        <div class="carousel-item home-carousel-item {{$ind === 1 ? 'active' : ''}}">
+          <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/hr-slider-{{$ind}}.jpg" alt="slide-{{$ind}}">
+          <div class="carousel-caption d-none d-md-block">
+            <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
+          </div>
         </div>
-      </div>
-      <div class="carousel-item home-carousel-item">
-        <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-2.JPG" alt="Second slide">
-        <div class="carousel-caption d-none d-md-block">
-          <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
-        </div>
-      </div>
-      <div class="carousel-item home-carousel-item">
-        <img class="d-block w-100 home-carousel-img" src="{{ URL::to('/') }}/images/home-slider/slider-3.jpg" alt="Third slide">
-        <div class="carousel-caption d-none d-md-block">
-          <h2>Track the impact of Africa's largest Inclusive agribusiness incubator</h2>
-        </div>
-      </div>
+      @endfor
     </div>
     <a class="carousel-control-prev" href="#home-carousel" role="button" data-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -68,7 +64,8 @@
   <div class="cover-container d-flex h-100 mx-auto flex-column">
     <main role="main" id="main" class="inner cover"></main>
   </div>
-@include('components.footer')
+
+  @include('components.footer')
 
   <!-- Global Dependencies -->
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>

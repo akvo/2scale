@@ -49,10 +49,15 @@ class PageController extends Controller
 		return view('pages.dashboard');
 	}
 
-    public function database()
-    {
-		return view('pages.database', ['surveys' => config('surveys')]);
-    }
+	public function database(Partnership $partnerships)
+	{
+			$countries = $partnerships->has('childrens')->get();
+			$data = [
+				'forms' => config('surveys.forms'),
+				'countries' => $countries,
+			];
+			return view('pages.database', ['surveys' => $data]);
+	}
 
 	public function surveys()
 	{

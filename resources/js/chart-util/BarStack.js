@@ -6,6 +6,7 @@ import {
     Icons,
 } from "./chart-style.js";
 import _ from "lodash";
+import { formatNumber } from "../util.js";
 
 const BarStack = (data, extra) => {
     if (!data) {
@@ -35,7 +36,8 @@ const BarStack = (data, extra) => {
                                 )
                                 .find((d) => d.group === params.name);
                             if (total?.value) {
-                                return total.value + params.value;
+                                let sum = total.value + params.value;
+                                return formatNumber(sum);
                             }
                             return "";
                         },
@@ -59,6 +61,10 @@ const BarStack = (data, extra) => {
                 label: {
                     show: true,
                     position: "inside",
+                    formatter: function (params) {
+                        const { value } = params;
+                        return value ? formatNumber(value) : 0;
+                    },
                 },
                 barWidth: 50,
                 stack: "t",
@@ -100,7 +106,12 @@ const BarStack = (data, extra) => {
         },
         tooltip: {
             trigger: "item",
-            formatter: "{b}: {c}",
+            formatter: function (params) {
+                const { name, value, seriesName } = params;
+                return `${name} : ${
+                    value ? formatNumber(value) : 0
+                } (${seriesName})`;
+            },
             backgroundColor: "#ffffff",
             ...TextStyle,
         },
@@ -114,8 +125,14 @@ const BarStack = (data, extra) => {
                     padding: 5,
                     fontFamily: "MarkPro",
                     fontSize: 12,
+                    color: "#000",
                 },
                 axisLine: { show: false },
+                splitLine: {
+                    lineStyle: {
+                        color: "#c4c4c4",
+                    },
+                },
             },
         ],
         xAxis: {
@@ -123,13 +140,13 @@ const BarStack = (data, extra) => {
             type: "category",
             axisLine: {
                 lineStyle: {
-                    color: "#ddd",
+                    color: "#c4c4c4",
                 },
             },
             axisLabel: {
                 fontFamily: "MarkPro",
                 fontSize: 12,
-                color: "#222",
+                color: "#000",
             },
         },
         series: series,

@@ -133,5 +133,7 @@ return [
 
     'log_channel' => env('MAIL_LOG_CHANNEL'),
 
-    'recipients' => env('EMAIL_RECIPIENTS', '')
+    'recipients' => env('EMAIL_RECIPIENTS', ''),
+
+    'sync_recipients' => env('SYNC_EMAIL_RECIPIENTS', ''),
 ];

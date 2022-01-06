@@ -6,6 +6,7 @@ import {
     Icons,
 } from "./chart-style.js";
 import _ from "lodash";
+import { formatNumber } from "../util.js";
 
 const LineStack = (data, extra) => {
     const { xAxisName, yAxisName } = extra;
@@ -58,8 +59,9 @@ const LineStack = (data, extra) => {
             show: true,
             align: "left",
             formatter: function (params) {
-                if (params.dataIndex === xAxis.length - 1) {
-                    return params.seriesName + ": " + params.value;
+                const { dataIndex, seriesName, value } = params;
+                if (dataIndex === xAxis.length - 1) {
+                    return `${seriesName} : ${value ? formatNumber(value) : 0}`;
                 }
                 return "";
             },
@@ -68,7 +70,7 @@ const LineStack = (data, extra) => {
         grid: {
             top: "50px",
             left: yAxisName ? "50px" : "auto",
-            right: "100px",
+            right: "135px",
             bottom: xAxisName ? "50px" : "25px",
             borderColor: "#ddd",
             borderWidth: 0.5,

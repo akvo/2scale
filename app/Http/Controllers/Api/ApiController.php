@@ -272,6 +272,7 @@ class ApiController extends Controller
                             ];
                         });
 
+                        $dimensionName = str_replace("enterprenuers", "entrepreneurs", $dim['name']);
                         $text = null;
                         $order = null;
                         if (isset($chart['dimensions'])) {
@@ -281,10 +282,16 @@ class ApiController extends Controller
                                     $order = $item['order'];
                                 }
                             }
+                            return [
+                                'name' => $dimensionName,
+                                'target_text' => $text,
+                                'order' => $order,
+                                'values' => $dimVal
+                            ];
                         }
 
                         return [
-                            'name' => $dim['name'],
+                            'name' => $dimensionName,
                             'target_text' => $text,
                             'order' => $order,
                             'values' => $dimVal
@@ -317,23 +324,25 @@ class ApiController extends Controller
 
             if ($chart['max']) {
                 $agg = $customAgg->where('uii', $uii)->first();
+                $aggDimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')
+                    ->flatten(1)->map(function ($d) use ($agg) {
+                        $match = $agg['dimensions']->where('name', $d['name'])->first();
+                        $d['actual_value'] = $match['actual_value'];
+                        $d['values'] = $d['values']->map(function ($v) use ($match) {
+                            $v['actual_value'] = $match['values']
+                                ->where('name', $v['name'])->first()['actual_value'];
+                            return $v;
+                        });
+                        return $d;
+                    });
                 return [
                     "group" => $chart['group'],
                     "uii" => $uii,
                     "target_text" => $chart['target_text'],
                     "target_value" => $rs['rsr_indicators']->sum('target_value'),
                     "actual_value" => $agg['actual_value'],
-                    "dimensions" => $rs['rsr_indicators']->pluck('rsr_dimensions')
-                                        ->flatten(1)->map(function ($d) use ($agg) {
-                                            $match = $agg['dimensions']->where('name', $d['name'])->first();
-                                            $d['actual_value'] = $match['actual_value'];
-                                            $d['values'] = $d['values']->map(function ($v) use ($match) {
-                                                $v['actual_value'] = $match['values']
-                                                    ->where('name', $v['name'])->first()['actual_value'];
-                                                return $v;
-                                            });
-                                            return $d;
-                                        })
+                    "dimensions" => $aggDimensions,
+                    "chart_title" => $chart['chart_title'],
                 ];
             }
 
@@ -367,11 +376,19 @@ class ApiController extends Controller
                 "target_text" => $target_text,
                 "target_value" => $target_value,
                 "actual_value" => $actual_value,
-                "dimensions" => $dimensions
-            ];})->groupBy('group')->map(function ($res, $key) {
+                "dimensions" => $dimensions,
+                "chart_title" => $chart['chart_title'],
+            ];
+        })->groupBy('group')->map(function ($res, $key) {
+            // UII8 Modification to show all dimension target/achieve value
+            $childs = Util::transformUii8Value($res, "UII-8", true, false);
+
+            // Custom automate calculation
+            $childs = Util::addUiiAutomateCalculation($childs);
+
             return [
                 "group" => $key,
-                "childrens" => $res
+                "childrens" => $childs
             ];
         })->values();
 
@@ -413,7 +430,7 @@ class ApiController extends Controller
                                     ];
                                 });
                                 return [
-                                    'name' => $dimensionName,
+                                    'name' => str_replace("enterprenuers", "entrepreneurs", $dimensionName),
                                     'target_text' => null,
                                     'values' => $values
                                 ];
@@ -453,13 +470,22 @@ class ApiController extends Controller
                         'target_value' => $ind ? $ind->target_value : 0,
                         'actual_value' => $ind ? $ind->actual_value : 0,
                         'dimensions' => $dimensions,
+                        'chart_title' => $group['chart_title'],
                     ];
                 })->values();
+
+                // UII8 Modification to show all dimension target/achieve value
+                $childs = Util::transformUii8Value($childrens, "UII8", false, true);
+
+                // Custom automate calculation
+                $childs = Util::addUiiAutomateCalculation($childs);
+
                 return [
                     'group' => $groupName,
-                    'childrens' => $childrens
+                    'childrens' => $childs
                 ];
             })->values();
+
             return [
                 'country' => $countryName,
                 'data' => $data

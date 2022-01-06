@@ -23,204 +23,163 @@ body {
     height: 100%;
     background-color: #333;
 }
-
 body {
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    -ms-flex-pack: center;
-    -webkit-box-pack: center;
-    justify-content: center;
     color: #000;
     background-color: #ffffff;
 }
-
-.cover-container {
-  max-width: 42em;
-}
-
-h1 {
-    font-weight: 100;
-}
-
-.masthead {
-    margin-bottom: 2rem;
-}
-
-.masthead-brand {
-    margin-bottom: 0;
-}
-
-.nav-masthead .nav-link {
-    padding: .25rem 0;
-    font-weight: 700;
-    color: rgba(255, 255, 255, .5);
-    background-color: transparent;
-    border-bottom: .25rem solid transparent;
-}
-
-.nav-masthead .nav-link:hover,
-.nav-masthead .nav-link:focus {
-    border-bottom-color: rgba(255, 255, 255, .25);
-}
-
-.nav-masthead .nav-link + .nav-link {
-    margin-left: 1rem;
-}
-
-.nav-masthead .active {
-    color: #fff;
-    border-bottom-color: #fff;
-}
-
-@media (min-width: 48em) {
-    .masthead-brand {
-        float: left;
-    }
-    .nav-masthead {
-        float: right;
-    }
-}
 .cover {
     padding: 0 1.5rem;
+    min-height: 78vh;
 }
 .cover .btn-lg {
     padding: .75rem 1.25rem;
     font-weight: 700;
 }
+.md-form textarea.md-textarea {
+    padding: 45px 0;
+    overflow-y: hidden;
+}
 </style>
 </head>
 <body class="text-center">
-    <!--Section: Contact v.2-->
-    <section class="container mb-2" style="margin-top: 35px">
+    <div class="cover-container d-flex p-3 mx-auto flex-column">
+        <main role="main" class="inner cover">
 
-        <!--Section heading-->
-        <h2 class="h1-responsive font-weight-bold text-center my-4">Report Issue</h2>
-        <!--Section description-->
+            <!--Section: Contact v.2-->
+            <section class="container mb-2" style="margin-top: 35px">
 
-        <div class="row d-flex justify-content-center">
+                <!--Section heading-->
+                <h3 class="h1-responsive font-weight-bold text-center my-4">How can we help you?</h3>
+                <!--Section description-->
 
-            <!--Grid column-->
-            <div class="col-md-10 mb-md-0 mb-5">
-                <form action="{{url('api/send_email')}}" method="post">
-                    @csrf
-                    <!--Grid row-->
-                    <div class="row">
+                <div class="row d-flex justify-content-center" style="margin-top: 75px">
 
-                        <!--Grid column-->
-                        <div class="col-md-6">
-                            <div class="md-form">
-                                <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
-                                {{-- <label for="name" class="">Your name</label> --}}
+                    <!--Grid column-->
+                    <div class="col-md-10 mb-md-0 mb-5">
+                        <form action="{{url('api/send_email')}}" method="post">
+                            @csrf
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-md-6">
+                                    <div class="md-form">
+                                        <input type="text" id="name" name="name" class="form-control" placeholder="Your name" required>
+                                        {{-- <label for="name" class="">Your name</label> --}}
+                                    </div>
+                                </div>
+                                <!--Grid column-->
+
+                                <!--Grid column-->
+                                <div class="col-md-6">
+                                    <div class="md-form">
+                                        <input type="email" id="email" name="email" class="form-control" placeholder="Your email" required>
+                                        {{-- <label for="email" class="">Your email</label> --}}
+                                    </div>
+                                </div>
+                                <!--Grid column-->
+
                             </div>
-                        </div>
-                        <!--Grid column-->
+                            <!--Grid row-->
 
-                        <!--Grid column-->
-                        <div class="col-md-6">
-                            <div class="md-form">
-                                <input type="email" id="email" name="email" class="form-control" placeholder="Your email" required>
-                                {{-- <label for="email" class="">Your email</label> --}}
+                            <!--Grid row-->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="md-form">
+                                        <input type="text" id="subject" name="subject" class="form-control" placeholder="Subject" required>
+                                        {{-- <label for="subject" class="">Subject</label> --}}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <!--Grid column-->
+                            <!--Grid row-->
 
+                            <!--Grid row-->
+                            <div class="row">
+
+                                <!--Grid column-->
+                                <div class="col-md-12">
+
+                                    <div class="md-form">
+                                        <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" required style="margin-top: 10px"></textarea>
+                                        <label for="message" style="margin-bottom: 10px">Your message</label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!--Grid row Captcha-->
+                            {{-- <div class="row">
+                               <div class="col-md-6">
+                                    <div class="md-form">
+                                        <input type="text" id="captcha" name="captcha" class="form-control" placeholder="Captcha" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="md-form">
+                                        <img src="{{ captcha_src('flat') }}" class="rounded float-left" alt="captcha">
+                                    </div>
+                                </div>
+                            </div> --}}
+
+
+                            <!--Grid row-->
+
+                            <div class="text-center text-md-left">
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </div>
+                        </form>
+
+
+                        <div class="status" style="margin-top: 25px">
+                            @if (isset($status) && $status === true)
+                                <div class="alert alert-success" role="alert">
+                                    Your email has been sent to our support team, <br>
+                                    We'll get in touch with you, thank you.
+                                </div>
+                            @endif
+                            @if (isset($status) && !$status)
+                                <div class="alert alert-danger" role="alert">
+                                    Failed to send an email, there was some problem, <br>
+                                    Please try again.
+                                </div>
+                            @endif
+                            @if (isset($status) && $status === 'invalid')
+                                <div class="alert alert-danger" role="alert">
+                                    Wrong captcha!
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                    <!--Grid row-->
+                    <!--Grid column-->
 
-                    <!--Grid row-->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="md-form">
-                                <input type="text" id="subject" name="subject" class="form-control" placeholder="Subject" required>
-                                {{-- <label for="subject" class="">Subject</label> --}}
-                            </div>
-                        </div>
-                    </div>
-                    <!--Grid row-->
+                    <!-- <div class="col-md-1"></div> -->
 
-                    <!--Grid row-->
-                    <div class="row">
+                    <!--Grid column-->
+                    <!-- <div class="col-md-3 text-center">
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-map-marker-alt fa-2x"></i>
+                                <p>San Francisco, CA 94126, USA</p>
+                            </li>
 
-                        <!--Grid column-->
-                        <div class="col-md-12">
+                            <li><i class="fas fa-phone mt-4 fa-2x"></i>
+                                <p>+ 01 234 567 89</p>
+                            </li>
 
-                            <div class="md-form">
-                                <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea" required style="margin-top: 10px"></textarea>
-                                <label for="message" style="margin-bottom: 10px">Your message</label>
-                            </div>
+                            <li><i class="fas fa-envelope mt-4 fa-2x"></i>
+                                <p>support@mail.com</p>
+                            </li>
+                        </ul>
+                    </div> -->
+                    <!--Grid column-->
 
-                        </div>
-                    </div>
-
-                    <!--Grid row Captcha-->
-                    {{-- <div class="row">
-                       <div class="col-md-6">
-                            <div class="md-form">
-                                <input type="text" id="captcha" name="captcha" class="form-control" placeholder="Captcha" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="md-form">
-                                <img src="{{ captcha_src('flat') }}" class="rounded float-left" alt="captcha">
-                            </div>
-                        </div>
-                    </div> --}}
-
-
-                    <!--Grid row-->
-
-                    <div class="text-center text-md-left">
-                        <button type="submit" class="btn btn-primary">Send</button>
-                    </div>
-                </form>
-
-
-                <div class="status" style="margin-top: 25px">
-                    @if (isset($status) && $status === true)
-                        <div class="alert alert-success" role="alert">
-                            Your email has been sent to our support team, <br>
-                            We'll get in touch with you, thank you.
-                        </div>
-                    @endif
-                    @if (isset($status) && !$status)
-                        <div class="alert alert-danger" role="alert">
-                            Failed to send an email, there was some problem, <br>
-                            Please try again.
-                        </div>
-                    @endif
-                    @if (isset($status) && $status === 'invalid')
-                        <div class="alert alert-danger" role="alert">
-                            Wrong captcha!
-                        </div>
-                    @endif
                 </div>
-            </div>
-            <!--Grid column-->
 
-            <!-- <div class="col-md-1"></div> -->
+            </section>
+            <!--Section: Contact v.2-->
+        </main>
+    </div>
 
-            <!--Grid column-->
-            <!-- <div class="col-md-3 text-center">
-                <ul class="list-unstyled mb-0">
-                    <li><i class="fas fa-map-marker-alt fa-2x"></i>
-                        <p>San Francisco, CA 94126, USA</p>
-                    </li>
+    @include('components.footer')
 
-                    <li><i class="fas fa-phone mt-4 fa-2x"></i>
-                        <p>+ 01 234 567 89</p>
-                    </li>
-
-                    <li><i class="fas fa-envelope mt-4 fa-2x"></i>
-                        <p>support@mail.com</p>
-                    </li>
-                </ul>
-            </div> -->
-            <!--Grid column-->
-
-        </div>
-
-    </section>
-    <!--Section: Contact v.2-->
 </body>
 </html>

@@ -8,7 +8,7 @@ const axios = window.axios;
 let counts = [];
 let charts = [];
 
-const dimensions = (x, idx) => {
+const dimensions = (x, idx, chartTitle = null) => {
     return x.map((d, i) => {
         const id = `uii-chart-${i}-${idx}`;
         if (d.values.length > 0) {
@@ -51,10 +51,22 @@ const dimensions = (x, idx) => {
         }
         return (
             <div class={`col-md-${x.length > 1 ? "6" : "12"} uii-charts`}>
-                {d.name.length > 0 ? <div class="uii-title">{d.name}</div> : ""}
+                {chartTitle ? (
+                    <div class="uii-title">{chartTitle}</div>
+                ) : d.name.length > 0 ? (
+                    <div class="uii-title">{d.name}</div>
+                ) : (
+                    ""
+                )}
                 <div
                     id={id}
-                    style={`height:${d?.height ? d.height : "450px"}`}
+                    style={`height:${
+                        d?.height
+                            ? d.height
+                            : d.values.length
+                            ? "450px"
+                            : "450px"
+                    }`}
                 ></div>
             </div>
         );
@@ -94,8 +106,43 @@ const uui = (x, idx) => {
             val: c.actual_value,
             suf: "",
         });
+        // automate calculation
+        let automateCalculation = 0;
+        if (c?.automate_calculation) {
+            let temp = c.automate_calculation?.map((it, itx) => {
+                const value = it.value.toFixed(3);
+                let text = it.text.split("##").map((t) => {
+                    if (t === "number") {
+                        return (
+                            <span
+                                style="font-weight:bold;color:#a43332; margin-left: 4px;"
+                                id={`automate-calculation-item-${idx}-${i}-${itx}`}
+                            >
+                                {value}
+                            </span>
+                        );
+                    }
+                    return t;
+                });
+                counts.push({
+                    id: `automate-calculation-item-${idx}-${i}-${itx}`,
+                    val: value,
+                    suf: "%",
+                });
+                return text;
+            });
+            automateCalculation = (
+                <span
+                    style="margin-left: 4px"
+                    id={`automate-calculation-${idx}-${i}`}
+                >
+                    | {temp}
+                </span>
+            );
+        }
+        // eol automate calculation
         const dim = c.dimensions?.length
-            ? dimensions(c.dimensions, `${idx}-${i}`)
+            ? dimensions(c.dimensions, `${idx}-${i}`, c?.chart_title)
             : dimensions(
                   [
                       {
@@ -106,12 +153,15 @@ const uui = (x, idx) => {
                           height: "200px",
                       },
                   ],
-                  `${idx}-${i}`
+                  `${idx}-${i}`,
+                  c?.chart_title
               );
+        // custom render for UII-8
+        const isUii8 = c?.uii?.toLowerCase()?.includes("uii-8");
         return (
-            <div class="col-md-12">
-                <div class={`row ${even ? "even-row" : ""}`}>
-                    <div class="col-md-4">
+            <div class={`${isUii8 ? "col-md-6 uii-8-group" : "col-md-12"}`}>
+                <div class={`row ${even && !isUii8 ? "even-row" : "odd-row"}`}>
+                    <div class={`${isUii8 ? "col-md-12" : "col-md-4"}`}>
                         <div class="card">
                             <div class="card-body">
                                 <div
@@ -130,6 +180,10 @@ const uui = (x, idx) => {
                                     >
                                         0
                                     </span>
+                                    {/* show automate calculation */}
+                                    {automateCalculation
+                                        ? automateCalculation
+                                        : ""}
                                     <br />
                                     <span style="font-weight:bold;">
                                         TARGET:{" "}
@@ -139,7 +193,7 @@ const uui = (x, idx) => {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class={`${isUii8 ? "col-md-12" : "col-md-8"}`}>
                         {c.dimensions?.length ? (
                             <div class="row">{dim}</div>
                         ) : (
@@ -154,7 +208,7 @@ const uui = (x, idx) => {
     });
 };
 
-const groups = (x, i) => {
+const groups = (x, i, dataLength) => {
     return (
         <div class="row">
             <div class="col-md-12">
@@ -162,7 +216,7 @@ const groups = (x, i) => {
                     {x.group}
                 </h3>
                 <div class="row">{uui(x, i)}</div>
-                <hr />
+                {i === dataLength - 1 ? <hr /> : ""}
             </div>
         </div>
     );
@@ -242,7 +296,7 @@ $("main").append(
     </div>
 );
 
-targetAndLastSync().then(el => {
+targetAndLastSync().then((el) => {
     $("#last-sync-temp").append(el);
 });
 
@@ -271,7 +325,7 @@ axios
         const data = res.data;
         $("main").append(
             data.map((x, i) => {
-                return groups(x, i);
+                return groups(x, i, data?.length);
             })
         );
         return { counts: counts, charts: charts };
@@ -296,20 +350,18 @@ axios
     })
     .then((x) => {
         $("main").append(
-            <div class="row">
+            <div class="row even-row">
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
                         Target audiences reached with program activities
                     </h3>
-                    <div id="first-row"></div>
-                    <hr />
+                    <div id="first-row" class="row even-row"></div>
                 </div>
                 <div class="col-md-12">
                     <h3 class="responsive font-weight-bold text-center my-4">
-                        Progress  on reach
+                        Progress on reach
                     </h3>
-                    <div id="second-row"></div>
-                    <hr />
+                    <div id="second-row" class="row odd-row"></div>
                 </div>
             </div>
         );
@@ -331,7 +383,10 @@ axios
                 md: 12,
                 height: 600,
                 parentId: "second-row",
-                axisName: {xAxisName : "Activity Dates", yAxisName : "Audiences"}
+                axisName: {
+                    xAxisName: "Activity Dates",
+                    yAxisName: "Audiences",
+                },
             },
             increments
         );

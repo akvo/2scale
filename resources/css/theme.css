@@ -272,10 +272,19 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     color: #fff;
     background-color: #a43332 !important;
 }
+.bootstrap-select > .dropdown-toggle.bs-placeholder {
+    color: #000;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+    color: #000;
+}
 .daterangepicker .ranges li.active,
 .dropdown-item.active,
 .dropdown-item:active {
-    background-color: #2dbbad;
+    background-color: #a43332;
+}
+button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
+    background-color: #a43332 !important;
 }
 
 .footer {
@@ -320,4 +329,36 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
     body {
         padding-top: 50px;
     }
+}
+
+.instruction-text-wrapper {
+    position: absolute;
+    top: 5.3rem;
+    left: 3rem;
+    font-size: 15px;
+    font-style: italic;
+}
+
+.select-dropdown-wrapper {
+    border-bottom: 1px solid #ddd;
+}
+
+/* change color button datepicker etc to 2scale color */
+button.cancelBtn.btn.btn-sm.btn-default {
+    background: #609ba7 !important;
+}
+button.applyBtn.btn.btn-sm.btn-primary {
+    background: #3d588a !important;
+}
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background-color: #3d588a;
+    border-color: transparent;
+    color: #fff;
+}
+.daterangepicker td.in-range {
+    background-color: #ebf4f8;
+    border-color: transparent;
+    color: #000;
+    border-radius: 0;
 }

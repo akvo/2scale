@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 
 class FrameController extends Controller
 {
-	public function blank()
+	public function blank(Request $request)
     {
-        return view('frames.frame-blank');
+        $page = 'default';
+        if (isset($request->page)) {
+            $page = $request->page;
+        }
+        return view('frames.frame-blank', ['page' => strtolower($page)]);
 	}
 
 	public function undermaintenance()
@@ -62,6 +66,10 @@ class FrameController extends Controller
         if(isset($request->country)) {
             $url .= '/' . $request->country;
         }
+        $partnership = '';
+        if(isset($request->partnership)) {
+            $url .= '/' . $request->partnership;
+        }
         return view('frames.frame-database', [
             'url' => $url . '/' . $request->start . '/' . $request->end,
             'start' => $request->start,
@@ -78,6 +86,14 @@ class FrameController extends Controller
     public function report()
     {
         return view('frames.frame-report');
+    }
+
+    public function uiiDatatableReport(Request $request)
+    {
+        return view('frames.frame-uii-datatable-report', [
+            'country_id' => $request->country_id,
+            'partnership_id' => $request->partnership_id,
+        ]);
     }
 
 }

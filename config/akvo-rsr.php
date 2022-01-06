@@ -40,6 +40,7 @@ return [
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'BoP Consumers',
         ],
         [
             'id' => 42865,
@@ -54,6 +55,7 @@ return [
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Smallholder Farmers',
         ],
         [
             'id' => 42698,
@@ -68,6 +70,7 @@ return [
             'max' => true,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Hectares',
         ],
         [
             'id' => 42804,
@@ -78,10 +81,11 @@ return [
                 'text' => 'SMEs driving inclusive business in target industries (50% women-led/women-owned)',
                 'bold' => 'SMEs '
             ],
-            'target_text' => '##number## SMEs ­driving inclusive business in target industries (125 women-led/women-owned).',
+            'target_text' => '##number## SMEs ­driving inclusive business in target industries (50% women-led/women-owned).',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'SMEs',
         ],
         [
             'id' => 42825,
@@ -92,10 +96,11 @@ return [
                 'text' => 'Non-farming jobs in targeted agribusiness clusters and value chains.(50% women, 40% youth)',
                 'bold' => 'Non-farming jobs '
             ],
-            'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (10,000 women; 8,000 youth).',
+            'target_text' => '##number## non-farming jobs in targeted agribusiness clusters and value chains (50% women; 40% youth).',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Non-farm Employment',
         ],
         [
             'id' => 42835,
@@ -106,10 +111,11 @@ return [
                 'text' => 'Micro entrepreneurs/SMEs associated with partnerships. (50% women-led/women-owned and 40% young entrepreneurs)',
                 'bold' => 'Micro entrepreneurs/SMEs '
             ],
-            'target_text' => '##number## micro entrepreneurs/SMEs (2,500 women-led/women-owned, 1,000 young entrepreneurs) associated with partnerships.',
+            'target_text' => '##number## micro entrepreneurs/SMEs (50% women-led/women-owned, 40% young entrepreneurs) associated with partnerships.',
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Micro-entreprenuers/SMEs',
         ],
         [
             'id' => 42845,
@@ -124,6 +130,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => 'Non-farm Innovations',
         ],
         [
             'id' => 42855,
@@ -132,12 +139,13 @@ return [
             'group' => 'Inclusive Agribusiness and Innovation',
             "target_text" => "##number## Value of additional financial services.",
             'tab' => [
-                'text' => 'Additional financial services',
-                'bold' => false
+                'text' => 'Financial value of additional financial services accessed by smallholder farmers(50% women, 40% youth), micro-entreprenuers (50% women, 40% youth) and SMEs (50% women-led)',
+                'bold' => 'additional financial services'
             ],
             'max' => false,
             'replace_value_with' => 1,
             'orders' => true,
+            'chart_title' => null,
             'dimensions' => [
                 [
                     "order" => 1,
@@ -178,6 +186,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => null,
         ],
         [
             'id' => 48259,
@@ -192,6 +201,7 @@ return [
             'max' => false,
             'replace_value_with' => false,
             'orders' => false,
+            'chart_title' => null,
         ],
     ],
     'charts' => [

@@ -45,7 +45,7 @@ input.btn.dropdown-toggle.btn-light{
 }
 
 .dropdown-item.active, .dropdown-item:active{
-	background-color:#2dbbad;
+	background-color:#a43332;
 }
 .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn):focus {
 	outline: none;
@@ -77,7 +77,7 @@ button.btn.dropdown-toggle.btn-pink.bs-placeholder {
         </select>
     </nav>
     <div class="d-flex justify-content-center mt-2">
-        <small class="text-muted">Actors collaborating within the partnerships</small>
+        <h6>Actors collaborating within the partnerships</h6>
     </div>
 </div>
     <!-- End Jumbotron-->
