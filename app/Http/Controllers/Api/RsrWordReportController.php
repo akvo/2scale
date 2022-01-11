@@ -198,9 +198,11 @@ class RsrWordReportController extends Controller
                 $section->addTextBreak(1);
             }
         }
-        $header = $section
-            ->createHeader()
-            ->addImage(url('/images/report-header.jpg'), array('width' => 80, 'align' => 'right'));
+        if (env('APP_ENV') !== "local") {
+            $header = $section
+                ->createHeader()
+                ->addImage(url('/images/report-header.jpg'), array('width' => 80, 'align' => 'right'));
+        }
         $footer = $section->createFooter();
         $footerTable = $footer->addTable(array('borderSize' => 0));
         $footerRow = $footerTable->addRow();

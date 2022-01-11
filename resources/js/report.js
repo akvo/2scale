@@ -284,26 +284,36 @@ renderReportForm();
 // getCharts("report/total-activities", "total-activities-row", "12");
 
 // All of Event Function
+const partnershipDropdownEvent = (id, text = "Select Partnership") => {
+    // click and change text
+    const selectorName = "[data-id=" + id + "]";
+    const dropdown = document.querySelector(selectorName);
+    if (dropdown) {
+        dropdown.click(); // click
+        dropdown.children[0].children[0].children[0].textContent = text; // change text
+    }
+};
+
 $("#country-level").on("change", () => {
     let country_id = $("#country-level").val();
-    document.querySelector("[data-id=partnership-level]").click();
     $("#partnership-level").val(0);
+    partnershipDropdownEvent("partnership-level", "Select Patnership (PF)");
     $(".partnerships").hide("fast");
     $(".ppp-" + country_id).show("fast");
 });
 
 $("#profile-country-level").on("change", () => {
     let country_id = $("#profile-country-level").val();
-    document.querySelector("[data-id=profile-partnership-level]").click();
     $("#profile-partnership-level").val(0);
+    partnershipDropdownEvent("profile-partnership-level");
     $(".profile-partnerships").hide("fast");
     $(".profile-ppp-" + country_id).show("fast");
 });
 
 $("#uii-country-level").on("change", () => {
     let country_id = $("#uii-country-level").val();
-    document.querySelector("[data-id=uii-partnership-level]").click();
     $("#uii-partnership-level").val(0);
+    partnershipDropdownEvent("uii-partnership-level");
     $(".uii-partnerships").hide("fast");
     $(".uii-ppp-" + country_id).show("fast");
 });
