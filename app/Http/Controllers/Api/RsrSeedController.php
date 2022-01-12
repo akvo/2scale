@@ -354,10 +354,7 @@ class RsrSeedController extends Controller
         if ($type === 'App\RsrDimension' || $type === 'App\RsrDimensionValue') {
             $titles['title'] = $titleData['name'];
         }
-        $title = RsrTitle::where('title', $titles['title'])->first();
-        if (!$title) {
-            $title = RsrTitle::updateOrCreate($titles, $titles);
-        }
+        $title = RsrTitle::updateOrCreate($titles, $titles);
 
         // seed Titleable
         $titleable = [];

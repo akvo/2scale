@@ -54,6 +54,12 @@ const renderReportForm = () => {
             $(".partnerships").hide("fast");
             $(".profile-partnerships").hide("fast");
             $(".uii-partnerships").hide("fast");
+        })
+        .finally((res) => {
+            setTimeout(() => {
+                $("#loader-spinner").remove();
+                $("#main-report-content").css("visibility", "visible");
+            }, 1000);
         });
 };
 
@@ -63,7 +69,19 @@ targetAndLastSync().then((el) => {
 });
 
 $("main").append(
-    <div>
+    <div class="d-flex justify-content-center" id="loader-spinner">
+        <div
+            class="spinner-border text-primary loader-spinner"
+            style="top: 40%;"
+            role="status"
+        >
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+);
+
+$("main").append(
+    <div id="main-report-content" style="visibility:hidden">
         <div class="row" id="zero-row"></div>
         <div class="row" id="first-row">
             <div class="col-md-12">
@@ -203,10 +221,7 @@ $("main").append(
                 <div class="card">
                     <div class="card-header">
                         <h3>Table: UII Targets and Achievements</h3>
-                        <h6>
-                            <span id="last-sync-temp-uii"></span> - include
-                            country filter
-                        </h6>
+                        <h6>include country filter</h6>
                     </div>
                     <div class="card-body" id="uii-report-filter">
                         <div class="d-flex justify-content-center align-items-center">
@@ -269,9 +284,20 @@ renderReportForm();
 // getCharts("report/total-activities", "total-activities-row", "12");
 
 // All of Event Function
+const partnershipDropdownEvent = (id, text = "Select Partnership") => {
+    // click and change text
+    const selectorName = "[data-id=" + id + "]";
+    const dropdown = document.querySelector(selectorName);
+    if (dropdown) {
+        dropdown.click(); // click
+        dropdown.children[0].children[0].children[0].textContent = text; // change text
+    }
+};
+
 $("#country-level").on("change", () => {
     let country_id = $("#country-level").val();
     $("#partnership-level").val(0);
+    partnershipDropdownEvent("partnership-level", "Select Patnership (PF)");
     $(".partnerships").hide("fast");
     $(".ppp-" + country_id).show("fast");
 });
@@ -279,6 +305,7 @@ $("#country-level").on("change", () => {
 $("#profile-country-level").on("change", () => {
     let country_id = $("#profile-country-level").val();
     $("#profile-partnership-level").val(0);
+    partnershipDropdownEvent("profile-partnership-level");
     $(".profile-partnerships").hide("fast");
     $(".profile-ppp-" + country_id).show("fast");
 });
@@ -286,6 +313,7 @@ $("#profile-country-level").on("change", () => {
 $("#uii-country-level").on("change", () => {
     let country_id = $("#uii-country-level").val();
     $("#uii-partnership-level").val(0);
+    partnershipDropdownEvent("uii-partnership-level");
     $(".uii-partnerships").hide("fast");
     $(".uii-ppp-" + country_id).show("fast");
 });
