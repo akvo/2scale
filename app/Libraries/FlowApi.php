@@ -13,6 +13,7 @@ class FlowApi
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
             }
+            return null;
         }
         if ($response->getStatusCode() === 200) {
             $data = json_decode($response->getBody(), true);
@@ -21,7 +22,6 @@ class FlowApi
         if (empty($data)) {
             return null;
         }
-
 
         return $data;
     }
