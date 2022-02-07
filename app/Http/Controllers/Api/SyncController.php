@@ -445,23 +445,25 @@ class SyncController extends Controller
                         }
                         // check repeatable
                         $question = Question::where('question_id', $question_id)->first();
-                        $qgroup = QuestionGroup::find($question['question_group_id']);
                         $repeat_index = 0;
-                        if ($qgroup['repeat']) {
-                            if (isset($this->repeat_temp[$question_id])) {
-                                $this->repeat_temp[$question_id] = $this->repeat_temp[$question_id] + 1;
-                            } else {
-                                $this->repeat_temp[$question_id] = 1;
-                            }
-                            $repeat_index = $this->repeat_temp[$question_id];
+                        if ($question) {
+                            $qgroup = QuestionGroup::find($question['question_group_id']);
+                            if ($qgroup['repeat']) {
+                                if (isset($this->repeat_temp[$question_id])) {
+                                    $this->repeat_temp[$question_id] = $this->repeat_temp[$question_id] + 1;
+                                } else {
+                                    $this->repeat_temp[$question_id] = 1;
+                                }
+                                $repeat_index = $this->repeat_temp[$question_id];
 
-                            $check = $answerData->keys();
-                            $qids = Question::where('question_group_id', $qgroup['id'])->pluck('question_id');
-                            $diff = $qids->diff($check);
-                            if (count($diff) > 0) {
-                                $diff->each(function ($val) use ($repeat_index) {
-                                    $this->repeat_temp[$val] = $repeat_index;
-                                });
+                                $check = $answerData->keys();
+                                $qids = Question::where('question_group_id', $qgroup['id'])->pluck('question_id');
+                                $diff = $qids->diff($check);
+                                if (count($diff) > 0) {
+                                    $diff->each(function ($val) use ($repeat_index) {
+                                        $this->repeat_temp[$val] = $repeat_index;
+                                    });
+                                }
                             }
                         }
                         return array(
