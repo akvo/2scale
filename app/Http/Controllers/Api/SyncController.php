@@ -21,6 +21,7 @@ use App\QuestionGroup;
 use App\LastSync;
 use \Mailjet\Resources;
 use Mailjet\LaravelMailjet\Facades\Mailjet;
+use Illuminate\Support\Facades\Log;
 
 class SyncController extends Controller
 {
@@ -339,11 +340,9 @@ class SyncController extends Controller
             $id = $datapoints->insertGetId($data_points);
             $answers = [];
             try {
-                //code...
                 $answers = $datapoints->find($id)->answers()->saveMany($data);
             } catch (\Throwable $th) {
-                //throw $th;
-                dump($data);
+                Log::error($th);
             }
             return ["answers" => $answers,"datapoints" => $datapoints];
         });
@@ -705,10 +704,15 @@ class SyncController extends Controller
             // ];
         }
 
+        // get all form from our db
+        $formIds = $forms->all()->pluck('form_id');
         // $formChanged = [];
         if (count($syncData['changes']['formChanged']) !== 0) {
             $this->collections = collect();
-            $formChanged = collect($syncData['changes']['formChanged'])->map(function ($form) use ($flowApi, $forms, $partnerships, $questions) {
+            $formChanged = collect($syncData['changes']['formChanged'])->filter(function ($form) use ($formIds) {
+                // filter form by form defined on DB
+                return $formIds->contains($form['id']);
+            })->map(function ($form) use ($flowApi, $forms, $partnerships, $questions) {
                 // update the form on flow api
                 $updatedFlowApi = $flowApi->questions($form['id'], $update = true);
 
@@ -788,7 +792,6 @@ class SyncController extends Controller
 
         // $dpsChanged = [];
         if (count($syncData['changes']['formInstanceChanged']) !== 0) {
-            $forms = $forms->all();
             $this->collections = collect();
             $formInstanceChanged = collect($syncData['changes']['formInstanceChanged'])->groupBy('formId');
             $formInstanceChanged->each(function ($item, $key) use ($forms, $partnerships) {
@@ -823,17 +826,25 @@ class SyncController extends Controller
                             ],
                         );
                     } catch (\Throwable $th) {
-                        dump($answer);
+                        Log::error($th);
                     }
                     return $answer;
                 });
                 return ["answers" => $answer,"datapoints" => $dp];
             });
             // new datapoint coming
-            $dpsNew = $this->collections->map(function($data_point) use ($datapoints) {
-                $data = collect($data_point["answers"])->map(function($answer) {
-                    return new Answer($answer);
-                });
+            // get all forms
+            $qIds = Question::all()->pluck('question_id');
+            $dpsNew = $this->collections->filter(function ($data_point) use ($formIds) {
+                // filter form by form defined on DB
+                return $formIds->contains($data_point['form_id']);
+            })->map(function ($data_point) use ($datapoints, $qIds) {
+                $data = collect($data_point["answers"])->filter(function ($answer) use ($qIds) {
+                        // check for question_id, if not in our DB, skip datapoint
+                        return $qIds->contains($answer['question_id']);
+                    })->map(function ($answer) use ($qIds) {
+                        return new Answer($answer);
+                    });
                 $data_points = collect($data_point)->except('answers')->toArray();
                 $id = $datapoints->insertGetId($data_points);
                 $answers = $datapoints->find($id)->answers()->saveMany($data);
@@ -845,7 +856,14 @@ class SyncController extends Controller
 
         // $dpsDeleted = 0;
         if (count($syncData['changes']['formInstanceDeleted']) !== 0 || count($syncData['changes']['dataPointDeleted']) !== 0) {
-            $datapointDeleted = collect($syncData['changes']['dataPointDeleted'])->map(function ($item) { return (int) $item; });
+            // get all datapoint id from DB
+            $dpIds = Datapoint::all()->pluck('datapoint_id');
+            $datapointDeleted = collect($syncData['changes']['dataPointDeleted'])->map(function ($item) {
+                return (int) $item;
+            })->filter(function ($item) use ($dpIds) {
+                // filter datapoint id by datapoint on DB
+                return $dpIds->contains($item);
+            });
             $dpsDeleted = $datapoints->whereIn('datapoint_id', $datapointDeleted)->delete();
 
             $this->dpsDeleted = $this->dpsDeleted + $dpsDeleted;
