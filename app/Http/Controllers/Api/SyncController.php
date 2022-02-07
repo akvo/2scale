@@ -292,12 +292,22 @@ class SyncController extends Controller
                 $type = 'multiple';
             };
             $opts = collect($options['options']['option'])->map(function($opt) use ($type, $question) {
-                $opt['type'] = $type;
-                $opt['question_id'] = $question['id'];
-                // there was a translation on options, so we need to forget the altText
-                $opt = collect($opt)->forget(['value', 'altText'])->toArray();
-                // return new Option($opt);
-                return Option::updateOrCreate($opt);
+                try {
+                    $opt['type'] = $type;
+                    $opt['question_id'] = $question['id'];
+                    // there was a translation on options, so we need to forget the altText
+                    $opt = collect($opt)->forget(['value', 'altText'])->toArray();
+                    // return new Option($opt);
+                    return Option::updateOrCreate($opt);
+                } catch (\Throwable $th) {
+                    $tmp = collect([
+                        "question_id" => $question['id'],
+                        "code" => "",
+                        "text" => $opt,
+                        "type" => $type
+                    ]);
+                    return Option::updateOrCreate($tmp->toArray());
+                }
             });
             // $insert = $questions->find($question->id)->options()->saveMany($opts);
             // return [$question->id => $insert];
