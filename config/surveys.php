@@ -5,7 +5,7 @@ $FORM_URL = env('FORM_URL', 'http://localhost:3000') . '/' . $INSTANCE;
 
 return [
     "url" => $FORM_URL,
-    "cascade" => "cascade-30100013-v70.sqlite",
+    "cascade" => "cascade-30100013-v72.sqlite",
     "sector_cascade" => "cascade-26130006-v24.sqlite",
     "forms" => array(
         [
@@ -137,7 +137,7 @@ return [
         */
     ),
     // unused
-    "country_cascade" => "cascade-30100013-v70.sqlite",
+    "country_cascade" => "cascade-30100013-v72.sqlite",
     "countries" => array(
         [
             "id" => 1,
