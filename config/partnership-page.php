@@ -94,6 +94,11 @@ return [
     'NG26' => 'Cassava partnership with Cato Foods',
     'NG27' => 'Maize partnership with AFEX Commodity Limited',
     // * eol Nigeria
+
+    // * South Sudan
+    'SS21' => 'Maize partnership with Kanybek General Trading & Investment Company Ltd.',
+    'SS22' => 'Maize partnership with Eden Multipurpose Marketing Co-operative Society & Nzara General Farmers Union',
+    // * eol South Sudan
   ],
   'impact_charts' => [
     # MAX is aggregation type, if false aggregation is SUM (default)
