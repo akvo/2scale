@@ -362,6 +362,14 @@ return [
                     'BF28' => 9362,
                 ],
             ], # Burkina Faso
+
+            'SS' => [ # South Sudan
+                'parent' => 10230,
+                'childs' => [
+                    'SS21' => 10231,
+                    'SS22' => 10232
+                ]
+            ],
         ],
     ],
 ];
