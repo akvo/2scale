@@ -52,7 +52,7 @@ class DataTableController extends Controller
         $questions = $questions->where([
                         ['form_id', $request->form_id],
                         ['personal_data', '=', 0]
-                    ])->get();
+                    ])->orderBy('question_group_id')->orderBy('id')->get();
         $total_questions = collect($questions)->count();
         $datapoints = $datapoints->map(function($datapoint) use ($total_questions, $questions, $qgroups, $country_cascade) {
             $ids = collect($datapoint)->get('data')->map(function($data){
