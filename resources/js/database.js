@@ -72,7 +72,7 @@ const createRows = (datas, rowType, colspan = false, res, index = 1) => {
             html +=
                 rowType === "head"
                     ? "<th class='" + classname + "' " + colspanOpt + ">"
-                    : "<td class='" + classname + "'>";
+                    : "<th class='" + classname + "'>";
             html +=
                 rowType === "head"
                     ? d.name
@@ -339,16 +339,120 @@ const datatableOptions = (id, res) => {
             }
         });
     });
-    let optSelected = window.parent
+    // generate filename
+    const filenameTemp = [];
+    const optSelected = window.parent
         .$("#select-database-survey option:selected")
         .text()
         .trim();
+    filenameTemp.push(optSelected);
+    const countrySelected = window.parent
+        .$("#select-country-survey option:selected")
+        .text()
+        .trim();
+    if (!countrySelected.toLowerCase().includes("select country")) {
+        filenameTemp.push(countrySelected);
+    }
+    const partnershipSelected = window.parent
+        .$("#select-partnership-survey option:selected")
+        .text()
+        .trim();
+    if (!partnershipSelected.toLowerCase().includes("select partnership")) {
+        filenameTemp.push(partnershipSelected);
+    }
+    const dateSelected = window.parent.$(".datarange-picker").val().trim();
+    filenameTemp.push(dateSelected);
+    const filename = filenameTemp.join("_");
     let dtoptions = {
         dom: "Birftp",
         buttons: [
             {
-                extend: "excel",
-                filename: optSelected,
+                extend: "excelHtml5",
+                filename: filename,
+                customize: function (xlsx) {
+                    // converts numbers to spreadsheet letter columns eg. 1 -> A
+                    function getExcelColumn(num) {
+                        let s = "",
+                            t;
+                        while (num > 0) {
+                            t = (num - 1) % 26;
+                            s = String.fromCharCode(65 + t) + s;
+                            num = ((num - t) / 26) | 0;
+                        }
+                        return s || undefined;
+                    }
+                    //copy _createNode function from source
+                    function _createNode(doc, nodeName, opts) {
+                        var tempNode = doc.createElement(nodeName);
+                        if (opts) {
+                            if (opts.attr) {
+                                $(tempNode).attr(opts.attr);
+                            }
+                            if (opts.children) {
+                                $.each(opts.children, function (key, value) {
+                                    tempNode.appendChild(value);
+                                });
+                            }
+                            if (opts.text !== null && opts.text !== undefined) {
+                                tempNode.appendChild(
+                                    doc.createTextNode(opts.text)
+                                );
+                            }
+                        }
+                        return tempNode;
+                    }
+                    const sheet = xlsx.xl.worksheets["sheet1.xml"];
+                    const mergeCells = $("mergeCells", sheet);
+                    mergeCells[0].children[0].remove(); // remove merge cell 1st row
+                    const rows = $("row", sheet);
+                    rows[0].children[0].remove(); // clear header cell
+                    const customHeaderRowIndex = 1;
+                    // iterate by qgroups
+                    let startColumnIndex = 2; // 1 or A used by ID table header
+                    let endColumnIndex = 0;
+                    res.qgroups.forEach((qg) => {
+                        const filterQuestions = res.questions.filter(
+                            (q) => q.question_group_id === qg.id
+                        );
+                        startColumnIndex = endColumnIndex
+                            ? endColumnIndex + 1
+                            : startColumnIndex;
+                        endColumnIndex =
+                            startColumnIndex + (filterQuestions.length - 1);
+                        const startColumn = getExcelColumn(startColumnIndex);
+                        const endColumn = getExcelColumn(endColumnIndex);
+                        const newCell = `${startColumn}${customHeaderRowIndex}`;
+                        const mergedCell = `${startColumn}${customHeaderRowIndex}:${endColumn}${customHeaderRowIndex}`;
+                        // start
+                        rows[0].appendChild(
+                            _createNode(sheet, "c", {
+                                attr: {
+                                    t: "inlineStr",
+                                    r: newCell, //address of new cell start
+                                    s: 2, // style - https://www.datatables.net/reference/button/excelHtml5
+                                },
+                                children: {
+                                    row: _createNode(sheet, "is", {
+                                        children: {
+                                            row: _createNode(sheet, "t", {
+                                                text: qg.name,
+                                            }),
+                                        },
+                                    }),
+                                },
+                            })
+                        );
+                        // set new cell merged
+                        mergeCells[0].appendChild(
+                            _createNode(sheet, "mergeCell", {
+                                attr: {
+                                    ref: mergedCell, // merge address / colspan
+                                },
+                            })
+                        );
+                        mergeCells.attr("count", mergeCells.attr("count") + 1);
+                    });
+                },
             },
             "copy",
             "colvis",
