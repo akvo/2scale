@@ -24,7 +24,7 @@
                         <a class="nav-link" href="/countries" target="_top">Countries</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/partnership" target="_top">Partnership</a>
+                        <a class="nav-link" href="/partnership" target="_top">Partnerships</a>
                     </li>
                 </ul>
             </div>

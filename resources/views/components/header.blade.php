@@ -18,7 +18,7 @@
         <a class="nav-link" href="/countries">Countries</a>
       </li>
       <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
-        <a class="nav-link" href="/partnership">Partnership</a>
+        <a class="nav-link" href="/partnership">Partnerships</a>
       </li>
 
       @if (Auth::check())
