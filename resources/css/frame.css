@@ -610,4 +610,25 @@ button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
     position: absolute;
     font-size: 0.7rem;
     top: -1.1rem;
+    /* border: 1.5px solid #3d588a; */
 }
+
+.btn-uii-show-program-level-wrapper {
+    margin-top: 1.25rem;
+    margin-left: 1rem;
+}
+
+.btn.btn-uii-show-program-level {
+    /* position: absolute;
+    top: -1.1rem;
+    left: 11rem; */
+    font-size: 0.7rem;
+    width: 365px;
+    /* border: 1.5px solid #3d588a; */
+    background-color: #609ba7;
+    color: #fff;
+}
+
+/* div#uii-report-filter {
+    margin-left: -15rem;
+} */
