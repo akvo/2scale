@@ -701,6 +701,30 @@ class ChartController extends Controller
         return $this->getAndTransformRsrData($partnershipId);
     }
 
+    /**
+     * Function to rename UII8 - dimensions name and
+     * total value indicator name
+     */
+    private function transfromUII8dimensionName($name, $isUII8)
+    {
+        // change UII 8 dimensions name
+        $dimName = strtolower($name);
+        if ($isUII8 && str_contains($dimName, 'total value')) {
+            $dimName = "Total value(Euros) of financial services accessed by SHFs, MSMEs & SMEs";
+        }
+        if ($isUII8 && str_contains($dimName, 'shfs')) {
+            $dimName = "#smallholder farmers";
+        }
+        if ($isUII8 &&  str_contains($dimName, 'micro-entrepreneurs')) {
+            $dimName = "#MSMEs";
+        }
+        if ($isUII8 &&  str_contains($dimName, 'smes')) {
+            $dimName = "#SMEs";
+        }
+        // eol change UII 8 dimensions name
+        return $dimName;
+    }
+
     public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false, $withContribution=false)
     {
         $pId = $partnershipId ? $partnershipId : 'all';
@@ -769,6 +793,10 @@ class ChartController extends Controller
 
         $this->collections = collect();
         $data = $data['rsr_results']->transform(function ($res) {
+            $uii = Str::before($res['title'], ': ');
+            $title = '# of '.Str::after($res['title'], ': ');
+            $isUII8 = str_contains($uii, 'UII-8');
+
             $hasChildrens = count($res['childrens']) > 0;
             $res['parent_project'] = null;
             $res['level'] = 1;
@@ -777,8 +805,8 @@ class ChartController extends Controller
             $res = Arr::except($res, ['childrens']);
             $res['columns'] = [
                 'id' => $res['id'],
-                'uii' => Str::before($res['title'], ': '),
-                'title' => '# of '.Str::after($res['title'], ': '),
+                'uii' => $uii,
+                'title' => $title,
                 'subtitle' => [],
             ];
             if ($res['rsr_indicators_count'] > 1 && count($res['rsr_dimensions']) === 0) {
@@ -791,8 +819,8 @@ class ChartController extends Controller
                 });
                 $res['columns']= [
                     'id' => $res['id'],
-                    'uii' => Str::before($res['title'], ': '),
-                    'title' => '# of '.Str::after($res['title'], ': '),
+                    'uii' => $uii,
+                    'title' => $title,
                     'subtitle' => $subtitles,
                 ];
             }
@@ -807,8 +835,8 @@ class ChartController extends Controller
                 });
                 $res['columns'] = [
                     'id' => $res['id'],
-                    'uii' => Str::before($res['title'], ': '),
-                    'title' => '# of '.Str::after($res['title'], ': '),
+                    'uii' => $uii,
+                    'title' => $title,
                     'subtitle' => $subtitles,
                 ];
                 # EOL UII 8 : As in RSR
@@ -822,7 +850,7 @@ class ChartController extends Controller
                 //         if ($dimensionIds->contains($dim['id']) || $dimensionIds->contains($dim['parent_dimension_name'])) {
                 //             return [
                 //                 'id' => $res['id'],
-                //                 'title' => '# of '.Str::after($res['title'], ': '),
+                //                 'title' => $title,
                 //                 'dimension' => $dim['name'],
                 //                 'subtitle' => $dim['rsr_dimension_values']->pluck('name'),
                 //             ];
@@ -831,7 +859,7 @@ class ChartController extends Controller
                 //     }
                 //     return [
                 //         'id' => $res['id'],
-                //         'title' => '# of '.Str::after($res['title'], ': '),
+                //         'title' => $title,
                 //         'dimension' => $dim['name'],
                 //         'subtitle' => $dim['rsr_dimension_values']->pluck('name'),
                 //     ];
@@ -842,27 +870,31 @@ class ChartController extends Controller
 
                 # UII 8 : As in RSR
                 $subtitles = collect();
-                $res['rsr_dimensions']->each(function ($dim) use ($subtitles) {
+                $res['rsr_dimensions']->each(function ($dim) use ($subtitles, $isUII8) {
+                    // change UII 8 dimensions name
+                    $dimName = $this->transfromUII8dimensionName($dim['name'], $isUII8);
                     $subtitles->push([
-                        "name" => $dim['name'],
+                        "name" => $dimName,
                         "values" => $dim['rsr_dimension_values']->pluck('name'),
                     ]);
                 });
-                $res['rsr_indicators']->each(function ($ind) use ($subtitles) {
+                $res['rsr_indicators']->each(function ($ind) use ($subtitles, $isUII8) {
+                    // change UII 8 ind title
+                    $indTitle = $this->transfromUII8dimensionName($ind['title'], $isUII8);
                     $subtitles->push([
-                        "name" => $ind['title'],
+                        "name" => $indTitle,
                         "values" => [],
                     ]);
                 });
                 $res['columns'] = [
                     'id' => $res['id'],
-                    'uii' => Str::before($res['title'], ': '),
-                    'title' => '# of '.Str::after($res['title'], ': '),
+                    'uii' => $uii,
+                    'title' => $title,
                     'subtitle' => $subtitles,
                 ];
                 # EOL UII 8 : As in RSR
             }
-            $res['uii'] = Str::before($res['title'], ': ');
+            $res['uii'] = $uii;
             $this->collections->push($res);
             return $res;
         });

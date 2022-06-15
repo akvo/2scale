@@ -481,23 +481,16 @@ let legend =
     '<ul id="table-legend" class="list-inline">\
     <li class="list-inline-item">' +
     dotIcon +
-    'SM : Male (>35)</li>\
+    'SM : Senior Men</li>\
     <li class="list-inline-item">' +
     dotIcon +
-    'SF : Female (>35)</li>\
+    'SW : Senior Women</li>\
     <li class="list-inline-item">' +
     dotIcon +
-    'JM : Male (<=35)</li>\
+    'JM : Junior Men</li>\
     <li class="list-inline-item">' +
     dotIcon +
-    'JF : Female (<=35)</li>\
-    <li class="list-inline-item">' +
-    dotIcon +
-    'M : Male</li>\
-    <li class="list-inline-item">' +
-    dotIcon +
-    "F : Female</li>\
-</ul>";
+    "JW : Junior Women</li></ul>";
 
 export const datatableOptions = (id, res, baseurl) => {
     let dtoptions = {
@@ -665,19 +658,19 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                 //             return 'SM';
                 //         }
                 //         if (isFemale && isSenior) {
-                //             return 'SF';
+                //             return 'SW';
                 //         }
                 //         if (isGender && !isFemale && isJunior) {
                 //             return 'JM';
                 //         }
                 //         if(isFemale && isJunior) {
-                //             return 'JF';
+                //             return 'JW';
                 //         }
                 //         if (isGender && !isFemale && !isSenior && !isJunior) {
-                //             return 'M';
+                //             return 'Male-led';
                 //         }
                 //         if (isFemale && !isSenior && !isJunior) {
-                //             return 'F';
+                //             return 'Female-led';
                 //         }
                 //         return subtitle;
                 //     });
@@ -702,19 +695,19 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                             return "SM";
                         }
                         if (isFemale && isSenior) {
-                            return "SF";
+                            return "SW";
                         }
                         if (isGender && !isFemale && isJunior) {
                             return "JM";
                         }
                         if (isFemale && isJunior) {
-                            return "JF";
+                            return "JW";
                         }
                         if (isGender && !isFemale && !isSenior && !isJunior) {
-                            return "M";
+                            return "Male-led";
                         }
                         if (isFemale && !isSenior && !isJunior) {
-                            return "F";
+                            return "Female-led";
                         }
                         return value;
                     });
@@ -768,8 +761,9 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                             ? 'rowspan="2" colspan="' + colspan + '"'
                             : 'colspan="' + colspan + '"'
                         : 'rowspan="3"';
-                html +=
-                    '<th scope="col" ' + span + ">" + column.title + "</th>";
+                // table header using uii or title
+                html += '<th scope="col" ' + span + ">" + column.uii + "</th>";
+                // '<th scope="col" ' + span + ">" + column.title + "</th>";
             });
             html += "</tr>";
             return res;
