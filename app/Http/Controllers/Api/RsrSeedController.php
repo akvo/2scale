@@ -107,10 +107,18 @@ class RsrSeedController extends Controller
                     'current_image' => $val['current_image'],
                     'current_image_caption' => $val['current_image_caption'],
                     'status_label' => $val['status_label'],
-                    'date_start_planned' => ($val['date_start_planned'] === null) ? $val['date_start_planned'] : Carbon::createFromFormat('Y-m-d', $val['date_start_planned'])->toDateString(),
-                    'date_start_actual' => ($val['date_start_actual'] === null) ? $val['date_start_actual'] : Carbon::createFromFormat('Y-m-d', $val['date_start_actual'])->toDateString(),
-                    'date_end_planned' => ($val['date_end_planned'] === null) ? $val['date_end_planned'] : Carbon::createFromFormat('Y-m-d', $val['date_end_planned'])->toDateString(),
-                    'date_end_actual' => ($val['date_end_actual'] === null) ? $val['date_end_actual'] :Carbon::createFromFormat('Y-m-d', $val['date_end_actual'])->toDateString(),
+                    'date_start_planned' => ($val['date_start_planned'] === null)
+                        ? $val['date_start_planned']
+                        : $this->createDateFromString($val['date_start_planned'], 'Y-m-d'),
+                    'date_start_actual' => ($val['date_start_actual'] === null)
+                        ? $val['date_start_actual']
+                        : $this->createDateFromString($val['date_start_actual'], 'Y-m-d'),
+                    'date_end_planned' => ($val['date_end_planned'] === null)
+                        ? $val['date_end_planned']
+                        : $this->createDateFromString($val['date_end_planned'], 'Y-m-d'),
+                    'date_end_actual' => ($val['date_end_actual'] === null)
+                        ? $val['date_end_actual']
+                        : $this->createDateFromString($val['date_end_actual'], 'Y-m-d'),
                 ],
             );
         });
@@ -300,8 +308,12 @@ class RsrSeedController extends Controller
                     'parent_period' => $val['parent_period'],
                     'target_value' => floatval($val['target_value']),
                     'actual_value' => floatval($val['actual_value']),
-                    'period_start' => ($val['period_start'] === null) ? $val['period_start'] : Carbon::createFromFormat('Y-m-d', $val['period_start'])->toDateString(),
-                    'period_end' => ($val['period_end'] === null) ? $val['period_end'] : Carbon::createFromFormat('Y-m-d', $val['period_end'])->toDateString(),
+                    'period_start' => ($val['period_start'] === null)
+                        ? $val['period_start']
+                        : $this->createDateFromString($val['period_start'], 'Y-m-d'),
+                    'period_end' => ($val['period_end'] === null)
+                        ? $val['period_end']
+                        : $this->createDateFromString($val['period_end'], 'Y-m-d'),
                 ]
             );
         });
@@ -333,8 +345,8 @@ class RsrSeedController extends Controller
                     'rsr_period_id' => $val['period'],
                     'value' => ($val['value'] === null) ? $val['value'] : floatval($val['value']),
                     'text' => $val['text'],
-                    'created_at' => Carbon::createFromFormat('Y-m-d\TH:i:s.u', $val['created_at'])->toDateTimeString(),
-                    'updated_at' => Carbon::createFromFormat('Y-m-d\TH:i:s.u', $val['last_modified_at'])->toDateTimeString()
+                    'created_at' => $this->createDateFromString($val['created_at'], 'Y-m-d H:i:s'),
+                    'updated_at' => $this->createDateFromString($val['last_modified_at'], 'Y-m-d H:i:s')
                 ]
             );
         });
@@ -383,5 +395,13 @@ class RsrSeedController extends Controller
             }
         }
         return $data;
+    }
+
+    private function createDateFromString($date, $format)
+    {
+        // old way Carbon::createFromFormat('Y-m-d\TH:i:s.u', $date)->toDateTimeString()
+        dump($date);
+        dump($format);
+        return Carbon::parse($date)->format($format);
     }
 }
