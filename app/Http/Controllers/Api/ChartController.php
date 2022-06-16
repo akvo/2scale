@@ -698,7 +698,8 @@ class ChartController extends Controller
             $partnershipId = $request->country_id; // generate datatables just from country level
             // $partnershipId = $request->partnership_id; // generate datatables from partnership level
         }
-        return $this->getAndTransformRsrData($partnershipId);
+        // send withContribution = true to add 2scale/private contribution value
+        return $this->getAndTransformRsrData($partnershipId, false, false, true);
     }
 
     /**
@@ -725,6 +726,22 @@ class ChartController extends Controller
         return $dimName;
     }
 
+    /**
+     * Function to add prefix to contribution title/name
+     * for ordering purposes
+     */
+    private function addPrefixToContributionNameForOrdering($name)
+    {
+        if (str_contains($name, "Private sector contribution")) {
+            // add 1 to put private contribution before 2scale contrib
+            return "Z##1PSC (Euros)";
+        }
+        if (str_contains($name, "2SCALE's Contribution")) {
+            return "Z##2SCALE contributions (Euros)";
+        }
+        return $name;
+    }
+
     public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false, $withContribution=false)
     {
         $pId = $partnershipId ? $partnershipId : 'all';
@@ -740,6 +757,7 @@ class ChartController extends Controller
 
         $this->rsrOverview = \App\ViewRsrOverview::where('agg_type', 'max')->get();
         $rsrFilter = $this->rsrResultFilter;
+        // ! Add contribution to show on uii table
         if ($withContribution) {
             $rsrFilter->push("Private sector contribution");
             $rsrFilter->push("2SCALE's Contribution");
@@ -900,12 +918,15 @@ class ChartController extends Controller
         });
 
         // $parents = $this->collections->where('level', 1)->values();
-        // filter not to show contribution value
+        // ! filter not to show contribution value
         $parents = $this->collections->where('level', 1)->values()->reject(function ($item) {
             return !Str::contains($item['title'], $this->rsrResultFilter);
         })->values();
         $results = $parents->first()->only('rsr_project_id', 'project');
-        $results['columns'] = $parents->sortBy('uii')->values();
+        $results['columns'] = $parents->map(function ($item) {
+                                    $item['uii'] = $this->addPrefixToContributionNameForOrdering($item['uii']);
+                                    return $item;
+                                })->sortBy('uii')->values();
 
         $childs = $this->collections->where('parent_project', $results['rsr_project_id']);
         $results['childrens'] = $childs->unique('project')->values();
@@ -913,11 +934,12 @@ class ChartController extends Controller
             $results['childrens'] = $results['childrens']->transform(function ($child) use ($childs) {
                 $child = $child->only('rsr_project_id', 'project');
                 // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
-                // filter not to show contribution value
+                // ! filter not to show contribution value
                 $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
                     return !Str::contains($item['title'], $this->rsrResultFilter);
                 })->values()->map(function ($col) {
                     $col['uii'] = Str::before($col['title'], ': ');
+                    $col['uii'] = $this->addPrefixToContributionNameForOrdering($col['uii']);
                     return $col;
                 })->sortBy('uii')->values();
 
@@ -927,11 +949,12 @@ class ChartController extends Controller
                     $child['childrens'] = $child['childrens']->transform(function ($child) use ($childs) {
                         $child = $child->only('rsr_project_id', 'project');
                         // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
-                        // filter not to show contribution value
+                        // ! filter not to show contribution value
                         $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
                             return !Str::contains($item['title'], $this->rsrResultFilter);
                         })->values()->map(function ($col) {
                             $col['uii'] = Str::before($col['title'], ': ');
+                            $col['uii'] = $this->addPrefixToContributionNameForOrdering($col['uii']);
                             return $col;
                         })->sortBy('uii')->values();
 
@@ -948,10 +971,13 @@ class ChartController extends Controller
                 "result_ids" => config('akvo-rsr.datatables.uii8_results_ids'),
                 "url" => config('akvo-rsr.endpoints.rsr_page'),
             ],
-            // filter not to show contribution value
+            // ! filter not to show contribution value
             "columns" => $data->pluck('columns')->reject(function ($item) {
                             return !Str::contains($item['uii'], $this->rsrResultFilter);
-                        })->values()->sortBy('uii')->values(),
+                        })->values()->map(function ($item) {
+                            $item['uii'] = $this->addPrefixToContributionNameForOrdering($item['uii']);
+                            return $item;
+                        })->sortBy('uii')->values(),
             "data" => $results,
         ];
 

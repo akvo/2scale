@@ -561,7 +561,7 @@ export const datatableOptions = (id, res, baseurl) => {
             {
                 targets: [
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                    17, 18, 19,
+                    17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
                 ],
                 visible: true,
             },
@@ -765,7 +765,14 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                             : 'colspan="' + colspan + '"'
                         : 'rowspan="3"';
                 // table header using uii or title
-                html += '<th scope="col" ' + span + ">" + column.uii + "</th>";
+                let uii = column.uii;
+                if (uii.includes("Z##1")) {
+                    uii = uii.replace("Z##1", "");
+                }
+                if (uii.includes("Z##")) {
+                    uii = uii.replace("Z##", "");
+                }
+                html += '<th scope="col" ' + span + ">" + uii + "</th>";
                 // '<th scope="col" ' + span + ">" + column.title + "</th>";
             });
             html += "</tr>";
