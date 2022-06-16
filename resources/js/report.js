@@ -360,10 +360,7 @@ $("#show-uii-program-level").on("click", () => {
     }
     window.document.getElementById("uii-report-data-frame").style.minHeight =
         "1150px";
-    $("#uii-report-data-frame").attr(
-        "src",
-        `/frame/uii-datatable-report/0/0 || null}`
-    );
+    $("#uii-report-data-frame").attr("src", `/frame/uii-datatable-report/0/0`);
 });
 
 $("#generate-word-report").on("click", () => {
@@ -474,7 +471,7 @@ const generatePartnershipChart = async (endpoints) => {
             "age-category"
         );
         setTimeout(() => {
-            resolve(console.log("generated"));
+            resolve(console.info("generated"));
         }, 15000);
     });
     return;
@@ -573,7 +570,7 @@ $("#generate-partnership-profile-report").on("click", () => {
                     $("#myModalBtnClose").show();
                 })
                 .catch((err) => {
-                    console.log("internal server error", err);
+                    console.info("internal server error", err);
                     $("#loader-spinner").remove();
                     $("#myModalAuthTitle").html("Error");
                     $("#myModalAuthBody").html(
