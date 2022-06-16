@@ -341,7 +341,7 @@ $("#filter-uii-report").on("click", () => {
     // window.document.getElementById("uii-report-filter").style.visibility =
     //     "hidden";
     window.document.getElementById("uii-report-data-frame").style.minHeight =
-        "950px";
+        "1150px";
     let country_id = $("#uii-country-level").val();
     let partnership_id = $("#uii-partnership-level").val();
     $("#uii-report-data-frame").attr(
@@ -359,7 +359,7 @@ $("#show-uii-program-level").on("click", () => {
         partnershipDropdownEvent("uii-country-level", "Select Country");
     }
     window.document.getElementById("uii-report-data-frame").style.minHeight =
-        "950px";
+        "1150px";
     $("#uii-report-data-frame").attr(
         "src",
         `/frame/uii-datatable-report/0/0 || null}`

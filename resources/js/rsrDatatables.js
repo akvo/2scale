@@ -270,6 +270,7 @@ const renderRow = (
 
     let data_id = "data-id=" + id;
     if (level === 3) {
+        icon_plus = "";
         style = "child child-" + parentId + " " + childId;
         data_id = "";
         indent = 'style="padding-left:25px;"';
