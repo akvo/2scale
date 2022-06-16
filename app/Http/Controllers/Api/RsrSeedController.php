@@ -400,8 +400,6 @@ class RsrSeedController extends Controller
     private function createDateFromString($date, $format)
     {
         // old way Carbon::createFromFormat('Y-m-d\TH:i:s.u', $date)->toDateTimeString()
-        dump($date);
-        dump($format);
         return Carbon::parse($date)->format($format);
     }
 }
