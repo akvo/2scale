@@ -17,7 +17,7 @@ Route::get('/impactreach', 'PageController@impactreach')->name('impactreach');
 Route::get('/partners', 'PageController@partners')->name('partners');
 Route::get('/countries', 'PageController@countries')->name('countries');
 Route::get('/partnership', 'PageController@partnership')->name('partnership');
-Route::get('/lumen-dashboard', 'PageController@lumenDashboard')->name('lumen-dashboard');
+Route::get('/uii-visuals', 'PageController@lumenDashboard')->name('uii-visuals');
 
 Route::get('/', 'PageController@home')->name('home');
 Route::get( '/auth0/callback', '\Auth0\Login\Auth0Controller@callback' )->name('auth0-callback');
