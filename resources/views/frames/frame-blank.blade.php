@@ -108,7 +108,7 @@ h1 {
             <h1>Survey Forms Explorer</h1>
         @endif
         @if ($page === 'lumen-dashboard')
-            <h1>Select UII to show Lumen visual.</h1>
+            <h1>Select UII to show visual.</h1>
         @endif
       </main>
 

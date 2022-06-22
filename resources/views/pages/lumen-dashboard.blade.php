@@ -18,7 +18,7 @@
     </nav>
 </div>
 
-<div class="instruction-text-wrapper">(Select UII to show Lumen visual)</div>
+<div class="instruction-text-wrapper">(Select UII to show visual)</div>
 
 <iframe
     id="lumen-dashboard-data-frame"

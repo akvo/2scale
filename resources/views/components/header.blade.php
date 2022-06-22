@@ -20,9 +20,6 @@
       <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
         <a class="nav-link" href="/partnership">Partnerships</a>
       </li>
-      <li class="nav-item {{Route::is('lumen-dashboard') ? 'active' : '' }}">
-        <a class="nav-link" href="/lumen-dashboard">Lumen</a>
-      </li>
 
       @if (Auth::check())
         <li class="nav-item {{Route::is('partners') ? 'active' : '' }}">
@@ -36,6 +33,9 @@
         </li>
         <li class="nav-item {{Route::is('report') ? 'active' : '' }}">
           <a class="nav-link" href="/report">Reports</a>
+        </li>
+        <li class="nav-item {{Route::is('uii-visuals') ? 'active' : '' }}">
+          <a class="nav-link" href="/uii-visuals">UII Visuals</a>
         </li>
         <li class="nav-item {{Route::is('support') ? 'active' : '' }}">
             <a class="nav-link" href="/support">Support</a>
