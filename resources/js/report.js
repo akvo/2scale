@@ -6,17 +6,6 @@ import { renderRsrTableTemplate, renderRsrTable } from "./rsrDatatables.js";
 
 const baseurl = $("meta[name=path]").attr("content");
 
-const lumenDashboards = {
-    "UII-1": "https://2scale.akvolumen.org/s/nXF-v96KRF4",
-    "UII-2": "https://2scale.akvolumen.org/s/8J1bSw8IW9g",
-    "UII-3": "https://2scale.akvolumen.org/s/cc5z5V9pHxQ",
-    "UII-4": "https://2scale.akvolumen.org/s/QFX_0qixuXQ",
-    "UII-5": "https://2scale.akvolumen.org/s/p-d507870kw",
-    "UII-6": "https://2scale.akvolumen.org/s/5_5fabJ5obA",
-    "UII-7": "https://2scale.akvolumen.org/s/UevggdhAzvQ",
-    "UII-8": "https://2scale.akvolumen.org/s/IIPJcwIMimE",
-};
-
 const renderReportForm = () => {
     axios
         .get(baseurl + "/api/flow/partnerships")
@@ -59,15 +48,6 @@ const renderReportForm = () => {
                     });
                 }
             });
-
-            // render lumen dashboard option
-            Object.keys(lumenDashboards).forEach((key) => {
-                const link = lumenDashboards[key];
-                const option =
-                    '<option value="' + link + '">' + key + "</option>";
-                $("#lumen-uii-dropdown").append(option);
-            });
-
             return res.data;
         })
         .then((res) => {
@@ -304,55 +284,6 @@ $("main").append(
                 </div>
             </div>
         </div>
-        {/* PoC Lumen dashboard */}
-        <hr />
-        <div class="row" id="uii-report-row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>UII Lumen Dashboard</h3>
-                        <h6>some subtitle</h6>
-                    </div>
-                    <div class="card-body" id="lumen-report-filter">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <form class="row form-inline">
-                                <div class="col-auto form-group">
-                                    <label class="control-label"></label>
-                                    <select
-                                        id="lumen-uii-dropdown"
-                                        class="form-control selectpicker"
-                                    >
-                                        <option value="0" selected>
-                                            Select UII
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-auto">
-                                    <button
-                                        id="generate-lumen-dashboard"
-                                        type="button"
-                                        class="btn btn-primary btn-report"
-                                    >
-                                        Generate
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div className="row" style="margin-top:25px">
-                    <div className="col-md-12" style="width:100%">
-                        <iframe
-                            id="lumen-report-data-frame"
-                            src=""
-                            frameborder={0}
-                            width="100%"
-                            style="min-width:100%; min-height: 2000px;"
-                        ></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 );
 renderReportForm();
@@ -500,14 +431,6 @@ $("#generate-word-report").on("click", () => {
             );
             $("#myModalBtnClose").show();
         });
-});
-
-// lumen
-$("#generate-lumen-dashboard").on("click", () => {
-    window.document.getElementById("lumen-report-data-frame").style.minHeight =
-        "1150px";
-    const link = $("#lumen-uii-dropdown").val();
-    $("#lumen-report-data-frame").attr("src", link);
 });
 
 // PROFILE REPORT GENERATOR
