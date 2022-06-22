@@ -40,6 +40,9 @@ iframe {
 iframe.has-filter {
     height: calc(100% - 56px);
 }
+iframe.lumen-iframe {
+    height: 100%;
+}
 .graphic {
     background-image: url(/images/infographic.png);
     height: 365px;
