@@ -20,6 +20,9 @@
       <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
         <a class="nav-link" href="/partnership">Partnerships</a>
       </li>
+      <li class="nav-item {{Route::is('lumen-dashboard') ? 'active' : '' }}">
+        <a class="nav-link" href="/lumen-dashboard">Lumen</a>
+      </li>
 
       @if (Auth::check())
         <li class="nav-item {{Route::is('partners') ? 'active' : '' }}">
