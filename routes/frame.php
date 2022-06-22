@@ -29,3 +29,5 @@ Route::get('/uii-datatable-report/{country_id}/{partnership_id}', 'FrameControll
 
 // RSR
 Route::post('/rsr-report', 'Api\RsrReportController@generateReport');
+
+Route::get('/lumen-dashboard/{uii}', 'FrameController@lumenDashboard');

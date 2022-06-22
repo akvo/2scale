@@ -107,6 +107,9 @@ h1 {
         @if ($page === 'survey')
             <h1>Survey Forms Explorer</h1>
         @endif
+        @if ($page === 'lumen-dashboard')
+            <h1>Select UII to show visual.</h1>
+        @endif
       </main>
 
       {{-- <footer class="mastfoot mt-auto">

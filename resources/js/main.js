@@ -424,3 +424,16 @@ const revalidate = () => {
 
 revalidate();
 authMessage();
+
+// Lumen Dashboard
+$("#lumen-uii-dropdown").on("change", (data) => {
+    if (data.target.value !== "") {
+        const uii = data.target.value;
+        $("#lumen-dashboard-data-frame").attr(
+            "src",
+            "/frame/lumen-dashboard/" + uii
+        );
+        return;
+    }
+    return;
+});

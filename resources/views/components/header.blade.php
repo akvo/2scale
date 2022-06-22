@@ -34,6 +34,9 @@
         <li class="nav-item {{Route::is('report') ? 'active' : '' }}">
           <a class="nav-link" href="/report">Reports</a>
         </li>
+        <li class="nav-item {{Route::is('uii-visuals') ? 'active' : '' }}">
+          <a class="nav-link" href="/uii-visuals">UII Visuals</a>
+        </li>
         <li class="nav-item {{Route::is('support') ? 'active' : '' }}">
             <a class="nav-link" href="/support">Support</a>
         </li>
