@@ -101,8 +101,8 @@ class Util {
         || (
             (Str::contains($d['uii'], "UII-8") || Str::contains($d['uii'], "UII8"))
             && (
-              Str::contains($d['target_text'], "smallholder farmers")
-              || Str::contains($d['target_text'], "MSMEs"))
+              Str::contains($d['target_text'], "smallholder farmers (50% women and 40% youth) have access to additional financial services")
+              || Str::contains($d['target_text'], "MSMEs (50% female-led; 20% young entrepreneurs) have access to additional financial services"))
           )
       ) {
         /* ## SHF - UII 2
