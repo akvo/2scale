@@ -18,13 +18,14 @@ class RsrReportController extends Controller
             $partnershipId = null;
         }
 
-        // get ABC cluster & other partner
-        $abc_clusters = $this->getAbcAndEnterpriseFormData($partnershipId, 'abc_names');
-        $other_main_partners = $this->getAbcAndEnterpriseFormData($partnershipId, 'other_main_partners');
-        // END of get ABC cluster & other partner
-
+        // get BSSs
+        $bss = $this->getOrganizationFormData($partnershipId, 'bss');
+        // get ABC cluster
+        $abc_clusters = $this->getOrganizationFormData($partnershipId, 'abc_names');
+        // get other partner
+        $other_main_partners = $this->getOrganizationFormData($partnershipId, 'other_main_partners');
         // producer organization
-        $producer_organizations = $this->getAbcAndEnterpriseFormData($partnershipId, 'producer_organization');
+        $producer_organizations = $this->getOrganizationFormData($partnershipId, 'producer_organization');
 
 
         $rsrProject = RsrProject::where('partnership_id', $partnershipId)
@@ -76,6 +77,7 @@ class RsrReportController extends Controller
         })->sortBy('uii_order')->values()->all();
         // return $rsrProject;
         $cards = explode('|', $r->card);
+        $rsrProject['bss'] = $bss->pluck('text')->unique()->values()->all();
         $rsrProject['abc_names'] = $abc_clusters->pluck('text')->unique()->values()->all();
         $rsrProject['other_main_partners'] = $other_main_partners->pluck('text')->unique()->values()->count();
         $rsrProject['producer_organization'] = $producer_organizations->pluck('text')->unique()->values()->count();
@@ -125,11 +127,15 @@ class RsrReportController extends Controller
         return (Str::endsWith($string, '.')) ? $string : $string.'.';
     }
 
-    private function getAbcAndEnterpriseFormData($partnershipId, $type)
+    private function getOrganizationFormData($partnershipId, $type)
     {
         $config = config('akvo-rsr.organization_form');
         $config = $config[$type];
         switch ($type) {
+            case 'bss':
+                $partnershipQid = $config['qids']['partnership_qid'];
+                $typeQid = $config['qids']['bss_name_qid'];
+                break;
             case 'abc_names':
                 $partnershipQid = $config['qids']['partnership_qid'];
                 $typeQid = $config['qids']['cluster_qid'];

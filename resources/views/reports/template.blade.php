@@ -265,6 +265,16 @@
         <table class="table table-org">
             <tbody>
                 <tr class="page-break">
+                    <td class="title">BUSINESS SUPPORT SERVICES</td>
+                    <td class="text">
+                        @if (count($project['bss']) !== 0)
+                            <p>{{ implode(', ', $project['bss']) }}</p>
+                        @else
+                            <p class="text-muted font-italic">No Data</p>
+                        @endif
+                    </td>
+                </tr>
+                <tr class="page-break">
                     <td class="title">AGRI-BUSINESS CLUSTER IN THE PARTNERSHIP</td>
                     <td class="text">
                         @if (count($project['abc_names']) !== 0)

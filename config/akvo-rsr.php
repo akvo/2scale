@@ -223,6 +223,13 @@ return [
         ],
     ],
     'organization_form' => [
+        'bss' => [
+            'fid' => 4100001,
+            'qids' => [
+                'partnership_qid' => 4100002,
+                'bss_name_qid' => 28150003,
+            ],
+        ],
         'abc_names' => [
             'fid' => 30160001,
             'qids' => [
