@@ -69,8 +69,11 @@ class RsrReportController extends Controller
                 // return Arr::except($ind, 'rsr_periods');
                 return $ind;
             });
+            $uii = Str::before($res['title'], ': ');
+            $res['uii_order'] = $this->addPrefixToContributionNameForOrdering($uii);
+            $res['is_uii'] = str_contains($res['uii_order'], 'UII');
             return $res;
-        });
+        })->sortBy('uii_order')->values()->all();
         // return $rsrProject;
         $cards = explode('|', $r->card);
         $rsrProject['abc_names'] = $abc_clusters->pluck('text')->unique()->values()->all();
@@ -159,5 +162,24 @@ class RsrReportController extends Controller
                                 return $item;
                             });
         return $type_answers;
+    }
+
+    /**
+     * Function to add prefix to contribution title/name
+     * for ordering purposes
+     */
+    private function addPrefixToContributionNameForOrdering($name)
+    {
+        if (str_contains($name, "Private sector contribution")) {
+            // add 1 to put private contribution before 2scale contrib
+            return "Y##1PSC (Euros)";
+        }
+        if (str_contains($name, "2SCALE's Contribution")) {
+            return "Y##2SCALE contributions (Euros)";
+        }
+        if (str_contains($name, "IP-")) {
+            return "Z##".$name;
+        }
+        return $name;
     }
 }
