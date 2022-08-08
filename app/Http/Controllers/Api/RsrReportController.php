@@ -39,6 +39,7 @@ class RsrReportController extends Controller
         $rsrProject['subtitle'] = $this->capitalizeAfterDelimiters($rsrProject['subtitle'], ['.', '. ']);
         $rsrProject['project_plan_summary'] = $this->capitalizeAfterDelimiters($rsrProject['project_plan_summary'], ['.', '. ']);
         $rsrProject['goals_overview'] = $this->capitalizeAfterDelimiters($rsrProject['goals_overview'], ['.', '. ']);
+        $rsrProject['target_group'] = $this->capitalizeAfterDelimiters($rsrProject['target_group'], ['.', '. ']);
         // $rsrProject['background'] = $this->capitalizeAfterDelimiters($rsrProject['background'], ['.', '. ']);
         // $rsrProject['sustainability'] = $this->capitalizeAfterDelimiters($rsrProject['sustainability'], ['.', '. ']);
         // EOL capitalize

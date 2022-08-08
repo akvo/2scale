@@ -245,8 +245,20 @@
             <div class="col-md-12 mt-4">
                 <p class="title font-weight-bold">GOALS OVERVIEW</p>
                 <div class="title-line"></div>
-                @if ($project['goals_overview'] !== "")
+                @if ($project['goals_overview'] || $project['goals_overview'] !== "")
                     <p class="text-justify">{{ $project['goals_overview'] }}</p>
+                @else
+                    <p class="text-muted font-italic">No Description</p>
+                @endif
+            </div>
+        </div>
+        <div class="page-break"></div>
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <p class="title font-weight-bold">TARGET GROUP</p>
+                <div class="title-line"></div>
+                @if ($project['target_group'] || $project['target_group'] !== "")
+                    <p class="text-justify">{{ $project['target_group'] }}</p>
                 @else
                     <p class="text-muted font-italic">No Description</p>
                 @endif

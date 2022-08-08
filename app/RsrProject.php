@@ -8,7 +8,7 @@ class RsrProject extends Model
 {
     protected $hidden = ['created_at','updated_at'];
     protected $fillable = ['id', 'partnership_id', 'title','subtitle', 'currency', 'budget','funds',
-                            'funds_needed', 'project_plan_summary', 'goals_overview', 'background',
+                            'funds_needed', 'project_plan_summary', 'goals_overview', 'target_group', 'background',
                             'sustainability', 'current_image', 'current_image_caption', 'status_label',
                             'date_start_planned', 'date_start_actual', 'date_end_planned', 'date_end_actual',
                         ];
