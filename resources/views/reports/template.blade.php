@@ -365,20 +365,23 @@
                                         {{ $indicator['title'] }}
                                     </td>
                                 </tr>
-                                <tr class="page-break">
-                                    <td colspan="4" class="title-column">
-                                        Description
-                                    </td>
-                                </tr>
-                                <tr class="page-break">
-                                    <td colspan="4">
-                                        @if (empty($indicator['description']) || $indicator['description'] == "​" || $item['description'] == null)
-                                            <div class="text-muted font-italic">No Description</div>
-                                        @else
-                                            <div>{{  $indicator['description'] }}</div>
-                                        @endif
-                                    </td>
-                                </tr>
+                                @if (!$item['is_uii'])
+                                    {{-- Hide indicator description only for UII --}}
+                                    <tr class="page-break">
+                                        <td colspan="4" class="title-column">
+                                            Description
+                                        </td>
+                                    </tr>
+                                    <tr class="page-break">
+                                        <td colspan="4">
+                                            @if (empty($indicator['description']) || $indicator['description'] == "​" || $item['description'] == null)
+                                                <div class="text-muted font-italic">No Description</div>
+                                            @else
+                                                <div>{{  $indicator['description'] }}</div>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr class="page-break">
                                     <td colspan="4" class="title-column">
                                       Baseline Year

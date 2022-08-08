@@ -71,7 +71,7 @@ class RsrReportController extends Controller
             });
             $uii = Str::before($res['title'], ': ');
             $res['uii_order'] = $this->addPrefixToContributionNameForOrdering($uii);
-            $res['is_uii'] = str_contains($res['uii_order'], 'UII');
+            $res['is_uii'] = str_contains(strtolower($res['title']), 'uii');
             return $res;
         })->sortBy('uii_order')->values()->all();
         // return $rsrProject;
