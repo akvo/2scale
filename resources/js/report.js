@@ -468,7 +468,7 @@ const generatePartnershipChart = async (endpoints) => {
             "reachreact/gender/" + endpoints,
             "seventh-row",
             "12",
-            "age-category"
+            "Age of participants in activities"
         );
         setTimeout(() => {
             resolve(console.info("generated"));

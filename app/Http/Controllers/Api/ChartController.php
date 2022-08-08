@@ -27,7 +27,8 @@ class ChartController extends Controller
         $this->collections = collect();
         $this->rsrOverview = collect();
         $this->rsrResultFilter = collect(['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
-	}
+        $this->genderTextLegends = collect(['sw' => 'Senior Women', 'jw' => 'Junior Women', 'sm' => 'Senior Men', 'jm' => 'Junior Men']);
+    }
 
     public function workStream(Request $request, Question $questions)
     {
@@ -135,7 +136,7 @@ class ChartController extends Controller
         if (count($all) === 0) {
             return response('no data available', 503);
         };
-        $legends = ["Female > 35", "Female ≤ 35", "Male > 35", "Male ≤ 35"];
+        $legends = $this->genderTextLegends->values();
         $all = collect($all)->sortByDesc('country')->values()->groupBy('country')->map(function($countries)
             use ($femaleold, $femaleyoung, $maleold, $maleyoung)
         {
@@ -144,16 +145,16 @@ class ChartController extends Controller
             {
                 $country->total = (int) $country->value;
                 if (collect($femaleold)->contains($country->question_id)){
-                    $country->participant = "Female > 35";
+                    $country->participant = $this->genderTextLegends['sw'];
                 }
                 if (collect($femaleyoung)->contains($country->question_id)){
-                    $country->participant = "Female ≤ 35";
+                    $country->participant = $this->genderTextLegends['jw'];
                 }
                 if (collect($maleold)->contains($country->question_id)){
-                    $country->participant = "Male > 35";
+                    $country->participant = $this->genderTextLegends['sm'];
                 }
                 if (collect($maleyoung)->contains($country->question_id)){
-                    $country->participant = "Male ≤ 35";
+                    $country->participant = $this->genderTextLegends['jm'];
                 }
                 return $country;
             });
@@ -172,16 +173,16 @@ class ChartController extends Controller
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $data->map(function($dt, $key)
                 use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
-                    if ($key === "Female > 35"){
+                    if ($key === $this->genderTextLegends['sw']){
                         $femaleold->push($dt);
                     }
-                    if ($key === "Female ≤ 35"){
+                    if ($key === $this->genderTextLegends['jw']){
                         $femaleyoung->push($dt);
                     }
-                    if ($key === "Male > 35"){
+                    if ($key === $this->genderTextLegends['sm']){
                         $maleold->push($dt);
                     }
-                    if ($key === "Male ≤ 35"){
+                    if ($key === $this->genderTextLegends['jm']){
                         $maleyoung->push($dt);
                     }
                 return $dt;
@@ -191,16 +192,16 @@ class ChartController extends Controller
         $series = collect($legends)->map(function($legend)
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $values = [];
-                if ($legend === "Female > 35"){
+                if ($legend === $this->genderTextLegends['sw']){
                     $values = $femaleold;
                 }
-                if ($legend === "Female ≤ 35"){
+                if ($legend === $this->genderTextLegends['jw']){
                     $values = $femaleyoung;
                 }
-                if ($legend === "Male > 35"){
+                if ($legend === $this->genderTextLegends['sm']){
                     $values = $maleold;
                 }
-                if ($legend === "Male ≤ 35"){
+                if ($legend === $this->genderTextLegends['jm']){
                     $values = $maleyoung;
                 }
             return array(
@@ -228,21 +229,21 @@ class ChartController extends Controller
         if (count($all) === 0) {
             return response('no data available', 503);
         };
-        $legends = ["Female > 35", "Female ≤ 35", "Male > 35", "Male ≤ 35"];
+        $legends = $this->genderTextLegends->values();
         $series = collect($all)->map(function($dt)
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $dt->answer = (int) $dt->answer;
                 if (collect($femaleold)->contains($dt->question_id)){
-                    $dt->participant = "Female > 35";
+                    $dt->participant = $this->genderTextLegends['sw'];
                 }
                 if (collect($femaleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Female ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jw'];
                 }
                 if (collect($maleold)->contains($dt->question_id)){
-                    $dt->participant = "Male > 35";
+                    $dt->participant = $this->genderTextLegends['sm'];
                 }
                 if (collect($maleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Male ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jm'];
                 }
                 return $dt;
             })->groupBy('participant')->map(function($part, $key){
@@ -460,16 +461,16 @@ class ChartController extends Controller
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $dt->answer = (int) $dt->answer;
                 if (collect($femaleold)->contains($dt->question_id)){
-                    $dt->participant = "Female > 35";
+                    $dt->participant = $this->genderTextLegends['sw'];
                 }
                 if (collect($femaleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Female ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jw'];
                 }
                 if (collect($maleold)->contains($dt->question_id)){
-                    $dt->participant = "Male > 35";
+                    $dt->participant = $this->genderTextLegends['sm'];
                 }
                 if (collect($maleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Male ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jm'];
                 }
                 return $dt;
             })->groupBy('participant')->map(function($dt, $key){
