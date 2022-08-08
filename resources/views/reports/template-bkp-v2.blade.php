@@ -253,7 +253,8 @@
             </div>
         </div>
         <div class="page-break"></div>
-        <div class="row">
+
+        {{-- <div class="row">
             <div class="col-md-12 mt-4">
                 <p class="title font-weight-bold">BACKGROUND</p>
                 <div class="title-line"></div>
@@ -276,7 +277,8 @@
                 @endif
             </div>
         </div>
-        <div class="page-break"></div>
+        <div class="page-break"></div> --}}
+
         {{-- <div class="row">
             <div class="col-md-12 mt-4">
                 <p class="title font-weight-bold">AGRI-BUSINESS CLUSTER NAMES</p>
