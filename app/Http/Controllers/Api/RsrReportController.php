@@ -38,8 +38,8 @@ class RsrReportController extends Controller
         $rsrProject['subtitle'] = $this->capitalizeAfterDelimiters($rsrProject['subtitle'], ['.', '. ']);
         $rsrProject['project_plan_summary'] = $this->capitalizeAfterDelimiters($rsrProject['project_plan_summary'], ['.', '. ']);
         $rsrProject['goals_overview'] = $this->capitalizeAfterDelimiters($rsrProject['goals_overview'], ['.', '. ']);
-        $rsrProject['background'] = $this->capitalizeAfterDelimiters($rsrProject['background'], ['.', '. ']);
-        $rsrProject['sustainability'] = $this->capitalizeAfterDelimiters($rsrProject['sustainability'], ['.', '. ']);
+        // $rsrProject['background'] = $this->capitalizeAfterDelimiters($rsrProject['background'], ['.', '. ']);
+        // $rsrProject['sustainability'] = $this->capitalizeAfterDelimiters($rsrProject['sustainability'], ['.', '. ']);
         // EOL capitalize
 
         $rsrProject['rsr_results'] = $rsrProject['rsr_results']->map(function ($res) use ($r) {
@@ -87,7 +87,7 @@ class RsrReportController extends Controller
             "titles" => $r->input('titles'),
         ];
         // return $data;
-        $html = view('reports.template2', ['data' => $data])->render();
+        $html = view('reports.template', ['data' => $data])->render();
         $filename = (string) Str::uuid().'.html';
         Storage::disk('public')->put('./reports/'.$filename, $html);
         return Storage::disk('public')->url('reports/'.$filename);
