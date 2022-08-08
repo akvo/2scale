@@ -265,7 +265,7 @@
         <table class="table table-org">
             <tbody>
                 <tr class="page-break">
-                    <td class="title">AGRI-BUSINESS CLUSTER NAMES</td>
+                    <td class="title">AGRI-BUSINESS CLUSTER IN THE PARTNERSHIP</td>
                     <td class="text">
                         @if (count($project['abc_names']) !== 0)
                             <p>{{ implode(', ', $project['abc_names']) }}</p>
@@ -275,13 +275,9 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="title">OTHER MAIN PARTNERS</td>
+                    <td class="title">ENTERPRISES PARTICIPATING IN THE PARTNERSHIP</td>
                     <td class="text">
-                        @if (count($project['other_main_partners']) !== 0)
-                            <p>{{ implode(', ', $project['other_main_partners']) }}</p>
-                        @else
-                            <p class="text-muted font-italic">No Data</p>
-                        @endif
+                        <p>{{ $project['other_main_partners'] }}</p>
                     </td>
                 </tr>
                 <tr>

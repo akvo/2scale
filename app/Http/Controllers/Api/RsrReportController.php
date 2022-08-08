@@ -74,8 +74,8 @@ class RsrReportController extends Controller
         // return $rsrProject;
         $cards = explode('|', $r->card);
         $rsrProject['abc_names'] = $abc_clusters->pluck('text')->unique()->values()->all();
-        $rsrProject['other_main_partners'] = $other_main_partners->pluck('text')->unique()->values()->all();
-        $rsrProject['producer_organization'] = count($producer_organizations->pluck('text')->unique()->values()->all());
+        $rsrProject['other_main_partners'] = $other_main_partners->pluck('text')->unique()->values()->count();
+        $rsrProject['producer_organization'] = $producer_organizations->pluck('text')->unique()->values()->count();
         $data = [
             "filename" => $r->input('filename'),
             "project" => $rsrProject,
