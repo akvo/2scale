@@ -317,7 +317,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="title">PRODUCER ORGANIZATION</td>
+                    <td class="title">PRODUCER ORGANIZATIONS</td>
                     <td class="text">
                         <p>{{ $project['producer_organization'] }}</p>
                     </td>
