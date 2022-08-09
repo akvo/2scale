@@ -91,6 +91,13 @@
         table.table.table-org td.text {
             border-right: none;
         }
+        br {
+            display: block;
+            content: "";
+            margin-top: 0;
+            margin-bottom: 7px;
+            line-height: 30px;
+        }
         @media print {
             body {
                 visibility: visible;
@@ -98,6 +105,13 @@
             table { page-break-inside:auto }
             tr    { page-break-inside:avoid; page-break-after:auto }
             .row { page-break-inside: avoid }
+            br {
+                display: block;
+                content: "";
+                margin-top: 0;
+                margin-bottom: 7px;
+                line-height: 30px;
+            }
         }
     </style>
 </head>
@@ -234,7 +248,7 @@
                 <p class="title font-weight-bold">PROJECT SUMMARY</p>
                 <div class="title-line"></div>
                 @if ($project['project_plan_summary'] || $project['project_plan_summary'] !== "")
-                    <p class="text-justify">{{ $project['project_plan_summary'] }}</p>
+                    <p class="text-justify">{!! nl2br($project['project_plan_summary']) !!}</p>
                 @else
                     <p class="text-muted font-italic">No Description</p>
                 @endif
@@ -246,7 +260,7 @@
                 <p class="title font-weight-bold">GOALS OVERVIEW</p>
                 <div class="title-line"></div>
                 @if ($project['goals_overview'] || $project['goals_overview'] !== "")
-                    <p class="text-justify">{{ $project['goals_overview'] }}</p>
+                    <p class="text-justify">{!! nl2br($project['goals_overview']) !!}</p>
                 @else
                     <p class="text-muted font-italic">No Description</p>
                 @endif
@@ -258,7 +272,7 @@
                 <p class="title font-weight-bold">TARGET GROUP</p>
                 <div class="title-line"></div>
                 @if ($project['target_group'] || $project['target_group'] !== "")
-                    <p class="text-justify">{{ $project['target_group'] }}</p>
+                    <p class="text-justify">{!! nl2br($project['target_group']) !!}</p>
                 @else
                     <p class="text-muted font-italic">No Description</p>
                 @endif
