@@ -656,9 +656,9 @@ class SyncController extends Controller
         return $table;
     }
 
-    private function sendEmail($subject, $html)
+    public function sendEmail($subject, $html, $mail_cfg='sync_recipients')
     {
-        $mails = explode(",", config('mail.sync_recipients'));
+        $mails = explode(",", config('mail.'.$mail_cfg));
         $recipients = collect();
         collect($mails)->each(function ($mail) use ($recipients) {
             $recipients->push(['Email' => $mail]);
