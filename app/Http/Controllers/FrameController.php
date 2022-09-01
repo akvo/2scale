@@ -96,4 +96,11 @@ class FrameController extends Controller
         ]);
     }
 
+    public function lumenDashboard(Request $request)
+    {
+        $uii = collect(config('lumen-dashboard'))->where('label', $request->uii)->first();
+        return view('frames.frame-lumen-dashboard', [
+            'link' => $uii['link']
+        ]);
+    }
 }

@@ -102,6 +102,7 @@ class RsrSeedController extends Controller
                     'funds_needed' => floatval($val['funds_needed']),
                     'project_plan_summary' => $val['project_plan_summary'],
                     'goals_overview' => $val['goals_overview'],
+                    'target_group' => $val['target_group'],
                     'background' => $val['background'],
                     'sustainability' => $val['sustainability'],
                     'current_image' => $val['current_image'],

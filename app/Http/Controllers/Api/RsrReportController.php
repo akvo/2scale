@@ -18,13 +18,14 @@ class RsrReportController extends Controller
             $partnershipId = null;
         }
 
-        // get ABC cluster & other partner
-        $abc_clusters = $this->getAbcAndEnterpriseFormData($partnershipId, 'abc_names');
-        $other_main_partners = $this->getAbcAndEnterpriseFormData($partnershipId, 'other_main_partners');
-        // END of get ABC cluster & other partner
-
+        // get BSSs
+        $bss = $this->getOrganizationFormData($partnershipId, 'bss');
+        // get ABC cluster
+        $abc_clusters = $this->getOrganizationFormData($partnershipId, 'abc_names');
+        // get other partner
+        $other_main_partners = $this->getOrganizationFormData($partnershipId, 'other_main_partners');
         // producer organization
-        $producer_organizations = $this->getAbcAndEnterpriseFormData($partnershipId, 'producer_organization');
+        $producer_organizations = $this->getOrganizationFormData($partnershipId, 'producer_organization');
 
 
         $rsrProject = RsrProject::where('partnership_id', $partnershipId)
@@ -38,8 +39,9 @@ class RsrReportController extends Controller
         $rsrProject['subtitle'] = $this->capitalizeAfterDelimiters($rsrProject['subtitle'], ['.', '. ']);
         $rsrProject['project_plan_summary'] = $this->capitalizeAfterDelimiters($rsrProject['project_plan_summary'], ['.', '. ']);
         $rsrProject['goals_overview'] = $this->capitalizeAfterDelimiters($rsrProject['goals_overview'], ['.', '. ']);
-        $rsrProject['background'] = $this->capitalizeAfterDelimiters($rsrProject['background'], ['.', '. ']);
-        $rsrProject['sustainability'] = $this->capitalizeAfterDelimiters($rsrProject['sustainability'], ['.', '. ']);
+        $rsrProject['target_group'] = $this->capitalizeAfterDelimiters($rsrProject['target_group'], ['.', '. ']);
+        // $rsrProject['background'] = $this->capitalizeAfterDelimiters($rsrProject['background'], ['.', '. ']);
+        // $rsrProject['sustainability'] = $this->capitalizeAfterDelimiters($rsrProject['sustainability'], ['.', '. ']);
         // EOL capitalize
 
         $rsrProject['rsr_results'] = $rsrProject['rsr_results']->map(function ($res) use ($r) {
@@ -69,13 +71,17 @@ class RsrReportController extends Controller
                 // return Arr::except($ind, 'rsr_periods');
                 return $ind;
             });
+            $uii = Str::before($res['title'], ': ');
+            $res['uii_order'] = $this->addPrefixToContributionNameForOrdering($uii);
+            $res['is_uii'] = str_contains(strtolower($res['title']), 'uii');
             return $res;
-        });
+        })->sortBy('uii_order')->values()->all();
         // return $rsrProject;
         $cards = explode('|', $r->card);
+        $rsrProject['bss'] = $bss->pluck('text')->unique()->values()->all();
         $rsrProject['abc_names'] = $abc_clusters->pluck('text')->unique()->values()->all();
-        $rsrProject['other_main_partners'] = $other_main_partners->pluck('text')->unique()->values()->all();
-        $rsrProject['producer_organization'] = count($producer_organizations->pluck('text')->unique()->values()->all());
+        $rsrProject['other_main_partners'] = $other_main_partners->pluck('text')->unique()->values()->count();
+        $rsrProject['producer_organization'] = $producer_organizations->pluck('text')->unique()->values()->count();
         $data = [
             "filename" => $r->input('filename'),
             "project" => $rsrProject,
@@ -87,7 +93,7 @@ class RsrReportController extends Controller
             "titles" => $r->input('titles'),
         ];
         // return $data;
-        $html = view('reports.template2', ['data' => $data])->render();
+        $html = view('reports.template', ['data' => $data])->render();
         $filename = (string) Str::uuid().'.html';
         Storage::disk('public')->put('./reports/'.$filename, $html);
         return Storage::disk('public')->url('reports/'.$filename);
@@ -122,11 +128,15 @@ class RsrReportController extends Controller
         return (Str::endsWith($string, '.')) ? $string : $string.'.';
     }
 
-    private function getAbcAndEnterpriseFormData($partnershipId, $type)
+    private function getOrganizationFormData($partnershipId, $type)
     {
         $config = config('akvo-rsr.organization_form');
         $config = $config[$type];
         switch ($type) {
+            case 'bss':
+                $partnershipQid = $config['qids']['partnership_qid'];
+                $typeQid = $config['qids']['bss_name_qid'];
+                break;
             case 'abc_names':
                 $partnershipQid = $config['qids']['partnership_qid'];
                 $typeQid = $config['qids']['cluster_qid'];
@@ -159,5 +169,24 @@ class RsrReportController extends Controller
                                 return $item;
                             });
         return $type_answers;
+    }
+
+    /**
+     * Function to add prefix to contribution title/name
+     * for ordering purposes
+     */
+    private function addPrefixToContributionNameForOrdering($name)
+    {
+        if (str_contains($name, "Private sector contribution")) {
+            // add 1 to put private contribution before 2scale contrib
+            return "Y##1PSC (Euros)";
+        }
+        if (str_contains($name, "2SCALE's Contribution")) {
+            return "Y##2SCALE contributions (Euros)";
+        }
+        if (str_contains($name, "IP-")) {
+            return "Z##".$name;
+        }
+        return $name;
     }
 }

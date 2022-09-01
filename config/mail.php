@@ -136,4 +136,6 @@ return [
     'recipients' => env('EMAIL_RECIPIENTS', ''),
 
     'sync_recipients' => env('SYNC_EMAIL_RECIPIENTS', ''),
+
+    'error_recipients' => env('ERROR_EMAIL_RECIPIENTS'),
 ];

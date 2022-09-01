@@ -19,8 +19,8 @@ return [
     'CI21' => 'Groundnuts partnership with K\'CHIBO SARL (suspended)',
     'CI22' => 'Multi-champion rice partnership',
     'CI23' => 'Vegetable partnership with Canaan Land',
-    'CI24' => null,
-    'CI25' => null,
+    'CI24' => 'Poultry partnership with Koudijs Distribution Society - KDS',
+    'CI25' => 'Cassava partnership with Protein Kissee-La (PKL)',
     // * eol Côte D'ivoire
 
     // * Ethiopia
@@ -33,7 +33,7 @@ return [
     'ET25' => 'Teff partnership with Kesem Multipurpose Farmers’ Cooperative Union (KMFCU)',
     'ET26' => 'Dairy partnership with Ever Green Milk Production and Processing (EGMPP) plc.',
     'ET27' => 'Poultry partnership with Chico Meat',
-    'ET28' => 'Vegetable partnership with Awash Olana Multipurpose Farmers’ cooperative Union (AOFCU)_x000D_',
+    'ET28' => 'Vegetable partnership with Awash Olana Multipurpose Farmers’ cooperative Union (AOFCU)',
     // * eol Ethiopia
 
     // * Ghana
@@ -93,6 +93,7 @@ return [
     'NG25' => 'Oil palm partnership with Okomu Oil Palm Company',
     'NG26' => 'Cassava partnership with Cato Foods',
     'NG27' => 'Maize partnership with AFEX Commodity Limited',
+    'NG28' => 'Vegetable partnership with Royal Blue Contractors-RBC and VD&S Farmer Centre',
     // * eol Nigeria
 
     // * South Sudan

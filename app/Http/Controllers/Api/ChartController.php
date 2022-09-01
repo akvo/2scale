@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Libraries\Akvo;
-use App\Libraries\Helpers;
 use App\Libraries\Echarts;
 use App\Question;
 use App\Answer;
@@ -17,7 +14,6 @@ use App\Datapoint;
 use App\Partnership;
 use App\Sector;
 use App\Option;
-use App\RsrDetail;
 use Illuminate\Support\Facades\Cache;
 
 class ChartController extends Controller
@@ -27,7 +23,8 @@ class ChartController extends Controller
         $this->collections = collect();
         $this->rsrOverview = collect();
         $this->rsrResultFilter = collect(['UII-1', 'UII-2', 'UII-3', 'UII-4', 'UII-5', 'UII-6', 'UII-7', 'UII-8']);
-	}
+        $this->genderTextLegends = collect(['sw' => 'Senior Women', 'jw' => 'Junior Women', 'sm' => 'Senior Men', 'jm' => 'Junior Men']);
+    }
 
     public function workStream(Request $request, Question $questions)
     {
@@ -135,7 +132,7 @@ class ChartController extends Controller
         if (count($all) === 0) {
             return response('no data available', 503);
         };
-        $legends = ["Female > 35", "Female ≤ 35", "Male > 35", "Male ≤ 35"];
+        $legends = $this->genderTextLegends->values();
         $all = collect($all)->sortByDesc('country')->values()->groupBy('country')->map(function($countries)
             use ($femaleold, $femaleyoung, $maleold, $maleyoung)
         {
@@ -144,16 +141,16 @@ class ChartController extends Controller
             {
                 $country->total = (int) $country->value;
                 if (collect($femaleold)->contains($country->question_id)){
-                    $country->participant = "Female > 35";
+                    $country->participant = $this->genderTextLegends['sw'];
                 }
                 if (collect($femaleyoung)->contains($country->question_id)){
-                    $country->participant = "Female ≤ 35";
+                    $country->participant = $this->genderTextLegends['jw'];
                 }
                 if (collect($maleold)->contains($country->question_id)){
-                    $country->participant = "Male > 35";
+                    $country->participant = $this->genderTextLegends['sm'];
                 }
                 if (collect($maleyoung)->contains($country->question_id)){
-                    $country->participant = "Male ≤ 35";
+                    $country->participant = $this->genderTextLegends['jm'];
                 }
                 return $country;
             });
@@ -172,16 +169,16 @@ class ChartController extends Controller
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $data->map(function($dt, $key)
                 use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
-                    if ($key === "Female > 35"){
+                    if ($key === $this->genderTextLegends['sw']){
                         $femaleold->push($dt);
                     }
-                    if ($key === "Female ≤ 35"){
+                    if ($key === $this->genderTextLegends['jw']){
                         $femaleyoung->push($dt);
                     }
-                    if ($key === "Male > 35"){
+                    if ($key === $this->genderTextLegends['sm']){
                         $maleold->push($dt);
                     }
-                    if ($key === "Male ≤ 35"){
+                    if ($key === $this->genderTextLegends['jm']){
                         $maleyoung->push($dt);
                     }
                 return $dt;
@@ -191,16 +188,16 @@ class ChartController extends Controller
         $series = collect($legends)->map(function($legend)
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $values = [];
-                if ($legend === "Female > 35"){
+                if ($legend === $this->genderTextLegends['sw']){
                     $values = $femaleold;
                 }
-                if ($legend === "Female ≤ 35"){
+                if ($legend === $this->genderTextLegends['jw']){
                     $values = $femaleyoung;
                 }
-                if ($legend === "Male > 35"){
+                if ($legend === $this->genderTextLegends['sm']){
                     $values = $maleold;
                 }
-                if ($legend === "Male ≤ 35"){
+                if ($legend === $this->genderTextLegends['jm']){
                     $values = $maleyoung;
                 }
             return array(
@@ -228,21 +225,21 @@ class ChartController extends Controller
         if (count($all) === 0) {
             return response('no data available', 503);
         };
-        $legends = ["Female > 35", "Female ≤ 35", "Male > 35", "Male ≤ 35"];
+        $legends = $this->genderTextLegends->values();
         $series = collect($all)->map(function($dt)
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $dt->answer = (int) $dt->answer;
                 if (collect($femaleold)->contains($dt->question_id)){
-                    $dt->participant = "Female > 35";
+                    $dt->participant = $this->genderTextLegends['sw'];
                 }
                 if (collect($femaleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Female ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jw'];
                 }
                 if (collect($maleold)->contains($dt->question_id)){
-                    $dt->participant = "Male > 35";
+                    $dt->participant = $this->genderTextLegends['sm'];
                 }
                 if (collect($maleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Male ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jm'];
                 }
                 return $dt;
             })->groupBy('participant')->map(function($part, $key){
@@ -460,16 +457,16 @@ class ChartController extends Controller
             use ($femaleold, $femaleyoung, $maleold, $maleyoung ){
                 $dt->answer = (int) $dt->answer;
                 if (collect($femaleold)->contains($dt->question_id)){
-                    $dt->participant = "Female > 35";
+                    $dt->participant = $this->genderTextLegends['sw'];
                 }
                 if (collect($femaleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Female ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jw'];
                 }
                 if (collect($maleold)->contains($dt->question_id)){
-                    $dt->participant = "Male > 35";
+                    $dt->participant = $this->genderTextLegends['sm'];
                 }
                 if (collect($maleyoung)->contains($dt->question_id)){
-                    $dt->participant = "Male ≤ 35";
+                    $dt->participant = $this->genderTextLegends['jm'];
                 }
                 return $dt;
             })->groupBy('participant')->map(function($dt, $key){
@@ -698,7 +695,48 @@ class ChartController extends Controller
             $partnershipId = $request->country_id; // generate datatables just from country level
             // $partnershipId = $request->partnership_id; // generate datatables from partnership level
         }
-        return $this->getAndTransformRsrData($partnershipId);
+        // send withContribution = true to add 2scale/private contribution value
+        return $this->getAndTransformRsrData($partnershipId, false, false, true);
+    }
+
+    /**
+     * Function to rename UII8 - dimensions name and
+     * total value indicator name
+     */
+    private function transfromUII8dimensionName($name, $isUII8)
+    {
+        // change UII 8 dimensions name
+        $dimName = strtolower($name);
+        if ($isUII8 && str_contains($dimName, 'total value')) {
+            $dimName = "Total value(Euros) of financial services accessed by SHFs, MSMEs & SMEs";
+        }
+        if ($isUII8 && str_contains($dimName, 'shfs')) {
+            $dimName = "#smallholder farmers";
+        }
+        if ($isUII8 &&  str_contains($dimName, 'micro-entrepreneurs')) {
+            $dimName = "#MSMEs";
+        }
+        if ($isUII8 &&  str_contains($dimName, 'smes')) {
+            $dimName = "#SMEs";
+        }
+        // eol change UII 8 dimensions name
+        return $dimName;
+    }
+
+    /**
+     * Function to add prefix to contribution title/name
+     * for ordering purposes
+     */
+    private function addPrefixToContributionNameForOrdering($name)
+    {
+        if (str_contains($name, "Private sector contribution")) {
+            // add 1 to put private contribution before 2scale contrib
+            return "Z##1PSC (Euros)";
+        }
+        if (str_contains($name, "2SCALE's Contribution")) {
+            return "Z##2SCALE contributions (Euros)";
+        }
+        return $name;
     }
 
     public function getAndTransformRsrData($partnershipId, $period_start=false, $period_end=false, $withContribution=false)
@@ -716,6 +754,7 @@ class ChartController extends Controller
 
         $this->rsrOverview = \App\ViewRsrOverview::where('agg_type', 'max')->get();
         $rsrFilter = $this->rsrResultFilter;
+        // ! Add contribution to show on uii table
         if ($withContribution) {
             $rsrFilter->push("Private sector contribution");
             $rsrFilter->push("2SCALE's Contribution");
@@ -769,6 +808,10 @@ class ChartController extends Controller
 
         $this->collections = collect();
         $data = $data['rsr_results']->transform(function ($res) {
+            $uii = Str::before($res['title'], ': ');
+            $title = '# of '.Str::after($res['title'], ': ');
+            $isUII8 = str_contains($uii, 'UII-8');
+
             $hasChildrens = count($res['childrens']) > 0;
             $res['parent_project'] = null;
             $res['level'] = 1;
@@ -777,8 +820,8 @@ class ChartController extends Controller
             $res = Arr::except($res, ['childrens']);
             $res['columns'] = [
                 'id' => $res['id'],
-                'uii' => Str::before($res['title'], ': '),
-                'title' => '# of '.Str::after($res['title'], ': '),
+                'uii' => $uii,
+                'title' => $title,
                 'subtitle' => [],
             ];
             if ($res['rsr_indicators_count'] > 1 && count($res['rsr_dimensions']) === 0) {
@@ -791,8 +834,8 @@ class ChartController extends Controller
                 });
                 $res['columns']= [
                     'id' => $res['id'],
-                    'uii' => Str::before($res['title'], ': '),
-                    'title' => '# of '.Str::after($res['title'], ': '),
+                    'uii' => $uii,
+                    'title' => $title,
                     'subtitle' => $subtitles,
                 ];
             }
@@ -807,8 +850,8 @@ class ChartController extends Controller
                 });
                 $res['columns'] = [
                     'id' => $res['id'],
-                    'uii' => Str::before($res['title'], ': '),
-                    'title' => '# of '.Str::after($res['title'], ': '),
+                    'uii' => $uii,
+                    'title' => $title,
                     'subtitle' => $subtitles,
                 ];
                 # EOL UII 8 : As in RSR
@@ -822,7 +865,7 @@ class ChartController extends Controller
                 //         if ($dimensionIds->contains($dim['id']) || $dimensionIds->contains($dim['parent_dimension_name'])) {
                 //             return [
                 //                 'id' => $res['id'],
-                //                 'title' => '# of '.Str::after($res['title'], ': '),
+                //                 'title' => $title,
                 //                 'dimension' => $dim['name'],
                 //                 'subtitle' => $dim['rsr_dimension_values']->pluck('name'),
                 //             ];
@@ -831,7 +874,7 @@ class ChartController extends Controller
                 //     }
                 //     return [
                 //         'id' => $res['id'],
-                //         'title' => '# of '.Str::after($res['title'], ': '),
+                //         'title' => $title,
                 //         'dimension' => $dim['name'],
                 //         'subtitle' => $dim['rsr_dimension_values']->pluck('name'),
                 //     ];
@@ -842,38 +885,45 @@ class ChartController extends Controller
 
                 # UII 8 : As in RSR
                 $subtitles = collect();
-                $res['rsr_dimensions']->each(function ($dim) use ($subtitles) {
+                $res['rsr_dimensions']->each(function ($dim) use ($subtitles, $isUII8) {
+                    // change UII 8 dimensions name
+                    $dimName = $this->transfromUII8dimensionName($dim['name'], $isUII8);
                     $subtitles->push([
-                        "name" => $dim['name'],
+                        "name" => $dimName,
                         "values" => $dim['rsr_dimension_values']->pluck('name'),
                     ]);
                 });
-                $res['rsr_indicators']->each(function ($ind) use ($subtitles) {
+                $res['rsr_indicators']->each(function ($ind) use ($subtitles, $isUII8) {
+                    // change UII 8 ind title
+                    $indTitle = $this->transfromUII8dimensionName($ind['title'], $isUII8);
                     $subtitles->push([
-                        "name" => $ind['title'],
+                        "name" => $indTitle,
                         "values" => [],
                     ]);
                 });
                 $res['columns'] = [
                     'id' => $res['id'],
-                    'uii' => Str::before($res['title'], ': '),
-                    'title' => '# of '.Str::after($res['title'], ': '),
+                    'uii' => $uii,
+                    'title' => $title,
                     'subtitle' => $subtitles,
                 ];
                 # EOL UII 8 : As in RSR
             }
-            $res['uii'] = Str::before($res['title'], ': ');
+            $res['uii'] = $uii;
             $this->collections->push($res);
             return $res;
         });
 
         // $parents = $this->collections->where('level', 1)->values();
-        // filter not to show contribution value
+        // ! filter not to show contribution value
         $parents = $this->collections->where('level', 1)->values()->reject(function ($item) {
             return !Str::contains($item['title'], $this->rsrResultFilter);
         })->values();
         $results = $parents->first()->only('rsr_project_id', 'project');
-        $results['columns'] = $parents->sortBy('uii')->values();
+        $results['columns'] = $parents->map(function ($item) {
+                                    $item['uii'] = $this->addPrefixToContributionNameForOrdering($item['uii']);
+                                    return $item;
+                                })->sortBy('uii')->values();
 
         $childs = $this->collections->where('parent_project', $results['rsr_project_id']);
         $results['childrens'] = $childs->unique('project')->values();
@@ -881,11 +931,12 @@ class ChartController extends Controller
             $results['childrens'] = $results['childrens']->transform(function ($child) use ($childs) {
                 $child = $child->only('rsr_project_id', 'project');
                 // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
-                // filter not to show contribution value
+                // ! filter not to show contribution value
                 $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
                     return !Str::contains($item['title'], $this->rsrResultFilter);
                 })->values()->map(function ($col) {
                     $col['uii'] = Str::before($col['title'], ': ');
+                    $col['uii'] = $this->addPrefixToContributionNameForOrdering($col['uii']);
                     return $col;
                 })->sortBy('uii')->values();
 
@@ -895,11 +946,12 @@ class ChartController extends Controller
                     $child['childrens'] = $child['childrens']->transform(function ($child) use ($childs) {
                         $child = $child->only('rsr_project_id', 'project');
                         // $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values();
-                        // filter not to show contribution value
+                        // ! filter not to show contribution value
                         $child['columns'] = $childs->where('rsr_project_id', $child['rsr_project_id'])->values()->reject(function ($item) {
                             return !Str::contains($item['title'], $this->rsrResultFilter);
                         })->values()->map(function ($col) {
                             $col['uii'] = Str::before($col['title'], ': ');
+                            $col['uii'] = $this->addPrefixToContributionNameForOrdering($col['uii']);
                             return $col;
                         })->sortBy('uii')->values();
 
@@ -916,10 +968,13 @@ class ChartController extends Controller
                 "result_ids" => config('akvo-rsr.datatables.uii8_results_ids'),
                 "url" => config('akvo-rsr.endpoints.rsr_page'),
             ],
-            // filter not to show contribution value
+            // ! filter not to show contribution value
             "columns" => $data->pluck('columns')->reject(function ($item) {
                             return !Str::contains($item['uii'], $this->rsrResultFilter);
-                        })->values()->sortBy('uii')->values(),
+                        })->values()->map(function ($item) {
+                            $item['uii'] = $this->addPrefixToContributionNameForOrdering($item['uii']);
+                            return $item;
+                        })->sortBy('uii')->values(),
             "data" => $results,
         ];
 

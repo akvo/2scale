@@ -223,6 +223,15 @@ $("main").append(
                         <h3>Table: UII Targets and Achievements</h3>
                         <h6>include country filter</h6>
                     </div>
+                    <div class="btn-uii-show-program-level-wrapper d-flex justify-content-center align-items-center">
+                        <button
+                            id="show-uii-program-level"
+                            type="button"
+                            class="btn btn-uii-show-program-level"
+                        >
+                            Show Program Level
+                        </button>
+                    </div>
                     <div class="card-body" id="uii-report-filter">
                         <div class="d-flex justify-content-center align-items-center">
                             <form class="row form-inline">
@@ -332,13 +341,26 @@ $("#filter-uii-report").on("click", () => {
     // window.document.getElementById("uii-report-filter").style.visibility =
     //     "hidden";
     window.document.getElementById("uii-report-data-frame").style.minHeight =
-        "950px";
+        "1150px";
     let country_id = $("#uii-country-level").val();
     let partnership_id = $("#uii-partnership-level").val();
     $("#uii-report-data-frame").attr(
         "src",
         `/frame/uii-datatable-report/${country_id}/${partnership_id || null}`
     );
+});
+
+$("#show-uii-program-level").on("click", () => {
+    // window.document.getElementById("uii-report-filter").style.visibility =
+    //     "hidden";
+    const country_id = $("#uii-country-level").val();
+    if (country_id > 0) {
+        $("#uii-country-level").val(0);
+        partnershipDropdownEvent("uii-country-level", "Select Country");
+    }
+    window.document.getElementById("uii-report-data-frame").style.minHeight =
+        "1150px";
+    $("#uii-report-data-frame").attr("src", `/frame/uii-datatable-report/0/0`);
 });
 
 $("#generate-word-report").on("click", () => {
@@ -446,10 +468,10 @@ const generatePartnershipChart = async (endpoints) => {
             "reachreact/gender/" + endpoints,
             "seventh-row",
             "12",
-            "age-category"
+            "Age of participants in activities"
         );
         setTimeout(() => {
-            resolve(console.log("generated"));
+            resolve(console.info("generated"));
         }, 15000);
     });
     return;
@@ -548,7 +570,7 @@ $("#generate-partnership-profile-report").on("click", () => {
                     $("#myModalBtnClose").show();
                 })
                 .catch((err) => {
-                    console.log("internal server error", err);
+                    console.info("internal server error", err);
                     $("#loader-spinner").remove();
                     $("#myModalAuthTitle").html("Error");
                     $("#myModalAuthBody").html(

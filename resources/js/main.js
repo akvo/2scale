@@ -147,7 +147,7 @@ $("#btn-data-download").on("click", () => {
     var checkTable = setInterval(() => {
         let table = iframe.contents().find("table");
         let btnExcel = iframe.contents().find(".buttons-excel");
-        console.log("interval");
+        console.info("interval");
         if (table.length > 0 && btnExcel.length > 0) {
             btnExcel.click();
             clearInterval(checkTable);
@@ -253,7 +253,7 @@ const generatePartnershipChart = async () => {
         params = params.join("/");
         $("#data-frame").attr("src", "/frame/partnership/" + params);
         setTimeout(() => {
-            resolve(console.log("generated"));
+            resolve(console.info("generated"));
         }, 15000);
     });
     return;
@@ -363,7 +363,7 @@ $("#generate-report-link").on("click", () => {
                     $("#myModalBtnClose").show();
                 })
                 .catch((err) => {
-                    console.log("internal server error", err);
+                    console.info("internal server error", err);
                     $("#loader-spinner").remove();
                     $("#myModalAuthTitle").html("Error");
                     $("#myModalAuthBody").html(
@@ -424,3 +424,16 @@ const revalidate = () => {
 
 revalidate();
 authMessage();
+
+// Lumen Dashboard
+$("#lumen-uii-dropdown").on("change", (data) => {
+    if (data.target.value !== "") {
+        const uii = data.target.value;
+        $("#lumen-dashboard-data-frame").attr(
+            "src",
+            "/frame/lumen-dashboard/" + uii
+        );
+        return;
+    }
+    return;
+});

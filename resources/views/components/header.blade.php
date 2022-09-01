@@ -18,7 +18,7 @@
         <a class="nav-link" href="/countries">Countries</a>
       </li>
       <li class="nav-item {{Route::is('partnership') ? 'active' : '' }}">
-        <a class="nav-link" href="/partnership">Partnership</a>
+        <a class="nav-link" href="/partnership">Partnerships</a>
       </li>
 
       @if (Auth::check())
@@ -33,6 +33,9 @@
         </li>
         <li class="nav-item {{Route::is('report') ? 'active' : '' }}">
           <a class="nav-link" href="/report">Reports</a>
+        </li>
+        <li class="nav-item {{Route::is('uii-visuals') ? 'active' : '' }}">
+          <a class="nav-link" href="/uii-visuals">UII-Lumen</a>
         </li>
         <li class="nav-item {{Route::is('support') ? 'active' : '' }}">
             <a class="nav-link" href="/support">Support</a>

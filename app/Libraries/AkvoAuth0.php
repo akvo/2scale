@@ -3,6 +3,7 @@
 namespace App\Libraries;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Controllers\Api\SyncController;
 
 class AkvoAuth0
 {
@@ -51,6 +52,14 @@ class AkvoAuth0
             $result = json_decode($response->getBody(), true);
             Cache::put('token', $result['id_token'], 4);
             return $result['id_token'];
+        }
+
+        if($response->getStatusCode() === 403) {
+            // send notification email
+            $sync = new SyncController();
+            $html = '<h2>2SCALE | 403 - Forbidden</h2><p>Check auth headers please...</p>';
+            $sync->sendEmail('403 - Forbidden', $html, 'error_recipients');
+            dd($response->getStatusCode());
         }
 
         return null;

@@ -12,7 +12,6 @@ const fetchData = (endpoint) => {
         axios
             .get("/charts/rsr-datatables/" + endpoint)
             .then((res) => {
-                // console.log('fetch network', res);
                 // storeDB({
                 //     table : table, data : {name: endpoint, data: res.data}, key : {name: endpoint}
                 // });
@@ -26,12 +25,11 @@ const fetchData = (endpoint) => {
 
 // load from dixie if exist
 export const loadData = async (endpoint) => {
-    // console.log(endpoint);
     const res = await table.get({ name: endpoint });
     if (res === undefined) {
         return fetchData(endpoint);
     }
-    console.log("not fetch network", res);
+    console.info("not fetch network", res);
     return res.data;
 };
 
@@ -246,7 +244,8 @@ const renderRow = (
     level = 1,
     parentId = "",
     childId = "",
-    url = false
+    url = false,
+    hasChild = true
 ) => {
     let icon_plus =
         '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">\
@@ -273,6 +272,10 @@ const renderRow = (
         style = "child child-" + parentId + " " + childId;
         data_id = "";
         indent = 'style="padding-left:25px;"';
+    }
+
+    if (level !== 1 && !hasChild) {
+        icon_plus = "";
     }
 
     // manage the child columns not match with children columns
@@ -481,23 +484,16 @@ let legend =
     '<ul id="table-legend" class="list-inline">\
     <li class="list-inline-item">' +
     dotIcon +
-    'SM : Male (>35)</li>\
+    'SM : Senior Men</li>\
     <li class="list-inline-item">' +
     dotIcon +
-    'SF : Female (>35)</li>\
+    'SW : Senior Women</li>\
     <li class="list-inline-item">' +
     dotIcon +
-    'JM : Male (<=35)</li>\
+    'JM : Junior Men</li>\
     <li class="list-inline-item">' +
     dotIcon +
-    'JF : Female (<=35)</li>\
-    <li class="list-inline-item">' +
-    dotIcon +
-    'M : Male</li>\
-    <li class="list-inline-item">' +
-    dotIcon +
-    "F : Female</li>\
-</ul>";
+    "JW : Junior Women</li></ul>";
 
 export const datatableOptions = (id, res, baseurl) => {
     let dtoptions = {
@@ -565,7 +561,7 @@ export const datatableOptions = (id, res, baseurl) => {
             {
                 targets: [
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                    17, 18, 19,
+                    17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
                 ],
                 visible: true,
             },
@@ -665,19 +661,19 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                 //             return 'SM';
                 //         }
                 //         if (isFemale && isSenior) {
-                //             return 'SF';
+                //             return 'SW';
                 //         }
                 //         if (isGender && !isFemale && isJunior) {
                 //             return 'JM';
                 //         }
                 //         if(isFemale && isJunior) {
-                //             return 'JF';
+                //             return 'JW';
                 //         }
                 //         if (isGender && !isFemale && !isSenior && !isJunior) {
-                //             return 'M';
+                //             return 'Male-led';
                 //         }
                 //         if (isFemale && !isSenior && !isJunior) {
-                //             return 'F';
+                //             return 'Female-led';
                 //         }
                 //         return subtitle;
                 //     });
@@ -702,19 +698,19 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                             return "SM";
                         }
                         if (isFemale && isSenior) {
-                            return "SF";
+                            return "SW";
                         }
                         if (isGender && !isFemale && isJunior) {
                             return "JM";
                         }
                         if (isFemale && isJunior) {
-                            return "JF";
+                            return "JW";
                         }
                         if (isGender && !isFemale && !isSenior && !isJunior) {
-                            return "M";
+                            return "Male-led";
                         }
                         if (isFemale && !isSenior && !isJunior) {
-                            return "F";
+                            return "Female-led";
                         }
                         return value;
                     });
@@ -768,8 +764,16 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                             ? 'rowspan="2" colspan="' + colspan + '"'
                             : 'colspan="' + colspan + '"'
                         : 'rowspan="3"';
-                html +=
-                    '<th scope="col" ' + span + ">" + column.title + "</th>";
+                // table header using uii or title
+                let uii = column.uii;
+                if (uii.includes("Z##1")) {
+                    uii = uii.replace("Z##1", "");
+                }
+                if (uii.includes("Z##")) {
+                    uii = uii.replace("Z##", "");
+                }
+                html += '<th scope="col" ' + span + ">" + uii + "</th>";
+                // '<th scope="col" ' + span + ">" + column.title + "</th>";
             });
             html += "</tr>";
             return res;
@@ -844,14 +848,27 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
             let url = res.config.url;
             let parentId = res.data.rsr_project_id;
             html += "<tbody>";
-            html += renderRow(res.data, 1, parentId, url + parentId);
+            html += renderRow(
+                res.data,
+                1,
+                parentId,
+                url + parentId,
+                res.data?.childrens ? res.data.childrens.length > 0 : false
+            );
             html += renderExtra(res.data.extras, parentId, "", true, true);
 
             if (res.data.childrens.length > 0) {
                 res.data.childrens.forEach((val, index) => {
                     let childId = val.rsr_project_id;
                     let last = res.data.childrens.length - 1 !== index;
-                    html += renderRow(val, 2, parentId, childId, url + childId);
+                    html += renderRow(
+                        val,
+                        2,
+                        parentId,
+                        childId,
+                        url + childId,
+                        val?.childrens ? val.childrens.length > 0 : false
+                    );
                     html += renderExtra(
                         val.extras,
                         "child-" + parentId,
@@ -867,7 +884,8 @@ export const renderRsrTable = async (endpoint, baseurl, datatableId) => {
                                 3,
                                 parentId,
                                 childId,
-                                url + childId
+                                url + childId,
+                                false
                             );
                         });
                     }
