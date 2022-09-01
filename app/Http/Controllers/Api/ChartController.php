@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Libraries\Akvo;
-use App\Libraries\Helpers;
 use App\Libraries\Echarts;
 use App\Question;
 use App\Answer;
@@ -17,7 +14,6 @@ use App\Datapoint;
 use App\Partnership;
 use App\Sector;
 use App\Option;
-use App\RsrDetail;
 use Illuminate\Support\Facades\Cache;
 
 class ChartController extends Controller
