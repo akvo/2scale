@@ -13,7 +13,10 @@ const renderPage = () => {
         );
     } else {
         $("#lumen-visual-iframe").attr("src", link);
-        document.getElementById("lumen-visual-iframe").height = "700px";
+        document.getElementById("lumen-visual-iframe").height = "1000px";
+        $("#lumen-visual-iframe")[0].style.paddingBottom = "75px";
+        $(".tmp-footer")[0].style.position = "relative";
+        $(".tmp-footer")[0].style.bottom = "60px";
     }
 };
 

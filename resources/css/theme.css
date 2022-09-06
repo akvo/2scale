@@ -30,7 +30,7 @@ body {
 }
 
 body {
-    padding-top: 66px;
+    padding-top: 60px;
 }
 iframe {
     height: 100%;
@@ -163,12 +163,12 @@ iframe.lumen-iframe {
 }
 .navbar .nav-link {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     padding: 1rem;
 }
 
 .navbar .navbar-brand {
-    width: 150px;
+    width: 125px;
     padding: 10px;
 }
 
@@ -336,7 +336,7 @@ button.btn.btn-secondary.btn-block.dropdown-toggle.waves-effect.waves-light {
 
 .instruction-text-wrapper {
     position: absolute;
-    top: 5.3rem;
+    top: 4.8rem;
     left: 3rem;
     font-size: 15px;
     font-style: italic;
