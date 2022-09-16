@@ -63,6 +63,12 @@ const createRows = (datas, rowType, colspan = false, res, index = 1) => {
                 questions = datas.questions.filter(
                     (x) => x.question_group_id === d.id
                 );
+                // don't render group head if doesn't have child question
+                // note, UII1 - BoP question group id 41 - (TO BE FILLED BY PrC) Conversion Factor Information
+                // (prod: doesnt has question, check to flow, that question group is not available)
+                if (!questions.length) {
+                    return;
+                }
             }
             let classname = i < 10 ? "default-hidden" : "";
             classname = d.text ? classname + "" : classname + " bg-light-grey";
@@ -320,7 +326,7 @@ getdata
         }
         return true;
     })
-    .then((res) => {
+    .then(() => {
         // change footer style to relative
         $("#loader-spinner").remove();
         $(".tmp-footer")[0].style.position = "relative";
