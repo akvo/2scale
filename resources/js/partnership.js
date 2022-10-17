@@ -103,27 +103,28 @@ const renderTextVisual = async () => {
             await renderCharts();
             return link;
         })
-        .then((link) => {
-            $("main").append(
-                <div
-                    class="row visual justify-content-center more-information-text"
-                    style="visibility: hidden;"
-                >
-                    <div className="col-md-12">
-                        For more information about this partnership, visit the
-                        partnership page
-                        <a
-                            target="_blank"
-                            href={`${link}`}
-                            style="margin-left: 4px;"
-                        >
-                            here
-                        </a>
-                        .
-                    </div>
-                </div>
-            );
-        })
+        // comment for now, to remove the link that directs a user/visitor to RSR
+        // .then((link) => {
+        //     $("main").append(
+        //         <div
+        //             class="row visual justify-content-center more-information-text"
+        //             style="visibility: hidden;"
+        //         >
+        //             <div className="col-md-12">
+        //                 For more information about this partnership, visit the
+        //                 partnership page
+        //                 <a
+        //                     target="_blank"
+        //                     href={`${link}`}
+        //                     style="margin-left: 4px;"
+        //                 >
+        //                     here
+        //                 </a>
+        //                 .
+        //             </div>
+        //         </div>
+        //     );
+        // })
         .then((res) => {
             let visuals = $(".visual");
             $("#loader-spinner").remove();
