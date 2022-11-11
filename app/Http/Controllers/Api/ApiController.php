@@ -125,7 +125,7 @@ class ApiController extends Controller
             $params->push('partnership_id');
         }
         if ($request->start && $request->end) {
-            $rnr = $rnr->whereBetween('event_date', [date($start), date($end)]);
+            $rnr = $rnr->whereBetween('event_date', [date($request->start), date($request->end)]);
             $params->push('event_date');
         }
         $params = $params->filter()->unique()->toArray();
