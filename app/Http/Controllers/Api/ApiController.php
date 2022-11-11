@@ -348,7 +348,7 @@ class ApiController extends Controller
 
             $dimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1);
 
-            if ($chart['orders']) {
+            if (isset($chart['orders']) && $chart['orders']) {
                 $dimensions = $dimensions->sortBy('order')->values();
             }
 
@@ -363,7 +363,7 @@ class ApiController extends Controller
             $actual_value = $rs['rsr_indicators']->sum('actual_value');
             $target_text = $chart['target_text'];
 
-            if ($chart['replace_value_with']) {
+            if (isset($chart['replace_value_with']) && $chart['replace_value_with']) {
                 $replace_value = $dimensions->where('order', $chart['replace_value_with'])->first();
                 $target_value = $replace_value['target_value'];
                 $target_text = $replace_value['target_text'];
