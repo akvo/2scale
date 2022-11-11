@@ -336,13 +336,13 @@ class ApiController extends Controller
                         return $d;
                     });
                 return [
-                    "group" => $chart['group'],
+                    "group" => isset($chart['group']) ? $chart['group'] : '',
                     "uii" => $uii,
-                    "target_text" => $chart['target_text'],
+                    "target_text" => isset($chart['target_text']) ? $chart['target_text'] : '',
                     "target_value" => $rs['rsr_indicators']->sum('target_value'),
                     "actual_value" => $agg['actual_value'],
                     "dimensions" => $aggDimensions,
-                    "chart_title" => $chart['chart_title'],
+                    "chart_title" => isset($chart['chart_title']) ? $chart['chart_title'] : '',
                 ];
             }
 
@@ -361,7 +361,7 @@ class ApiController extends Controller
 
             $target_value = $rs['rsr_indicators']->sum('target_value');
             $actual_value = $rs['rsr_indicators']->sum('actual_value');
-            $target_text = $chart['target_text'];
+            $target_text = isset($chart['target_text']) ? $chart['target_text'] : '';
 
             if (isset($chart['replace_value_with']) && $chart['replace_value_with']) {
                 $replace_value = $dimensions->where('order', $chart['replace_value_with'])->first();
@@ -371,13 +371,13 @@ class ApiController extends Controller
             }
 
             return [
-                "group" => $chart['group'],
+                "group" => isset($chart['group']) ? $chart['group'] : '',
                 "uii" => $uii,
                 "target_text" => $target_text,
                 "target_value" => $target_value,
                 "actual_value" => $actual_value,
                 "dimensions" => $dimensions,
-                "chart_title" => $chart['chart_title'],
+                "chart_title" => isset($chart['chart_title']) ? $chart['chart_title'] : '',
             ];
         })->groupBy('group')->map(function ($res, $key) {
             // UII8 Modification to show all dimension target/achieve value
