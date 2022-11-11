@@ -390,6 +390,8 @@ class ApiController extends Controller
                 "group" => $key,
                 "childrens" => $childs
             ];
+        })->filter(function ($item) {
+            return isset($item['group']) && $item['group'] && $item['group'] !== '';
         })->values();
 
         Cache::put('rsr-uii-report', $results, 86400);
