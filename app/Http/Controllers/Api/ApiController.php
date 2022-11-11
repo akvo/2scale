@@ -322,7 +322,7 @@ class ApiController extends Controller
 
             $uii = Str::before($rs['title'],":");
 
-            if ($chart['max']) {
+            if (isset($chart['max']) && $chart['max']) {
                 $agg = $customAgg->where('uii', $uii)->first();
                 $aggDimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')
                     ->flatten(1)->map(function ($d) use ($agg) {

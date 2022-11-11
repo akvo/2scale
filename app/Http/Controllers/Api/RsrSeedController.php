@@ -384,7 +384,7 @@ class RsrSeedController extends Controller
         }
         $data = collect();
         $results = $this->rsr->get($endpoint, 'project', $projectId);
-        if ($results['count'] == 0) {
+        if (isset($results['count']) && $results['count'] == 0) {
             return [];
         }
         $data->push($results['results']);
