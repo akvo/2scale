@@ -125,7 +125,7 @@ class ApiController extends Controller
             $params->push('partnership_id');
         }
         if ($request->start && $request->end) {
-            $rnr = $rnr->whereBetween('event_date', [date($start), date($end)]);
+            $rnr = $rnr->whereBetween('event_date', [date($request->start), date($request->end)]);
             $params->push('event_date');
         }
         $params = $params->filter()->unique()->toArray();
@@ -322,7 +322,7 @@ class ApiController extends Controller
 
             $uii = Str::before($rs['title'],":");
 
-            if ($chart['max']) {
+            if (isset($chart['max']) && $chart['max']) {
                 $agg = $customAgg->where('uii', $uii)->first();
                 $aggDimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')
                     ->flatten(1)->map(function ($d) use ($agg) {
@@ -336,19 +336,19 @@ class ApiController extends Controller
                         return $d;
                     });
                 return [
-                    "group" => $chart['group'],
+                    "group" => isset($chart['group']) ? $chart['group'] : '',
                     "uii" => $uii,
-                    "target_text" => $chart['target_text'],
+                    "target_text" => isset($chart['target_text']) ? $chart['target_text'] : '',
                     "target_value" => $rs['rsr_indicators']->sum('target_value'),
                     "actual_value" => $agg['actual_value'],
                     "dimensions" => $aggDimensions,
-                    "chart_title" => $chart['chart_title'],
+                    "chart_title" => isset($chart['chart_title']) ? $chart['chart_title'] : '',
                 ];
             }
 
             $dimensions = $rs['rsr_indicators']->pluck('rsr_dimensions')->flatten(1);
 
-            if ($chart['orders']) {
+            if (isset($chart['orders']) && $chart['orders']) {
                 $dimensions = $dimensions->sortBy('order')->values();
             }
 
@@ -361,9 +361,9 @@ class ApiController extends Controller
 
             $target_value = $rs['rsr_indicators']->sum('target_value');
             $actual_value = $rs['rsr_indicators']->sum('actual_value');
-            $target_text = $chart['target_text'];
+            $target_text = isset($chart['target_text']) ? $chart['target_text'] : '';
 
-            if ($chart['replace_value_with']) {
+            if (isset($chart['replace_value_with']) && $chart['replace_value_with']) {
                 $replace_value = $dimensions->where('order', $chart['replace_value_with'])->first();
                 $target_value = $replace_value['target_value'];
                 $target_text = $replace_value['target_text'];
@@ -371,13 +371,13 @@ class ApiController extends Controller
             }
 
             return [
-                "group" => $chart['group'],
+                "group" => isset($chart['group']) ? $chart['group'] : '',
                 "uii" => $uii,
                 "target_text" => $target_text,
                 "target_value" => $target_value,
                 "actual_value" => $actual_value,
                 "dimensions" => $dimensions,
-                "chart_title" => $chart['chart_title'],
+                "chart_title" => isset($chart['chart_title']) ? $chart['chart_title'] : '',
             ];
         })->groupBy('group')->map(function ($res, $key) {
             // UII8 Modification to show all dimension target/achieve value
@@ -390,6 +390,8 @@ class ApiController extends Controller
                 "group" => $key,
                 "childrens" => $childs
             ];
+        })->filter(function ($item) {
+            return isset($item['group']) && $item['group'] && $item['group'] !== '';
         })->values();
 
         Cache::put('rsr-uii-report', $results, 86400);
