@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Libraries;
+
 use GuzzleHttp\Exception\RequestException;
 use App\Libraries\AkvoAuth0 as Auth;
 
@@ -43,8 +44,7 @@ class FlowAuth0
             }
 
             return $response->getStatusCode();
-
-        } catch(RequestException $e) {
+        } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
             }
@@ -53,4 +53,3 @@ class FlowAuth0
         return null;
     }
 }
-

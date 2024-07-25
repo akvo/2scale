@@ -15,7 +15,7 @@ return [
                     "form_id" => 28150013,
                     "name" => "D&D Baseline Forms",
                     "survey_id" => 22120008,
-                    "partner_qid"=> 30200015,
+                    "partner_qid" => 30200015,
                     "sector_qid" => 26170015,
                 ],
                 [
@@ -55,7 +55,7 @@ return [
                     "form_id" => 14170009,
                     "name" => "Producer Organization Information Form",
                     "survey_id" => 6120005,
-                    "partner_qid"=> 36100005,
+                    "partner_qid" => 36100005,
                     "sector_qid" => null,
                 ]
             )

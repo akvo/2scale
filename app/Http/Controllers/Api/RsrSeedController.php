@@ -129,7 +129,7 @@ class RsrSeedController extends Controller
     private function getProject($projectId)
     {
         $projects = $this->rsr->get('projects', 'id', $projectId);
-        if ($projects['count'] == 0) {
+        if (!is_array($projects) || !isset($projects['count']) || $projects['count'] == 0) {
             return [];
         }
         return $projects['results'][0];
@@ -384,14 +384,14 @@ class RsrSeedController extends Controller
         }
         $data = collect();
         $results = $this->rsr->get($endpoint, 'project', $projectId);
-        if (isset($results['count']) && $results['count'] == 0) {
+        if (!is_array($results) || !isset($results['count']) || $results['count'] == 0) {
             return [];
         }
         $data->push($results['results']);
         // fetch next page
         while($results['next'] !== null){
             $results = $this->rsr->fetch($results['next']);
-            if ($results['count'] !== 0) {
+            if (is_array($results) && isset($results['count']) && $results['count'] !== 0) {
                 $data->push($results['results']);
             }
         }
