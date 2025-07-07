@@ -14,17 +14,19 @@ WORKDIR /var/www/html
 
 RUN set -eux; \
     apt-get update && apt-get install -y \
-        wait-for-it \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-        zip \
-        unzip; \
+    wait-for-it \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    zip \
+    unzip; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
     docker-php-ext-install -j$(nproc) gd pdo_mysql; \
-    pecl install xdebug; \
+    pecl install xdebug-3.1.5; \
     docker-php-ext-enable xdebug
 
 COPY --from=composer:1.10.20 /usr/bin/composer /usr/bin/composer
+
+RUN chown -R akvo:akvo /usr/local/etc/php/conf.d
 
 USER akvo
