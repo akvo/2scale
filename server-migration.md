@@ -67,7 +67,23 @@ mysql -u [DB_USER] -p [DB_NAME] < [DUMP_FILENAME].sql
 ```
 
 
-## 6. ⏱️ Optional: Increase PHP Max Execution Time
+## 6. ❌ Disable current cron jobs
+
+Disable 2 types of cron jobs from previous server:
+
+- RSR sync
+
+```bash
+cd /home/customer/www/tc.akvo.org/public_html/{PROJECT_DIR} && /usr/local/bin/php73 /home/customer/www/tc.akvo.org/public_html/PROJECT_DIR/artisan rsr:sync
+```
+
+- Flow sync
+
+```bash
+cd /home/customer/www/tc.akvo.org/public_html/{PROJECT_DIR} && /usr/local/bin/php73 /home/customer/www/tc.akvo.org/public_html/PROJECT_DIR/artisan flow:sync
+```
+
+## 7. ⏱️ Optional: Increase PHP Max Execution Time
 
 If needed, increase the max_execution_time to 300 seconds (5 minutes):
 
