@@ -28,12 +28,12 @@ const handleNotFound = () => {
 };
 
 let targetSyncText = "";
-targetAndLastSync().then((el) => (targetSyncText = el));
+targetAndLastSync().then(el => (targetSyncText = el));
 
 const renderTextVisual = async () => {
     await axios
         .get("/api/flow/partnership/text/" + endpoints)
-        .then((res) => {
+        .then(res => {
             $("main").append(
                 <div class="d-flex justify-content-center" id="loader-spinner">
                     <div
@@ -46,7 +46,7 @@ const renderTextVisual = async () => {
             );
             return res;
         })
-        .then((res) => {
+        .then(res => {
             const { title, sector, producer, abc, enterprise, link } = res.data;
             const workWith = [];
             let workWithText = "It currently works with";
@@ -95,11 +95,11 @@ const renderTextVisual = async () => {
             );
             return res.data.link;
         })
-        .then(async (link) => {
+        .then(async link => {
             await renderImplementingPartner();
             return link;
         })
-        .then(async (link) => {
+        .then(async link => {
             await renderCharts();
             return link;
         })
@@ -125,7 +125,7 @@ const renderTextVisual = async () => {
         //         </div>
         //     );
         // })
-        .then((res) => {
+        .then(res => {
             let visuals = $(".visual");
             $("#loader-spinner").remove();
             $(".tmp-footer")[0].style.position = "relative";
@@ -134,7 +134,7 @@ const renderTextVisual = async () => {
                 element.style.visibility = "visible";
             }
         })
-        .catch((err) => {
+        .catch(err => {
             handleNotFound();
         });
 };
@@ -142,7 +142,7 @@ const renderTextVisual = async () => {
 const renderImplementingPartner = async () => {
     await axios
         .get("/api/rsr/partnership/implementing-partner/" + endpoints)
-        .then((res) => {
+        .then(res => {
             const data = res.data;
             $("main").append(
                 <div class="row visual" style="visibility: hidden;">
@@ -186,7 +186,7 @@ const renderImplementingPartner = async () => {
             );
             return true;
         })
-        .catch((err) => {
+        .catch(err => {
             handleNotFound();
         });
 };
@@ -199,24 +199,24 @@ const dimensions = (x, idx, chartTitle = null) => {
         const id = `uii-chart-${i}-${idx}`;
         if (d.values.length > 0) {
             let series = [];
-            d.values.map((v) => {
+            d.values.map(v => {
                 let restTarget = v.target_value - v.actual_value;
                 series.push({
                     group: v.name,
                     value: restTarget < 0 ? 0 : restTarget,
-                    name: "Pending",
+                    name: "Pending"
                 });
                 series.push({
                     group: v.name,
                     value: v.actual_value,
-                    name: "Achieved",
+                    name: "Achieved"
                 });
                 return v.name;
             });
             charts.push({
                 id: id,
                 data: series,
-                type: "BARSTACK",
+                type: "BARSTACK"
             });
         }
         if (d.values.length === 0 && d?.target_value && d?.actual_value) {
@@ -225,14 +225,14 @@ const dimensions = (x, idx, chartTitle = null) => {
                 data: [
                     {
                         name: "Pending",
-                        value: d.target_value - d.actual_value,
+                        value: d.target_value - d.actual_value
                     },
                     {
                         name: "Achieved",
-                        value: d.actual_value,
-                    },
+                        value: d.actual_value
+                    }
                 ],
-                type: "DOUGHNUT",
+                type: "DOUGHNUT"
             });
         }
         return (
@@ -266,7 +266,7 @@ const uui = (x, idx) => {
             even = true;
         }
         let target = c.target_text || "";
-        target = target.split("##").map((t) => {
+        target = target.split("##").map(t => {
             if (t === "number") {
                 return (
                     <span style="font-weight:bold;color:#a43332;">
@@ -277,27 +277,27 @@ const uui = (x, idx) => {
             return t;
         });
         const percentage =
-            target.length > 1
+            target.length > 1 && c.target_value
                 ? ((c.actual_value / c.target_value) * 100).toFixed(3)
                 : null;
         if (target.length > 1) {
             counts.push({
                 id: `percentage-${idx}-${i}`,
                 val: percentage,
-                suf: "%",
+                suf: "%"
             });
         }
         counts.push({
             id: `achieved-${idx}-${i}`,
             val: c.actual_value,
-            suf: "",
+            suf: ""
         });
         // automate calculation
         let automateCalculation = 0;
         if (c?.automate_calculation) {
             let temp = c.automate_calculation?.map((it, itx) => {
-                const value = it.value.toFixed(3);
-                let text = it.text.split("##").map((t) => {
+                const value = it.value ? it.value.toFixed(3) : 0;
+                let text = it.text.split("##").map(t => {
                     if (t === "number") {
                         return (
                             <span
@@ -313,7 +313,7 @@ const uui = (x, idx) => {
                 counts.push({
                     id: `automate-calculation-item-${idx}-${i}-${itx}`,
                     val: value,
-                    suf: "%",
+                    suf: "%"
                 });
                 return text;
             });
@@ -336,8 +336,8 @@ const uui = (x, idx) => {
                           target_value: c.target_value,
                           actual_value: c.actual_value,
                           values: [],
-                          height: "200px",
-                      },
+                          height: "200px"
+                      }
                   ],
                   `${idx}-${i}`,
                   c?.chart_title
@@ -411,7 +411,7 @@ const groups = (x, i, dataLength) => {
 const renderCharts = async () => {
     await axios
         .get("/api/rsr/partnership/charts/" + endpoints)
-        .then((res) => {
+        .then(res => {
             const data = res.data;
             $("main").append(
                 <div class="visual" style="visibility: hidden;">
@@ -435,13 +435,13 @@ const renderCharts = async () => {
             );
             return { counts: counts, charts: charts };
         })
-        .then((res) => {
+        .then(res => {
             //generate countup
             if (res.counts.length > 0) {
                 setTimeout(() => {
                     res.counts.forEach((x, i) => {
                         const countUp = new CountUp(x.id, x.val, {
-                            suffix: x.suf,
+                            suffix: x.suf
                         });
                         if (!countUp.error) {
                             countUp.start();
@@ -459,7 +459,7 @@ const renderCharts = async () => {
             }
             return true;
         })
-        .catch((err) => {
+        .catch(err => {
             handleNotFound();
         });
 };

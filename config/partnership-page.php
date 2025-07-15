@@ -2,6 +2,8 @@
 
 $ROOT_API = env('RSR_API_ROOT', '');
 
+// This config use to be map the partnership name by code: e.g. BF21 into Cassava partnership with Nanalim if
+// projec title from RSR still using BF21_Title format instead of Cassava partnership with Nanalim
 return [
   'partnership_names' => [
     // * Burkina Faso
@@ -34,6 +36,7 @@ return [
     'ET26' => 'Dairy partnership with Ever Green Milk Production and Processing (EGMPP) plc.',
     'ET27' => 'Poultry partnership with Chico Meat',
     'ET28' => 'Vegetable partnership with Awash Olana Multipurpose Farmers’ cooperative Union (AOFCU)',
+    'ETLIS03' => 'Vegetables partnership with Meki Batu Fruits and Vegetable Growers Cooperative Union Ltd',
     // * eol Ethiopia
 
     // * Ghana
@@ -56,6 +59,10 @@ return [
     'KE28' => 'Dairy partnership with Meru Dairy Union (MDU)',
     'KE29' => 'Cassava partnership with Mhogo Foods Ltd.',
     'KE30' => 'Sorghum and Pearl millet partnership with Tegemeo Cereals Enterprise Ltd',
+    'KELIS08' => 'Sorghum partnership with Nyabon Enterprises Ltd.',
+    'KELIS04' => 'Rice partnership with Mwea Rice Growers Co-operative Society Ltd',
+    'KELIS03' => 'Dairy partnership with Eldoville Dairies Ltd',
+    'KELIS01' => 'Sorghum partnership with Shalem Investment Ltd.',
     // * eol Kenya
 
     // * Mali
@@ -68,6 +75,7 @@ return [
     'ML25' => 'Fonio partnership with UTC (Unité de Transformation des Céréales) and UCODAL(Unité de Transformation et de Conditionnement des Denrées Alimentaires)',
     'ML26' => 'Rice partnership with SOPROTRILAD (Société de Production et de Transformation du Riz dans la zone du Lac DEBO)',
     'ML27' => 'Poultry partnership with Wasaso Cooperative',
+    'MLLIS01' => null,
     // * eol Mali
 
     // * Niger
@@ -94,6 +102,9 @@ return [
     'NG26' => 'Cassava partnership with Cato Foods',
     'NG27' => 'Maize partnership with AFEX Commodity Limited',
     'NG28' => 'Vegetable partnership with Royal Blue Contractors-RBC and VD&S Farmer Centre',
+    'NGLIS01' => 'Cassava partnership with Psaltry International Company Limited',
+    'NGLIS03' => 'Vegetable spice partnership with AACE Food processing and Distribution Ltd.',
+    'NGLIS02' => 'Soyabeans partnership with New Era Youth Farmers Multipurpose Cooperative Society (Kwara Youth)',
     // * eol Nigeria
 
     // * South Sudan
