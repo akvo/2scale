@@ -4,6 +4,7 @@ agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu2004
+    docker_image: php:7.3-cli
 blocks:
   - name: "Build, test & deploy"
     task:
@@ -18,8 +19,7 @@ blocks:
       jobs:
         - name: "Build&Test"
           commands:
-            - sem-version php 7.2
-            - php -v # optional: confirm PHP version
+            - php -v # confirm PHP version
             - export AUTH0_PASSWORD=${PASSWORD}
             - export GCLOUD_ACCOUNT_FILE=$(pwd)/akvo-lumen-a52cb7c6668a.json
             - export AUTH0_USER=${USERNAME}
