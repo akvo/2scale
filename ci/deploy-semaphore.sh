@@ -28,61 +28,61 @@ else
 fi
 
 rsync \
-    --archive \
-    --compress \
-    --progress \
-    --exclude=ci \
-    --exclude=node_modules \
-    --rsh="ssh -i ${SITES_SSH_KEY} -o BatchMode=yes -p 18765 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-    . u7-nnfq7m4dqfyx@35.214.170.100:/home/customer/www/tc.akvo.org/public_html/$FOLDER/
+--archive \
+--compress \
+--progress \
+--exclude=ci \
+--exclude=node_modules \
+--rsh="ssh -i ${SITES_SSH_KEY} -o BatchMode=yes -p 18765 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+. u7-nnfq7m4dqfyx@35.214.170.100:/home/customer/www/tc.akvo.org/public_html/$FOLDER/
 
 echo "Fixing permissions..."
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "find www/tc.akvo.org/public_html/${FOLDER}/ -not -path "*.well-known*" -type f -print0 | xargs -0 -n1 chmod 644"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "find www/tc.akvo.org/public_html/${FOLDER}/ -not -path "*.well-known*" -type f -print0 | xargs -0 -n1 chmod 644"
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "find www/tc.akvo.org/public_html/${FOLDER}/ -type d -print0 | xargs -0 -n1 chmod 755"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "find www/tc.akvo.org/public_html/${FOLDER}/ -type d -print0 | xargs -0 -n1 chmod 755"
 
 echo "Copy the config..."
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "cp ~/env/${FOLDER}.env.prod www/tc.akvo.org/public_html/${FOLDER}/.env"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "cp ~/env/${FOLDER}.env.prod www/tc.akvo.org/public_html/${FOLDER}/.env"
 
 echo "Clearing cache..."
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php73 artisan cache:clear"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php73 artisan cache:clear"
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/composer install"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php74 /usr/local/bin/composer install"
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/composer dump-autoload"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php74 /usr/local/bin/composer dump-autoload"
 
 ssh -i "${SITES_SSH_KEY}" -o BatchMode=yes \
-    -p 18765 \
-    -o UserKnownHostsFile=/dev/null \
-    -o StrictHostKeyChecking=no \
-    u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php73 artisan migrate --force"
+-p 18765 \
+-o UserKnownHostsFile=/dev/null \
+-o StrictHostKeyChecking=no \
+u7-nnfq7m4dqfyx@35.214.170.100 "cd www/tc.akvo.org/public_html/${FOLDER}/ && /usr/local/bin/php73 artisan migrate --force"
 
 echo "===================================================="
 echo "Done deploying ${FOLDER}"
