@@ -1,6 +1,6 @@
-FROM php:7.4-cli
+FROM php:7.4-cli-buster
 
-# Install dependencies for Composer and PHP extensions
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     unzip \
     git \
