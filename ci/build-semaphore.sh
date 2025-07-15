@@ -2,25 +2,26 @@
 
 set -eu
 
-#cp .env.prod .env
+# Optional: uncomment if you use .env.prod
+# cp .env.prod .env
 
 docker run \
 --rm \
 --volume "$(pwd):/app" \
 --workdir /app \
---entrypoint /bin/sh \
-php:7.4-cli -c 'curl -sS https://getcomposer.org/installer | php && php composer.phar install'
+composer:2 \
+install --no-interaction --prefer-dist --optimize-autoloader
 
 docker run \
 --rm \
 --volume "$(pwd):/app" \
 --workdir /app \
---entrypoint /bin/sh \
-php:7.4-cli -c 'php composer.phar dump-autoload'
+composer:2 \
+dump-autoload --optimize
 
 docker run \
 --rm \
 --volume "$(pwd):/app" \
---workdir "/app" \
---entrypoint /bin/sh \
-node:8-alpine -c 'npm i && npm run prod'
+--workdir /app \
+node:8-alpine \
+sh -c 'npm install && npm run prod'
