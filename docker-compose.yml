@@ -1,8 +1,7 @@
-version: "3.7"
-
 services:
   mainnetwork:
     image: alpine
+    platform: linux/amd64
     command: tail -f /dev/null
     expose:
       - "3000"
@@ -10,8 +9,10 @@ services:
     ports:
       - "3000:80"       # Nginx
       - "8000:8080"
+
   nginx:
     image: nginx:1.19-alpine
+    platform: linux/amd64
     restart: unless-stopped
     network_mode: service:mainnetwork
     volumes:
@@ -19,6 +20,7 @@ services:
       - .docker/nginx:/etc/nginx/conf.d
     depends_on:
       - app
+
   app:
     build:
       args:
@@ -40,6 +42,7 @@ services:
     command: .docker/start-app.sh
     depends_on:
       - db
+
   ui:
     build:
       context: .
@@ -51,8 +54,10 @@ services:
     command: .docker/start-ui.sh
     depends_on:
       - app
+
   db:
     image: mysql:5.7
+    platform: linux/amd64
     restart: unless-stopped
     network_mode: service:mainnetwork
     environment:

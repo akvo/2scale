@@ -22,4 +22,6 @@ npm-debug.log
 yarn-error.log
 .DS_Store
 .env.prod
+.env.test
+.env.local
 .docker/sql/*

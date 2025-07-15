@@ -21,6 +21,8 @@ use App\ViewRsrCountryData;
 use App\LastSync;
 use App\Libraries\Util;
 
+ini_set('max_execution_time', 600);
+
 class ApiController extends Controller
 {
 

@@ -6,4 +6,7 @@ set -eu
 # wait-for-it localhost:3306  -- php artisan migrate:fresh --seed
 # wait-for-it localhost:3306  -- php artisan migrate:fresh
 
+# execute update-php-ini.sh
+.docker/update-php-ini.sh
+
 php-fpm
