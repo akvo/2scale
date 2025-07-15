@@ -9,14 +9,14 @@ docker run \
 --volume "$(pwd):/app" \
 --workdir /app \
 --entrypoint /bin/sh \
-php:7.2-cli -c 'curl -sS https://getcomposer.org/installer | php && php composer.phar install'
+php:7.4-cli -c 'curl -sS https://getcomposer.org/installer | php && php composer.phar install'
 
 docker run \
 --rm \
 --volume "$(pwd):/app" \
 --workdir /app \
 --entrypoint /bin/sh \
-php:7.2-cli -c 'php composer.phar dump-autoload'
+php:7.4-cli -c 'php composer.phar dump-autoload'
 
 docker run \
 --rm \
