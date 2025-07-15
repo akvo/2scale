@@ -2,29 +2,32 @@
 
 set -eu
 
-#cp .env.prod .env
+# Optional: copy env if needed
+# cp .env.prod .env
 
-# Run Composer install
-docker run \
---rm \
--v "$(pwd):/app" \
-php:7.4-cli /bin/sh -c "\
-    apt-get update && \
-    apt-get install -y unzip git zlib1g-dev && \
-    docker-php-ext-install zip && \
-    curl -sS https://getcomposer.org/installer | php && \
-php composer.phar install"
+# Define working directory
+WORKDIR="$(pwd)"
 
-# Run Composer dump-autoload
-docker run \
---rm \
--v "$(pwd):/app" \
-php:7.4-cli /bin/sh -c "\
-php composer.phar dump-autoload"
+# Step 1: Build custom PHP 7.4 + Composer Docker image
+docker build -f ci/composer.Dockerfile -t php74-composer .
 
-# Run npm
-docker run \
---rm \
--v "$(pwd):/app" \
-node:8-alpine /bin/sh -c "\
-npm i && npm run prod"
+# Step 2: Run Composer install
+docker run --rm \
+-v "$WORKDIR:/app" \
+-w /app \
+php74-composer \
+composer install
+
+# Step 3: Run Composer dump-autoload
+docker run --rm \
+-v "$WORKDIR:/app" \
+-w /app \
+php74-composer \
+composer dump-autoload
+
+# Step 4: Run npm install & build (via Node 8)
+docker run --rm \
+-v "$WORKDIR:/app" \
+-w /app \
+node:8-alpine \
+sh -c "npm install && npm run prod"
