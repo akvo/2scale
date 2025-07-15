@@ -5,22 +5,22 @@ set -eu
 #cp .env.prod .env
 
 docker run \
-       --rm \
-       --volume "$(pwd):/home/tcakvo/public_html/2scale" \
-       --workdir /home/tcakvo/public_html/2scale \
-       --entrypoint /bin/sh \
-       composer:1.10.17 -c 'composer install'
+--rm \
+--volume "$(pwd):/app" \
+--workdir /app \
+--entrypoint /bin/sh \
+php:7.2-cli -c 'curl -sS https://getcomposer.org/installer | php && php composer.phar install'
 
 docker run \
-       --rm \
-       --volume "$(pwd):/home/tcakvo/public_html/2scale" \
-       --workdir /home/tcakvo/public_html/2scale \
-       --entrypoint /bin/sh \
-       composer:1.10.17 -c 'composer dump-autoload'
+--rm \
+--volume "$(pwd):/app" \
+--workdir /app \
+--entrypoint /bin/sh \
+php:7.2-cli -c 'php composer.phar dump-autoload'
 
 docker run \
-       --rm \
-       --volume "$(pwd):/home/tcakvo/public_html/2scale" \
-       --workdir "/home/tcakvo/public_html/2scale" \
-       --entrypoint /bin/sh \
-       node:8-alpine -c 'npm i && npm run prod'
+--rm \
+--volume "$(pwd):/app" \
+--workdir "/app" \
+--entrypoint /bin/sh \
+node:8-alpine -c 'npm i && npm run prod'
