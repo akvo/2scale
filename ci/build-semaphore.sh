@@ -2,26 +2,29 @@
 
 set -eu
 
-# Optional: uncomment if you use .env.prod
-# cp .env.prod .env
+#cp .env.prod .env
 
+# Run Composer install
 docker run \
 --rm \
---volume "$(pwd):/app" \
---workdir /app \
-composer:2 \
-install --no-interaction --prefer-dist --optimize-autoloader
+-v "$(pwd):/app" \
+php:7.4-cli /bin/sh -c "\
+    apt-get update && \
+    apt-get install -y unzip git zlib1g-dev && \
+    docker-php-ext-install zip && \
+    curl -sS https://getcomposer.org/installer | php && \
+php composer.phar install"
 
+# Run Composer dump-autoload
 docker run \
 --rm \
---volume "$(pwd):/app" \
---workdir /app \
-composer:2 \
-dump-autoload --optimize
+-v "$(pwd):/app" \
+php:7.4-cli /bin/sh -c "\
+php composer.phar dump-autoload"
 
+# Run npm
 docker run \
 --rm \
---volume "$(pwd):/app" \
---workdir /app \
-node:8-alpine \
-sh -c 'npm install && npm run prod'
+-v "$(pwd):/app" \
+node:8-alpine /bin/sh -c "\
+npm i && npm run prod"
