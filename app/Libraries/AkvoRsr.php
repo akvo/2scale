@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Libraries;
+
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 
@@ -9,8 +10,6 @@ class AkvoRsr
     public function __construct()
     {
         $this->token = config('akvo-rsr.token');
-        $this->limit = "/?format=json&limit=1";
-        $this->limit100 = "/?format=json&limit=100";
     }
 
     public function getHeaders()
@@ -21,13 +20,19 @@ class AkvoRsr
         ];
     }
 
-    public function get($endpoint, $param=false, $value=false)
+    public function get($endpoint, $param = false, $value = false, $limit = 100)
     {
-        $path = '';
-        if ($param) {
-            $path = '&'.$param.'='.$value;
+        $queryParams = [
+            'format' => 'json',
+            'limit'  => $limit,
+        ];
+
+        if ($param && $value) {
+            $queryParams[$param] = $value;
         }
-        $url = config('akvo-rsr.endpoints.'.$endpoint).$this->limit100.$path;
+
+        $baseUrl = rtrim(config('akvo-rsr.endpoints.' . $endpoint), '/');
+        $url = $baseUrl . '?' . http_build_query($queryParams);
         return $this->fetch($url);
     }
 
@@ -35,17 +40,20 @@ class AkvoRsr
     {
         $client = new \GuzzleHttp\Client();
         try {
-            $responses = $client->get($url, $this->getHeaders());
-            if ($responses->getStatusCode() === 200) {
-                return json_decode($responses->getBody(), true);
+            $response = $client->get($url, [
+                'headers' => $this->getHeaders()
+            ]);
+
+            if ($response->getStatusCode() === 200) {
+                $body = (string) $response->getBody();
+                return json_decode($body, true);
             }
-            return $responses->getStatusCode();
+
+            return $response->getStatusCode();
+
         } catch (RequestException $e) {
-            $responses = null;
-            if ($e->hasResponse()) {
-                $responses = $e->getResponse();
-            }
+            $response = $e->hasResponse() ? $e->getResponse() : null;
+            return $response;
         }
-        return $responses;
     }
 }

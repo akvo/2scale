@@ -78,7 +78,7 @@ class RsrSeedController extends Controller
             }
             $projectId = config('akvo-rsr.projects.childs.'.$config);
 
-            if ($projectId !== null) {
+            if ($projectId !== null || $projectId !== []) {
                 $data = $this->getProject($projectId);
                 $data['partnership_id'] = $val['id'];
                 $this->collections->push($data);
