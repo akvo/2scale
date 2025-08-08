@@ -18,7 +18,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            \Auth0\Login\Contract\Auth0UserRepository::class,
+            // \App\Http\Middleware\Authenticate::class, // NOTE :: Disable this because we don't need auth
+            // \Auth0\Login\Contract\Auth0UserRepository::class,
             // \Auth0\Login\Repository\Auth0UserRepository::class,
             \App\Repositories\CustomUserRepository::class
         );

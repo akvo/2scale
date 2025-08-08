@@ -30,16 +30,18 @@ class PageController extends Controller
 	*/
 	public function home()
 	{
-		$fetch = new CustomUserRepository();
-		// User on instance
-		if (\Auth::check() && !$fetch->fetchFlowUser()) {
-			return view('pages.home');
-		}
-		// User not on an intance
-		if (\Auth::check() && $fetch->fetchFlowUser()) {
-			$auth = new Auth0IndexController();
-			return $auth->logout(true);
-		}
+        // NOTE :: Disable this because we don't need auth
+		// $fetch = new CustomUserRepository();
+		// // User on instance
+		// if (\Auth::check() && !$fetch->fetchFlowUser()) {
+		// 	return view('pages.home');
+		// }
+		// // User not on an intance
+		// if (\Auth::check() && $fetch->fetchFlowUser()) {
+		// 	$auth = new Auth0IndexController();
+		// 	return $auth->logout(true);
+		// }
+        // EOL Disable this because we don't need auth
 
 		return view('pages.home');
 	}
@@ -103,12 +105,12 @@ class PageController extends Controller
 	}
 
 	public function report()
-  {
+{
 		return view('pages.report');
 	}
 
 	public function lumenDashboard()
-  {
+{
 		$config = config('lumen-dashboard');
 		return view('pages.lumen-dashboard', ['config' => $config]);
 	}
