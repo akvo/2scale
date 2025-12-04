@@ -74,7 +74,7 @@ class PartnershipPageController extends Controller
         if (!$project) {
             return response('no data available', 503);
         }
-        $results = $this->rsrSeed->getResults($project['id'], 'partnership')->flatten(1);
+        $results = collect($this->rsrSeed->getResults($project['id'], 'partnership'))->flatten(1);
         $results = $results->reject(function ($res) {
             return !Str::contains(strtolower($res['organisation_role_label']), 'implementing');
         });
@@ -99,7 +99,10 @@ class PartnershipPageController extends Controller
         }
 
         $charts = config('partnership-page.impact_charts');
-        $results = $this->rsrSeed->getResults($project['id'], 'results')->flatten(1);
+        $results = collect(
+            $this->rsrSeed->getResults($project['id'], 'results')
+        )->flatten(1);
+
 
         // * Transform results value
         $results = $results->filter(function ($res) {

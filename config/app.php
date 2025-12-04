@@ -174,7 +174,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Auth0\Login\LoginServiceProvider::class,
+        // Auth0\Login\LoginServiceProvider::class,
 
         Mailjet\LaravelMailjet\MailjetServiceProvider::class,
         Mailjet\LaravelMailjet\MailjetMailServiceProvider::class,
@@ -231,7 +231,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Auth0' => Auth0\Login\Facade\Auth0::class,
+        // 'Auth0' => Auth0\Login\Facade\Auth0::class, // NOTE :: Disable this because we don't need auth
         'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class,
         // 'Captcha' => Mews\Captcha\Facades\Captcha::class,
     ],
