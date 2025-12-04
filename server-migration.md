@@ -66,6 +66,13 @@ Once the SQL file is cleaned up, import it using:
 mysql -u [DB_USER] -p [DB_NAME] < [DUMP_FILENAME].sql
 ```
 
+### 🗒️ [IMPORTANT]: Run `2scale:cache` command
+
+Once the database records imported, we need to run artisan command to cache current database records and make the endpoints run smoothly.
+
+```bash
+php artisan 2scale:cache
+```
 
 ## 6. ❌ Disable current cron jobs
 

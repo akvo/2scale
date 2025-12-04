@@ -9,7 +9,7 @@ return [
     |   As set in the auth0 administration page
     |
     */
-    'domain'        => env( 'AUTH0_DOMAIN' ),
+    'domain'        => env( 'AUTH0_DOMAIN' , 'example.auth0.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -18,7 +18,7 @@ return [
     |   As set in the auth0 administration page
     |
     */
-    'client_id'     => env( 'AUTH0_CLIENT_ID' ),
+    'client_id'     => env( 'AUTH0_CLIENT_ID', 'client_id' ),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ return [
     |   As set in the auth0 administration page
     |
     */
-    'client_secret' => env( 'AUTH0_CLIENT_SECRET' ),
+    'client_secret' => env( 'AUTH0_CLIENT_SECRET', 'client_secret' ),
 
     /*
      |--------------------------------------------------------------------------
